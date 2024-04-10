@@ -1,4 +1,4 @@
-package router
+package Router
 
 import (
 	"fmt"
@@ -20,26 +20,26 @@ func NewRoute(name string, path string, handler http.HandlerFunc) *Route {
 	}
 }
 
-type Router struct {
+type router struct {
 	Routes map[string]*Route
 }
 
-func NewRouter() *Router {
-	return &Router{
+func NewRouter() *router {
+	return &router{
 		Routes: make(map[string]*Route),
 	}
 }
 
-func (r *Router) AddRoute(route *Route) {
+func (r *router) AddRoute(route *Route) {
 	r.Routes[route.Name] = route
 }
 
-func (r *Router) GetRoute(name string) *Route {
+func (r *router) GetRoute(name string) *Route {
 
 	return r.Routes[name]
 }
 
-func (r *Router) RegisterRoutes() {
+func (r *router) RegisterRoutes() {
 	for _, route := range r.Routes {
 		// http.HandleFunc(route.Path, func(w http.ResponseWriter, r *http.Request) {
 		// 	msg := fmt.Sprintf("Hello from %s, World!", route.Name)
@@ -54,6 +54,10 @@ var routes = NewRouter()
 var PublicRoutes = NewRouter()
 
 func init() {
+	// echoInst := echo.New()
+
+	// echoInst.GET("/", controller.GetUser)
+
 	PublicRoutes.AddRoute(NewRoute("Login", "/login", controller.Login))
 	// PublicRoutes.AddRoute(NewRoute("LoginForm", "POST", "/login", controller.LoginForm))
 	PublicRoutes.AddRoute(NewRoute("About", "/about", controller.About))
@@ -66,7 +70,7 @@ func init() {
 
 func Start() {
 	fmt.Println("Starting web server on port 8080")
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe("localhost:8080", nil)
 	if err != nil {
 		fmt.Println("Error starting web server: ", err)
 	}
