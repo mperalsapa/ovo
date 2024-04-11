@@ -8,8 +8,8 @@ import (
 
 func SetPassword(c echo.Context) error {
 	pwd := c.QueryParam("pwd")
-	user := model.User{}
-	user.SetPassword(pwd)
+	user := model.User{Password: pwd}
+	user.HashPassword()
 	return c.JSON(200, user.Password)
 }
 
