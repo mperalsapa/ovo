@@ -8,6 +8,7 @@ import (
 	model "ovo-server/internal/model"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func middleLogger1(next echo.HandlerFunc) echo.HandlerFunc {
@@ -34,10 +35,25 @@ func init() {
 func main() {
 	fmt.Println("Hello, World!")
 	echoInst := echo.New()
-	echoInst.GET("/", controller.Home, middleLogger1, middleLogger2)
-	echoInst.GET("/setpassword", controller.SetPassword)
-	echoInst.GET("/login", controller.LoginTest)
-	echoInst.GET("/register", controller.Register)
+
+	echoInst.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:8080", "http://localhost:1234"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+
+	echoInst.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
+
+	staticFilesRoute := "../ovo-web/dist"
+	echoInst.Static("/", staticFilesRoute)
+
+	echoInst.POST("/login", controller.Login)
+
+	apiGroup := echoInst.Group("/api")
+	apiGroup.GET("/home", controller.Home, middleLogger1, middleLogger2)
+	apiGroup.GET("/setpassword", controller.SetPassword)
+	apiGroup.GET("/register", controller.Register)
 
 	echoInst.Start("localhost:8080")
 }
