@@ -2,13 +2,12 @@ package database
 
 import (
 	"fmt"
-	"ovo-server/internal/model"
 )
 
-func Migrate() {
+func Migrate(model interface{}) {
 	fmt.Println("Checking database")
 
 	fmt.Println("Doing migration...")
-	db.connection.AutoMigrate(model.User{})
-	db.connection.AutoMigrate(model.Movie{})
+
+	db.connection.AutoMigrate(model)
 }

@@ -30,6 +30,4 @@ func Init() {
 	if err != nil {
 		panic("Failed to connect to database!")
 	}
-
-	Migrate()
 }

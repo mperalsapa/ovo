@@ -5,6 +5,7 @@ import (
 
 	"ovo-server/internal/controller"
 	"ovo-server/internal/database"
+	model "ovo-server/internal/model"
 
 	"github.com/labstack/echo/v4"
 )
@@ -26,6 +27,8 @@ func middleLogger2(next echo.HandlerFunc) echo.HandlerFunc {
 func init() {
 	fmt.Println("Init...")
 	database.Init()
+	// Migrating every time we start the server, this should be addressed to check versioning of database
+	model.Init()
 }
 
 func main() {
