@@ -6,12 +6,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type DB struct {
+type dbInst struct {
 	connection *gorm.DB
 	config     *gorm.Config
 }
 
-var db DB = DB{}
+var db dbInst = dbInst{}
 
 // var db *gorm.DB
 // var dbConfig = &gorm.Config{}
@@ -30,4 +30,17 @@ func Init() {
 	if err != nil {
 		panic("Failed to connect to database!")
 	}
+
+}
+
+func GetDB() *gorm.DB {
+	return db.connection
+}
+
+func Create(model interface{}) {
+	db.connection.Create(model)
+}
+
+func Migrate(models ...interface{}) {
+	db.connection.AutoMigrate(models...)
 }

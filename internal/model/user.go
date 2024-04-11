@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	db "ovo-server/internal/database"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -36,5 +37,27 @@ func CreateUser(username, password string, role Role) User {
 		Role:     role,
 	}
 	user.SetPassword(password)
+	return user
+}
+
+func (u *User) Save() {
+	db.GetDB().Save(u)
+}
+
+func (u *User) Delete() {
+	db.GetDB().Delete(u)
+}
+
+func GetUserByID(id uint) User {
+	user := User{}
+	db.GetDB().Where("id = ?", id).First(&user)
+	fmt.Println(user)
+	return user
+}
+
+func GetUserByUsername(username string) User {
+	user := User{}
+	db.GetDB().Where("username = ?", username).First(&user)
+	fmt.Println(user)
 	return user
 }

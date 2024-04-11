@@ -36,6 +36,8 @@ func main() {
 	echoInst := echo.New()
 	echoInst.GET("/", controller.Home, middleLogger1, middleLogger2)
 	echoInst.GET("/setpassword", controller.SetPassword)
+	echoInst.GET("/login", controller.LoginTest)
+	echoInst.GET("/register", controller.Register)
 
 	echoInst.Start("localhost:8080")
 }
