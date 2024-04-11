@@ -25,18 +25,25 @@ type User struct {
 	WatchedEpisode []Episode `gorm:"many2many:user_watched_episodes;"`
 }
 
-func (u *User) SetPassword(password string) {
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+func (u *User) HashPassword() {
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	u.Password = string(hashedPassword)
-	fmt.Println(u.Password)
+}
+
+// Compares the hashed password (stored in the database) with the password provided by the user
+func (u *User) CheckPassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return err == nil
 }
 
 func CreateUser(username, password string, role Role) User {
 	user := User{
 		Username: username,
 		Role:     role,
+		Password: password,
 	}
-	user.SetPassword(password)
+
+	user.HashPassword()
 	return user
 }
 
