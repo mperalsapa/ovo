@@ -5,7 +5,9 @@ import (
 
 	"ovo-server/internal/controller"
 	"ovo-server/internal/database"
+	customMiddleware "ovo-server/internal/middleware"
 	model "ovo-server/internal/model"
+	customSession "ovo-server/internal/session"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -46,12 +48,23 @@ func main() {
 	}))
 
 	staticFilesRoute := "../ovo-web/dist"
-	echoInst.Static("/", staticFilesRoute)
+	echoInst.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:   staticFilesRoute,
+		Index:  "index.html",
+		Browse: false,
+		HTML5:  true,
+	}))
 
-	echoInst.POST("/login", controller.Login)
+	// echoInst.Use(customMiddleware.AuthMiddleware)
+	customSession.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
 
+	// Route definition
+	echoInst.POST("/login", controller.Login, customMiddleware.IsNotAuthenticated)
+	echoInst.POST("/register", controller.Register, customMiddleware.IsNotAuthenticated)
 	apiGroup := echoInst.Group("/api")
-	apiGroup.GET("/home", controller.Home, middleLogger1, middleLogger2)
+	apiGroup.Use(customMiddleware.IsAuthenticated)
+	apiGroup.GET("/logout", controller.Logout)
+	apiGroup.GET("/home", controller.Home)
 	apiGroup.GET("/setpassword", controller.SetPassword)
 	apiGroup.GET("/register", controller.Register)
 
