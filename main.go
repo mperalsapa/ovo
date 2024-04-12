@@ -13,20 +13,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func middleLogger1(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		fmt.Println("Middleware Logger")
-		return next(c)
-	}
-}
-
-func middleLogger2(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		fmt.Println("Middleware Logger 2")
-		return next(c)
-	}
-}
-
 func init() {
 	fmt.Println("Init...")
 	database.Init()
