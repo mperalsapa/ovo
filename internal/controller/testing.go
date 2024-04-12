@@ -13,7 +13,7 @@ func SetPassword(c echo.Context) error {
 	return c.JSON(200, user.Password)
 }
 
-func Register(c echo.Context) error {
+func RegisterTest(c echo.Context) error {
 	username := c.QueryParam("username")
 	pwd := c.QueryParam("pwd")
 	role := c.QueryParam("role")
