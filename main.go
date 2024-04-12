@@ -7,6 +7,7 @@ import (
 	"ovo-server/internal/database"
 	customMiddleware "ovo-server/internal/middleware"
 	model "ovo-server/internal/model"
+	"ovo-server/internal/router"
 	customSession "ovo-server/internal/session"
 
 	"github.com/labstack/echo/v4"
@@ -22,37 +23,44 @@ func init() {
 
 func main() {
 	fmt.Println("Hello, World!")
-	echoInst := echo.New()
+	router.InitRoutes()
+	echoInstance := echo.New()
 
-	echoInst.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	echoInstance.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:8080", "http://localhost:1234"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
-	echoInst.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+	echoInstance.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 
-	staticFilesRoute := "../ovo-web/dist"
-	echoInst.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Root:   staticFilesRoute,
-		Index:  "index.html",
-		Browse: false,
-		HTML5:  true,
-	}))
+	// staticFilesRoute := "../ovo-web/dist"
+	// echoInst.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+	// 	Root:   staticFilesRoute,
+	// 	Index:  "index.html",
+	// 	Browse: false,
+	// 	HTML5:  true,
+	// }))
 
 	// echoInst.Use(customMiddleware.AuthMiddleware)
 	customSession.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
 
 	// Route definition
-	echoInst.POST("/login", controller.Login, customMiddleware.IsNotAuthenticated)
-	echoInst.POST("/register", controller.Register, customMiddleware.IsNotAuthenticated)
-	apiGroup := echoInst.Group("/api")
-	apiGroup.Use(customMiddleware.IsAuthenticated)
-	apiGroup.GET("/logout", controller.Logout)
-	apiGroup.GET("/home", controller.Home)
-	apiGroup.GET("/setpassword", controller.SetPassword)
-	apiGroup.GET("/register", controller.Register)
+	echoInstance.GET(router.Routes.Login, controller.Login, customMiddleware.IsNotAuthenticated)
+	echoInstance.POST(router.Routes.Login, controller.LoginRequest, customMiddleware.IsNotAuthenticated)
+	echoInstance.POST(router.Routes.Register, controller.Register, customMiddleware.IsNotAuthenticated)
 
-	echoInst.Start("localhost:8080")
+	echoAuthenticatedGroup := echoInstance.Group("")
+	echoAuthenticatedGroup.Use(customMiddleware.IsAuthenticated)
+	echoAuthenticatedGroup.GET(router.Routes.Logout, controller.Logout)
+	echoAuthenticatedGroup.GET(router.Routes.Home, controller.Home)
+	echoAuthenticatedGroup.GET("/setpassword", controller.SetPassword)
+	echoAuthenticatedGroup.GET("/register", controller.Register)
+
+	echoAdminGroup := echoInstance.Group("/admin")
+	echoAdminGroup.Use(customMiddleware.IsAdmin)
+	// TODO IMPLEMENT ADMIN ROUTES
+
+	echoInstance.Start("localhost:8080")
 }
