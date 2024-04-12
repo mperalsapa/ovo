@@ -10,6 +10,10 @@ import (
 )
 
 func Login(e echo.Context) error {
+	return e.JSON(http.StatusOK, "Login Page")
+}
+
+func LoginRequest(e echo.Context) error {
 	var reqUser model.User
 	if err := e.Bind(&reqUser); err != nil {
 		return e.JSON(http.StatusBadRequest, err)

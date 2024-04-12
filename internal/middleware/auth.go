@@ -16,7 +16,7 @@ func IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 		r := c.Request()
 		auth := localsession.IsAuth(r)
 		if !auth {
-			return c.JSON(http.StatusUnauthorized, "Unauthorized")
+			return c.Redirect(http.StatusFound, "/login")
 		}
 
 		return next(c)
