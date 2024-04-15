@@ -1,0 +1,28 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Hot Reload Templ Build",
+            "type": "shell",
+            "command": "templ generate --watch --proxy='http://localhost:8080' --cmd='go run .'",
+            "problemMatcher": []
+        },
+        {
+            "label": "Air reload on save",
+            "type": "shell",
+            "command": "air"
+        },
+        {
+            "label": "Run server",
+            "type": "shell",
+            "command": "templ generate; go run ."
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "go build ."
+        }
+    ]
+}
