@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"ovo-server/internal/model"
 	localsession "ovo-server/internal/session"
@@ -12,9 +11,7 @@ import (
 
 func IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		fmt.Println("Checking authentication v2 ...")
-		r := c.Request()
-		auth := localsession.IsAuth(r)
+		auth := localsession.IsAuth(c)
 		if !auth {
 			return c.Redirect(http.StatusFound, "/login")
 		}
@@ -25,20 +22,16 @@ func IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 
 func IsNotAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		fmt.Println("Checking authentication v2 ...")
-		r := c.Request()
-		auth := localsession.IsAuth(r)
+		auth := localsession.IsAuth(c)
 		if auth {
 			return c.JSON(http.StatusOK, "Already authenticated")
 		}
-
 		return next(c)
 	}
 }
 
 func IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		fmt.Println("Checking admin")
 		session, _ := session.Get("session", c)
 		if session.Values["user"] == nil {
 			return c.JSON(http.StatusUnauthorized, "Unauthorized")
