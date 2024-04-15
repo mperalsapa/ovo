@@ -1,6 +1,9 @@
 package database
 
 import (
+	"fmt"
+	"ovo-server/internal/config"
+
 	"github.com/glebarez/sqlite"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -19,11 +22,16 @@ var db dbInst = dbInst{}
 func Init() {
 	db.config = &gorm.Config{}
 	var err error
-	switch "mysql" {
+	switch config.Variables.DatabaseType {
 	case "mysql":
-		dsn := "root:@tcp(127.0.0.1:3306)/ovo-dev?charset=utf8mb4&parseTime=True&loc=Local"
+		dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+			config.Variables.DatabaseUsername,
+			config.Variables.DatabasePassword,
+			config.Variables.DatabaseHost,
+			config.Variables.DatabaseName)
+
 		db.connection, err = gorm.Open(mysql.Open(dsn), db.config)
-	case "sqlite":
+	default:
 		db.connection, err = gorm.Open(sqlite.Open("test.db"), db.config)
 	}
 

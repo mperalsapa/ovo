@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"ovo-server/internal/config"
 	"ovo-server/internal/controller"
 	"ovo-server/internal/database"
 	customMiddleware "ovo-server/internal/middleware"
@@ -16,6 +17,7 @@ import (
 
 func init() {
 	fmt.Println("Init...")
+	config.Init()
 	database.Init()
 	// Migrating every time we start the server, this should be addressed to check versioning of database
 	model.Init()
