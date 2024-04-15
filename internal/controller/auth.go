@@ -14,7 +14,10 @@ import (
 func Login(context echo.Context) error {
 	userSession := session.GetUserSession(context)
 	fmt.Println("Username stored in session : ", userSession.Username)
-	component := view.LoginPage(userSession.Username)
+	pageData := view.LoginPageData{
+		UserSession: userSession,
+	}
+	component := view.LoginPage(pageData)
 	return RenderView(context, http.StatusOK, component)
 }
 
@@ -36,6 +39,7 @@ func LoginRequest(context echo.Context) error {
 		return context.Redirect(http.StatusFound, router.Routes.Login)
 	}
 	userSession.Authenticated = true
+	userSession.ErrorMsg = ""
 	userSession.SaveUserSession(context)
 
 	return context.Redirect(http.StatusFound, router.Routes.Home)
