@@ -18,8 +18,8 @@ const (
 
 type User struct {
 	gorm.Model
-	Username       string    `json:"username" gorm:"not null"`
-	Password       string    `json:"password" gorm:"not null"`
+	Username       string    `form:"username" json:"username" gorm:"not null"`
+	Password       string    `form:"password" json:"password" gorm:"not null"`
 	Role           Role      `json:"role" gorm:"enum('admin', 'editor', 'visitor')"`
 	WatchedMovies  []Movie   `gorm:"many2many:user_watched_movies;"`
 	WatchedEpisode []Episode `gorm:"many2many:user_watched_episodes;"`
