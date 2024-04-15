@@ -11,54 +11,55 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Login(e echo.Context) error {
-	userSession := session.GetUserSession(e)
+func Login(context echo.Context) error {
+	userSession := session.GetUserSession(context)
 	fmt.Println("Username stored in session : ", userSession.Username)
 	component := view.LoginPage(userSession.Username)
-	return RenderView(e, http.StatusOK, component)
+	return RenderView(context, http.StatusOK, component)
 }
 
-func LoginRequest(e echo.Context) error {
+func LoginRequest(context echo.Context) error {
 	var reqUser model.User
-	if err := e.Bind(&reqUser); err != nil {
-		return e.JSON(http.StatusBadRequest, err)
+	if err := context.Bind(&reqUser); err != nil {
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	userSession := session.GetUserSession(e)
+	userSession := session.GetUserSession(context)
 	userSession.Username = reqUser.Username
 
 	user := model.GetUserByUsername(reqUser.Username)
 
 	if valid := user.CheckPassword(reqUser.Password); !valid {
 		userSession.Authenticated = false
-		userSession.SaveUserSession(e)
-		return e.JSON(http.StatusUnauthorized, "Invalid username or password")
+		userSession.ErrorMsg = "Invalid username or password"
+		userSession.SaveUserSession(context)
+		return context.Redirect(http.StatusFound, router.Routes.Login)
 	}
 	userSession.Authenticated = true
-	userSession.SaveUserSession(e)
+	userSession.SaveUserSession(context)
 
-	return e.Redirect(http.StatusFound, router.Routes.Home)
+	return context.Redirect(http.StatusFound, router.Routes.Home)
 }
 
-func Register(e echo.Context) error {
+func Register(context echo.Context) error {
 	var reqUser model.User
-	if err := e.Bind(&reqUser); err != nil {
-		return e.JSON(http.StatusBadRequest, err)
+	if err := context.Bind(&reqUser); err != nil {
+		return context.JSON(http.StatusBadRequest, err)
 	}
 
 	user := model.CreateUser(reqUser.Username, reqUser.Password, reqUser.Role)
 	user.Save()
 
-	return e.JSON(http.StatusOK, user)
+	return context.Redirect(http.StatusFound, router.Routes.Login)
 }
 
-func Logout(c echo.Context) error {
-	session := session.GetUserSession(c)
+func Logout(context echo.Context) error {
+	session := session.GetUserSession(context)
 	session.Authenticated = false
-	session.SaveUserSession(c)
+	session.SaveUserSession(context)
 	fmt.Println("User logged out: " + session.Username)
 
-	return c.Redirect(http.StatusFound, router.Routes.Login)
+	return context.Redirect(http.StatusFound, router.Routes.Login)
 }
 
 func About(w http.ResponseWriter, r *http.Request) {
