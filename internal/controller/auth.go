@@ -4,13 +4,18 @@ import (
 	"fmt"
 	"net/http"
 	"ovo-server/internal/model"
+	"ovo-server/internal/router"
 	session "ovo-server/internal/session"
+	"ovo-server/internal/view"
 
 	"github.com/labstack/echo/v4"
 )
 
 func Login(e echo.Context) error {
-	return e.JSON(http.StatusOK, "Login Page")
+	userSession := session.GetUserSession(e)
+	fmt.Println("Username stored in session : ", userSession.Username)
+	component := view.LoginPage(userSession.Username)
+	return RenderView(e, http.StatusOK, component)
 }
 
 func LoginRequest(e echo.Context) error {
@@ -18,21 +23,21 @@ func LoginRequest(e echo.Context) error {
 	if err := e.Bind(&reqUser); err != nil {
 		return e.JSON(http.StatusBadRequest, err)
 	}
-	fmt.Println("Checking against : ", reqUser.Username)
+
+	userSession := session.GetUserSession(e)
+	userSession.Username = reqUser.Username
+
 	user := model.GetUserByUsername(reqUser.Username)
 
-	fmt.Println("User : \n", user, "ReqUser : \n", reqUser)
 	if valid := user.CheckPassword(reqUser.Password); !valid {
+		userSession.Authenticated = false
+		userSession.SaveUserSession(e)
 		return e.JSON(http.StatusUnauthorized, "Invalid username or password")
 	}
+	userSession.Authenticated = true
+	userSession.SaveUserSession(e)
 
-	session, _ := session.Store.Get(e.Request(), session.Name)
-	session.Values["authenticated"] = true
-	session.Values["username"] = user.Username
-
-	session.Save(e.Request(), e.Response())
-
-	return e.JSON(http.StatusOK, user)
+	return e.Redirect(http.StatusFound, router.Routes.Home)
 }
 
 func Register(e echo.Context) error {
@@ -47,13 +52,13 @@ func Register(e echo.Context) error {
 	return e.JSON(http.StatusOK, user)
 }
 
-func Logout(e echo.Context) error {
-	session, _ := session.Store.Get(e.Request(), session.Name)
-	session.Values["authenticated"] = false
-	session.Save(e.Request(), e.Response())
+func Logout(c echo.Context) error {
+	session := session.GetUserSession(c)
+	session.Authenticated = false
+	session.SaveUserSession(c)
+	fmt.Println("User logged out: " + session.Username)
 
-	fmt.Println(session.Values["username"], " Logged out ", session.Values["authenticated"])
-	return e.JSON(http.StatusOK, "Logged out")
+	return c.Redirect(http.StatusFound, router.Routes.Login)
 }
 
 func About(w http.ResponseWriter, r *http.Request) {
