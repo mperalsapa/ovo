@@ -1,0 +1,34 @@
+package page
+
+import (
+	"ovo-server/internal/session"
+	"ovo-server/internal/template/shared"
+	"ovo-server/internal/template/component"
+)
+
+type LoginPageData struct {
+	UserSession session.UserSession
+}
+
+templ LoginPage(pageData LoginPageData) {
+	@shared.Page("Login") {
+		<form method="POST" class="h-full flex items-center">
+			<div class="mx-auto w-fit h-fit">
+				if (pageData.UserSession.ErrorMsg != "") {
+					@component.Alert(pageData.UserSession.ErrorMsg, "error")
+				}
+				<div class="form">
+					<div class="form-field">
+						<label htmlFor="username" hidden>Username</label>
+						<input class="themed-input-text" type="text" name="username" id="username" placeholder="Username" value={ pageData.UserSession.Username }/>
+					</div>
+					<div class="form-field">
+						<label htmlFor="password" hidden>Password</label>
+						<input class="themed-input-text" type="password" name="password" id="password" placeholder="Password"/>
+					</div>
+					<input class="button" type="submit" value="Login"/>
+				</div>
+			</div>
+		</form>
+	}
+}

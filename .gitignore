@@ -2,3 +2,5 @@ tmp
 *.db
 .env
 node_modules
+*templ.go
+*templ.txt
