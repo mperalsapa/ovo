@@ -80,7 +80,7 @@ func RegisterRequest(context echo.Context) error {
 	testUser := model.User{}
 	fmt.Println(json.Marshal(testUser))
 
-	user := model.CreateUser(reqUser.Username, reqUser.Password)
+	user := model.NewUser(reqUser.Username, reqUser.Password)
 
 	userCount := model.UserCount()
 	if userCount == 0 {

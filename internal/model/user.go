@@ -23,7 +23,7 @@ type User struct {
 	Role           Role      `json:"role" gorm:"enum('admin', 'editor', 'visitor');default:'visitor'"`
 	WatchedMovies  []Movie   `gorm:"many2many:user_watched_movies;"`
 	WatchedEpisode []Episode `gorm:"many2many:user_watched_episodes;"`
-	Enabled        bool      `json:"enabled" gorm:"default:false"; default:false`
+	Enabled        bool      `json:"enabled" gorm:"default:false"`
 }
 
 func (u *User) HashPassword() {
@@ -37,7 +37,7 @@ func (u *User) CheckPassword(password string) bool {
 	return err == nil
 }
 
-func CreateUser(username, password string) User {
+func NewUser(username, password string) User {
 	user := User{
 		Username: username,
 		Password: password,

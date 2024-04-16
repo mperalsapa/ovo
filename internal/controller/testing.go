@@ -17,7 +17,7 @@ func RegisterTest(c echo.Context) error {
 	username := c.QueryParam("username")
 	pwd := c.QueryParam("pwd")
 	role := c.QueryParam("role")
-	user := model.CreateUser(username, pwd)
+	user := model.NewUser(username, pwd)
 	user.Role = model.Role(role)
 	user.Save()
 	return c.JSON(200, user)
