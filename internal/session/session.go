@@ -94,7 +94,6 @@ func (u *UserSession) PopErrorMessage(c echo.Context) string {
 func IsAuth(c echo.Context) (Auth bool) {
 	userSession := GetUserSession(c)
 	auth := userSession.Authenticated
-	fmt.Println("Checking authentication ...", auth)
 	return auth
 }
 
