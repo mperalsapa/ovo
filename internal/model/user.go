@@ -8,19 +8,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type Role string
+type Role int
 
 const (
-	Admin   Role = "admin"
-	Editor  Role = "editor"
-	Visitor Role = "visitor"
+	Visitor Role = iota
+	Editor
+	Admin
 )
 
 type User struct {
 	gorm.Model
 	Username       string    `form:"username" json:"username" gorm:"not null"`
 	Password       string    `form:"password" json:"password" gorm:"not null"`
-	Role           Role      `json:"role" gorm:"enum('admin', 'editor', 'visitor');default:'visitor'"`
+	Role           Role      `json:"role"`
 	WatchedMovies  []Movie   `gorm:"many2many:user_watched_movies;"`
 	WatchedEpisode []Episode `gorm:"many2many:user_watched_episodes;"`
 	Enabled        bool      `json:"enabled" gorm:"default:false"`
@@ -71,6 +71,10 @@ func GetUserByID(id uint) User {
 func GetUserByUsername(username string) User {
 	user := User{}
 	db.GetDB().Where("username = ?", username).First(&user)
-	fmt.Println(user)
 	return user
+}
+
+func UserExists(username string) bool {
+	user := GetUserByUsername(username)
+	return user.Username != ""
 }

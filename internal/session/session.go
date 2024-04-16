@@ -1,17 +1,22 @@
 package session
 
 import (
+	"encoding/gob"
 	"fmt"
-	"net/http"
+	"log"
 	"ovo-server/internal/model"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
 
-var Key []byte
-var Store *sessions.CookieStore
-var Name string
+var SessionSettings sessionSettings
+
+type sessionSettings struct {
+	Store  *sessions.CookieStore
+	Name   string `default:"ovo-session"`
+	MaxAge int    `default:"3600"`
+}
 
 type UserSession struct {
 	Username      string
@@ -21,56 +26,70 @@ type UserSession struct {
 }
 
 func GenerateSessionHandler(key string, name string) {
-	Key = []byte(key)
-	Store = sessions.NewCookieStore(Key)
-	Name = name
-}
 
-func GetUsername(r *http.Request) (UserName string) {
-	session, _ := Store.Get(r, Name)
-	if session.IsNew {
-		return ""
+	SessionSettings = sessionSettings{
+		Store:  sessions.NewCookieStore([]byte(key)),
+		Name:   name,
+		MaxAge: 3600,
 	}
-	UserName = session.Values["username"].(string)
-	return UserName
+
+	gob.Register(UserSession{})
+
 }
 
 func GetUserSession(c echo.Context) (User UserSession) {
-	session, _ := Store.Get(c.Request(), Name)
-	if session.IsNew {
+	currentSession, err := SessionSettings.Store.Get(c.Request(), SessionSettings.Name)
+
+	if err != nil {
+		log.Println("Error getting session: ", err)
 		return UserSession{}
 	}
-	user := UserSession{
-		Username:      session.Values["username"].(string),
-		Authenticated: session.Values["authenticated"].(bool),
-		Role:          session.Values["role"].(model.Role),
-		ErrorMsg:      session.Values["error_msg"].(string),
+
+	if currentSession.IsNew {
+		return UserSession{}
 	}
+	user, ok := currentSession.Values["user"].(UserSession)
+	if !ok {
+		log.Println("Error getting user from session")
+		return UserSession{}
+	}
+
+	// Checking if user exists in the database
+	exists := model.UserExists(user.Username)
+	if !exists {
+		log.Println("User does not exist in the database")
+		return UserSession{}
+	}
+
 	return user
 }
 
-func (u *UserSession) SaveUserSession(c echo.Context) {
-	fmt.Println("Saving user session ...")
-	fmt.Println("Username : ", u.Username)
-	session, _ := Store.Get(c.Request(), Name)
-	session.Values["username"] = u.Username
-	session.Values["authenticated"] = u.Authenticated
-	session.Values["role"] = u.Role
-	session.Values["error_msg"] = u.ErrorMsg
-	session.Save(c.Request(), c.Response())
+func GetSession(c echo.Context) (*sessions.Session, error) {
+	return SessionSettings.Store.Get(c.Request(), SessionSettings.Name)
 }
 
-func (u *UserSession) ClearUserSession(r *http.Request, w http.ResponseWriter) {
-	session, _ := Store.Get(r, Name)
-	session.Values["username"] = ""
-	session.Values["authenticated"] = false
-	session.Values["role"] = ""
-	session.Values["error_msg"] = ""
-	session.Save(r, w)
+func (u *UserSession) SaveUserSession(c echo.Context) {
+	session, err := GetSession(c)
+	if err != nil {
+		log.Println("Error getting session when storing: ", err)
+		return
+	}
+	log.Printf("Storing user %s with role %d is authenticated: %t", u.Username, u.Role, u.Authenticated)
+	session.Values["user"] = *u
+	err = session.Save(c.Request(), c.Response())
+	if err != nil {
+		log.Println("Error saving session: ", err)
+	}
+	log.Println("User session saved: " + u.Username + " - Authenticated: " + fmt.Sprint(u.Authenticated))
 }
 
 func GetKey(c echo.Context) (Key string) {
-	session, _ := Store.Get(c.Request(), Name)
+	session, err := GetSession(c)
+	if err != nil {
+		log.Println("Error getting session when getting key: ", err)
+		return ""
+	}
+
 	if session.IsNew {
 		return ""
 	}
@@ -79,7 +98,12 @@ func GetKey(c echo.Context) (Key string) {
 }
 
 func SetKey(c echo.Context, key string, value string) {
-	session, _ := Store.Get(c.Request(), Name)
+	session, err := GetSession(c)
+	if err != nil {
+		log.Println("Error getting session when setting key: ", err)
+		return
+	}
+
 	session.Values["key"] = key
 	session.Save(c.Request(), nil)
 }

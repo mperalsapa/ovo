@@ -16,9 +16,9 @@ func SetPassword(c echo.Context) error {
 func RegisterTest(c echo.Context) error {
 	username := c.QueryParam("username")
 	pwd := c.QueryParam("pwd")
-	role := c.QueryParam("role")
+	// role := c.QueryParam("role")
 	user := model.NewUser(username, pwd)
-	user.Role = model.Role(role)
+	// user.Role = model.OldRoleEnum(role)
 	user.Save()
 	return c.JSON(200, user)
 }

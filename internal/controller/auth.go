@@ -18,6 +18,7 @@ func Login(context echo.Context) error {
 		Username: userSession.Username,
 		AlertMsg: userSession.PopErrorMessage(context),
 	}
+
 	component := page.LoginPage(pageData)
 	return RenderView(context, http.StatusOK, component)
 }
@@ -39,8 +40,10 @@ func LoginRequest(context echo.Context) error {
 		userSession.SaveUserSession(context)
 		return context.Redirect(http.StatusFound, router.Routes.Login)
 	}
+
 	userSession.Authenticated = true
 	userSession.ErrorMsg = ""
+	userSession.Role = user.Role
 	userSession.SaveUserSession(context)
 
 	return context.Redirect(http.StatusFound, router.Routes.Home)
@@ -73,11 +76,16 @@ func RegisterRequest(context echo.Context) error {
 	}
 
 	userSession.Username = reqUser.Username
+	if model.UserExists(reqUser.Username) {
+		log.Println("User already exists: " + reqUser.Username)
+		userSession.ErrorMsg = "User already exists"
+		userSession.SaveUserSession(context)
+		return context.Redirect(http.StatusFound, router.Routes.Register)
+	}
+
 	if reqUser.Password != reqUser.PasswordVerification {
 		log.Println("Password and password verification do not match")
 		userSession.ErrorMsg = "Password and password verification do not match"
-		log.Println(userSession.Username)
-		log.Println("Redirecting to register page using message error: " + userSession.ErrorMsg)
 		userSession.SaveUserSession(context)
 		return context.Redirect(http.StatusFound, router.Routes.Register)
 	}
