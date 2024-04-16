@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"ovo-server/internal/model"
 	"ovo-server/internal/router"
-	session "ovo-server/internal/session"
-	"ovo-server/internal/view"
+	"ovo-server/internal/session"
+	"ovo-server/internal/template/page"
 
 	"github.com/labstack/echo/v4"
 )
@@ -14,10 +14,10 @@ import (
 func Login(context echo.Context) error {
 	userSession := session.GetUserSession(context)
 	fmt.Println("Username stored in session : ", userSession.Username)
-	pageData := view.LoginPageData{
+	pageData := page.LoginPageData{
 		UserSession: userSession,
 	}
-	component := view.LoginPage(pageData)
+	component := page.LoginPage(pageData)
 	return RenderView(context, http.StatusOK, component)
 }
 
