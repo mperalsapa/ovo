@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"ovo-server/internal/model"
 	"ovo-server/internal/router"
@@ -47,11 +48,12 @@ func LoginRequest(context echo.Context) error {
 
 func Register(context echo.Context) error {
 	userSession := session.GetUserSession(context)
+	log.Println("Register page - Current error msg: " + userSession.ErrorMsg)
 	pageData := page.RegisterPageData{
 		Username: userSession.Username,
 		AlertMsg: userSession.PopErrorMessage(context),
 	}
-
+	fmt.Println("Register page - Register error msg: " + pageData.AlertMsg)
 	component := page.RegisterPage(pageData)
 	return RenderView(context, http.StatusOK, component)
 }
@@ -70,8 +72,12 @@ func RegisterRequest(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err)
 	}
 
+	userSession.Username = reqUser.Username
 	if reqUser.Password != reqUser.PasswordVerification {
+		log.Println("Password and password verification do not match")
 		userSession.ErrorMsg = "Password and password verification do not match"
+		log.Println(userSession.Username)
+		log.Println("Redirecting to register page using message error: " + userSession.ErrorMsg)
 		userSession.SaveUserSession(context)
 		return context.Redirect(http.StatusFound, router.Routes.Register)
 	}

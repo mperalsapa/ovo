@@ -99,15 +99,11 @@ func IsAuth(c echo.Context) (Auth bool) {
 
 func IsAdmin(c echo.Context) (Admin bool) {
 	auth := IsAuth(c)
-	if auth != true {
+	if !auth {
 		return false
 	}
 
 	userSession := GetUserSession(c)
 	role := userSession.Role
-	if role != "admin" {
-		return false
-	}
-
-	return true
+	return role == model.Admin
 }
