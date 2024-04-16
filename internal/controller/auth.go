@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"ovo-server/internal/model"
@@ -13,9 +14,9 @@ import (
 
 func Login(context echo.Context) error {
 	userSession := session.GetUserSession(context)
-	fmt.Println("Username stored in session : ", userSession.Username)
 	pageData := page.LoginPageData{
-		UserSession: userSession,
+		Username: userSession.Username,
+		AlertMsg: userSession.PopErrorMessage(context),
 	}
 	component := page.LoginPage(pageData)
 	return RenderView(context, http.StatusOK, component)
@@ -46,12 +47,47 @@ func LoginRequest(context echo.Context) error {
 }
 
 func Register(context echo.Context) error {
-	var reqUser model.User
+	userSession := session.GetUserSession(context)
+	pageData := page.RegisterPageData{
+		Username: userSession.Username,
+		AlertMsg: userSession.PopErrorMessage(context),
+	}
+
+	component := page.RegisterPage(pageData)
+	return RenderView(context, http.StatusOK, component)
+}
+
+func RegisterRequest(context echo.Context) error {
+	userSession := session.GetUserSession(context)
+
+	type RegisterRequest struct {
+		Username             string `form:"username"`
+		Password             string `form:"password"`
+		PasswordVerification string `form:"password_verification"`
+	}
+
+	var reqUser RegisterRequest
 	if err := context.Bind(&reqUser); err != nil {
 		return context.JSON(http.StatusBadRequest, err)
 	}
 
-	user := model.CreateUser(reqUser.Username, reqUser.Password, reqUser.Role)
+	if reqUser.Password != reqUser.PasswordVerification {
+		userSession.ErrorMsg = "Password and password verification do not match"
+		userSession.SaveUserSession(context)
+		return context.Redirect(http.StatusFound, router.Routes.Register)
+	}
+
+	testUser := model.User{}
+	fmt.Println(json.Marshal(testUser))
+
+	user := model.CreateUser(reqUser.Username, reqUser.Password)
+
+	userCount := model.UserCount()
+	if userCount == 0 {
+		user.Role = model.Admin
+		user.Enabled = true
+	}
+
 	user.Save()
 
 	return context.Redirect(http.StatusFound, router.Routes.Login)

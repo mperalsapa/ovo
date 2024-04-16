@@ -83,6 +83,13 @@ func SetKey(c echo.Context, key string, value string) {
 	session.Save(c.Request(), nil)
 }
 
+func (u *UserSession) PopErrorMessage(c echo.Context) string {
+	errorMsg := u.ErrorMsg
+	u.ErrorMsg = ""
+	u.SaveUserSession(c)
+	return errorMsg
+}
+
 func IsAuth(c echo.Context) (Auth bool) {
 	userSession := GetUserSession(c)
 	auth := userSession.Authenticated

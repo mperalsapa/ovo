@@ -5,12 +5,12 @@ import (
 	"ovo-server/internal/template/component"
 )
 
-type LoginPageData struct {
+type RegisterPageData struct {
 	AlertMsg string
 	Username string
 }
 
-templ LoginPage(pageData LoginPageData) {
+templ RegisterPage(pageData RegisterPageData) {
 	@shared.Page("Login") {
 		<form method="POST" class="h-full flex items-center">
 			<div class="mx-auto w-fit h-fit">
@@ -26,7 +26,11 @@ templ LoginPage(pageData LoginPageData) {
 						<label htmlFor="password" hidden>Password</label>
 						<input class="themed-input-text" type="password" name="password" id="password" placeholder="Password"/>
 					</div>
-					<input class="button" type="submit" value="Login"/>
+					<div class="form-field">
+						<label htmlFor="password_verification" hidden>Password Verification</label>
+						<input class="themed-input-text" type="password" name="password_verification" id="password_verification" placeholder="Password Verification"/>
+					</div>
+					<input class="button" type="submit" value="Register"/>
 				</div>
 			</div>
 		</form>

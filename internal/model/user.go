@@ -20,9 +20,10 @@ type User struct {
 	gorm.Model
 	Username       string    `form:"username" json:"username" gorm:"not null"`
 	Password       string    `form:"password" json:"password" gorm:"not null"`
-	Role           Role      `json:"role" gorm:"enum('admin', 'editor', 'visitor')"`
+	Role           Role      `json:"role" gorm:"enum('admin', 'editor', 'visitor');default:'visitor'"`
 	WatchedMovies  []Movie   `gorm:"many2many:user_watched_movies;"`
 	WatchedEpisode []Episode `gorm:"many2many:user_watched_episodes;"`
+	Enabled        bool      `json:"enabled" gorm:"default:false"; default:false`
 }
 
 func (u *User) HashPassword() {
@@ -36,10 +37,9 @@ func (u *User) CheckPassword(password string) bool {
 	return err == nil
 }
 
-func CreateUser(username, password string, role Role) User {
+func CreateUser(username, password string) User {
 	user := User{
 		Username: username,
-		Role:     role,
 		Password: password,
 	}
 
@@ -53,6 +53,12 @@ func (u *User) Save() {
 
 func (u *User) Delete() {
 	db.GetDB().Delete(u)
+}
+
+func UserCount() int64 {
+	var count int64
+	db.GetDB().Model(&User{}).Count(&count)
+	return count
 }
 
 func GetUserByID(id uint) User {

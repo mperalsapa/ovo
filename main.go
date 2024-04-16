@@ -52,14 +52,14 @@ func main() {
 	// Route definition
 	echoInstance.GET(router.Routes.Login, controller.Login, customMiddleware.IsNotAuthenticated)
 	echoInstance.POST(router.Routes.Login, controller.LoginRequest, customMiddleware.IsNotAuthenticated)
-	echoInstance.POST(router.Routes.Register, controller.Register, customMiddleware.IsNotAuthenticated)
+	echoInstance.GET(router.Routes.Register, controller.Register, customMiddleware.IsNotAuthenticated)
+	echoInstance.POST(router.Routes.Register, controller.RegisterRequest, customMiddleware.IsNotAuthenticated)
 
 	echoAuthenticatedGroup := echoInstance.Group("")
 	echoAuthenticatedGroup.Use(customMiddleware.IsAuthenticated)
 	echoAuthenticatedGroup.GET(router.Routes.Logout, controller.Logout)
 	echoAuthenticatedGroup.GET(router.Routes.Home, controller.Home)
 	echoAuthenticatedGroup.GET("/setpassword", controller.SetPassword)
-	echoAuthenticatedGroup.GET("/register", controller.Register)
 
 	echoAdminGroup := echoInstance.Group("/admin")
 	echoAdminGroup.Use(customMiddleware.IsAdmin)
