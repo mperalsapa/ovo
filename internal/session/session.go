@@ -3,6 +3,7 @@ package session
 import (
 	"fmt"
 	"net/http"
+	"ovo-server/internal/model"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
@@ -15,7 +16,7 @@ var Name string
 type UserSession struct {
 	Username      string
 	Authenticated bool
-	Role          string
+	Role          model.Role
 	ErrorMsg      string
 }
 
@@ -42,7 +43,7 @@ func GetUserSession(c echo.Context) (User UserSession) {
 	user := UserSession{
 		Username:      session.Values["username"].(string),
 		Authenticated: session.Values["authenticated"].(bool),
-		Role:          session.Values["role"].(string),
+		Role:          session.Values["role"].(model.Role),
 		ErrorMsg:      session.Values["error_msg"].(string),
 	}
 	return user

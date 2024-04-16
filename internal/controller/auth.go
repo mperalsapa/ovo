@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"ovo-server/internal/model"
@@ -76,9 +75,6 @@ func RegisterRequest(context echo.Context) error {
 		userSession.SaveUserSession(context)
 		return context.Redirect(http.StatusFound, router.Routes.Register)
 	}
-
-	testUser := model.User{}
-	fmt.Println(json.Marshal(testUser))
 
 	user := model.NewUser(reqUser.Username, reqUser.Password)
 
