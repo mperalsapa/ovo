@@ -35,7 +35,7 @@ func main() {
 	}))
 
 	echoInstance.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status}\n",
+		Format: "${time_rfc3339} - STATUS: ${status} - Method: ${method} - URI: ${uri}\n",
 	}))
 
 	// staticFilesRoute := "../ovo-web/dist"
@@ -63,6 +63,7 @@ func main() {
 
 	echoAdminGroup := echoInstance.Group("/admin")
 	echoAdminGroup.Use(customMiddleware.IsAdmin)
+	echoAdminGroup.GET("/", controller.AdminDashboard)
 	// TODO IMPLEMENT ADMIN ROUTES
 
 	echoInstance.Start("localhost:8080")
