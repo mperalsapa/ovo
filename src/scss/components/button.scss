@@ -1,0 +1,35 @@
+.button {
+    background-color: var(--secondary-color);
+    color: var(--primary-text-color);
+    @apply rounded p-2;
+
+    &:hover {
+        background-color: var(--secondary-color-light);
+    }
+
+    &-primary {
+        background-color: var(--primary-color);
+
+        &:hover {
+            background-color: var(--primary-color-light);
+        }
+    }
+
+    &-warning {
+        background-color: var(--warning-color);
+
+        &:hover {
+            background-color: var(--warning-color-light);
+        }
+    }
+
+    &-danger {
+        background-color: var(--danger-color);
+
+        &:hover {
+            background-color: var(--danger-color-light);
+        }
+    }
+
+    // com
+}

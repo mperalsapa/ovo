@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --main-color: white;
+  --primary-color: #44a9cc;
+  --secondary-color: #44a9cc;
+  --background-color: #1d1d1b;
+  --warning-color: hsl(24, 100%, 62%);
+  --danger-color: hsl(0, 100%, 62%);
+  --primary-text-color: white;
+  --secondary-text-color: white;
+  --warning-text-color: white;
+  --danger-text-color: white;
+  --secondary-color-light: #6cbbd7;
+  --warning-color-light: #ffa970;
+  --danger-color-light: #ff7070;
+  --secondary-color-dark: #246d86;
+  --warning-color-dark: #d65600;
+  --danger-color-dark: #d60000;
+}
+
+:root body.dark {
+  --text-color: #1a1a1a;
+  --secondary-color: #63b4d0;
+}
+
+:root body.winter {
+  --main-color: #008cff;
+  --secondary-color: #63b4d0;
+}
+
+html {
+  background-color: var(--background-color);
+}
+
+.button {
+  background-color: var(--secondary-color);
+  color: var(--primary-text-color);
+  @apply rounded p-2;
+}
+.button:hover {
+  background-color: var(--secondary-color-light);
+}
+.button-primary {
+  background-color: var(--primary-color);
+}
+.button-primary:hover {
+  background-color: var(--primary-color-light);
+}
+.button-warning {
+  background-color: var(--warning-color);
+}
+.button-warning:hover {
+  background-color: var(--warning-color-light);
+}
+.button-danger {
+  background-color: var(--danger-color);
+}
+.button-danger:hover {
+  background-color: var(--danger-color-light);
+}
+
+input[type=text],
+input[type=password] {
+  width: 300px;
+  @apply rounded p-1 px-2;
+  @apply outline hover:outline-dashed outline-2 outline-secondary;
+  background-color: transparent;
+  color: var(--primary-text-color);
+}
+
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.alert-error {
+  color: var(--danger-text-color);
+  background-color: var(--danger-color-light);
+  border-color: var(--danger-color);
+}
+
+.border-primary {
+  border-color: var(--primary-color);
+}
+
+.border-secondary {
+  border-color: var(--secondary-color);
+}
+
+.outline-primary {
+  outline-color: var(--primary-color);
+}
+
+.outline-secondary {
+  outline-color: var(--secondary-color);
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color);
+}
+
+.form {
+  @apply gap-3 flex flex-col;
+}
+
+/*# sourceMappingURL=style.css.map */

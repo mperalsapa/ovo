@@ -28,6 +28,7 @@ func main() {
 	router.InitRoutes()
 	echoInstance := echo.New()
 
+	echoInstance.Static("/assets", "public")
 	echoInstance.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:8080", "http://localhost:1234"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},

@@ -23,6 +23,25 @@
             "label": "Build",
             "type": "shell",
             "command": "go build ."
+        },
+        {
+            "label": "Build CSS - Tailwind",
+            "type": "shell",
+            "command": "npx tailwindcss -i ./src/css/style.css -o ./public/css/style.css --watch",
+            "problemMatcher": []
+        },
+        {
+            "type": "go",
+            "label": "go: build package",
+            "command": "build",
+            "args": [
+                "${fileDirname}"
+            ],
+            "problemMatcher": [
+                "$go"
+            ],
+            "group": "build",
+            "detail": "cd d:\\marcp\\Documents\\DAW2\\PROJECTE\\FINAL\\projecte-final-daw\\ovo; go build ${fileDirname}"
         }
     ]
 }

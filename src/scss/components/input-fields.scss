@@ -1,0 +1,8 @@
+input[type=text],
+input[type=password] {
+    width: 300px;
+    @apply rounded p-1 px-2;
+    @apply outline hover:outline-dashed outline-2 outline-secondary;
+    background-color: transparent;
+    color: var(--primary-text-color);
+}

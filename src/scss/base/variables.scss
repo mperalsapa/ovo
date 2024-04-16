@@ -1,0 +1,68 @@
+@use 'sass:color';
+
+$header-gap: 30px;
+$header-height: 72px;
+
+$labeledButton_iconHeight: 30px;
+$labeledButton_padding: 5px;
+$labeledButton_width: $labeledButton_iconHeight + $labeledButton_padding * 2;
+
+$layout_header-searchField_width: $labeledButton_width * 3 + $header-gap * 3;
+$layout_header-searchBackground_width: $layout_header-searchField_width + $header-gap;
+
+$layout_container-verticalPadding: 52.5px;
+$layout_container-horizontalPadding: 105px;
+
+$layout_grid-gap: 2rem;
+
+$scrollIndicatorHeight: 5px;
+$scrollIndicatorColor: #343434;
+$scrollProgressHeight: 3px;
+$scrollProgressColor: #44a9cc;
+$scrollProgressGlowColor: #63b4d0;
+
+$backgroundColor: #1d1d1b;
+
+$mainThemePrimaryColor: #44a9cc;
+$mainThemeWarningColor: hsl(24, 100%, 62%);
+$mainThemeDangerColor: hsl(0, 100%, 62%);
+
+$lightColorPercentage: 10%;
+$darkColorPercentage: -20%;
+
+:root {
+    --main-color: white;
+    --primary-color: #{$mainThemePrimaryColor};
+    --secondary-color: #{$mainThemePrimaryColor};
+    --background-color: #{$backgroundColor};
+    --warning-color: #{$mainThemeWarningColor};
+    --danger-color: #{$mainThemeDangerColor};
+
+    --primary-text-color: white;
+    --secondary-text-color: white;
+    --warning-text-color: white;
+    --danger-text-color: white;
+
+    --secondary-color-light: #{adjust-color($mainThemePrimaryColor, $lightness: $lightColorPercentage)};
+    --warning-color-light: #{adjust-color($mainThemeWarningColor, $lightness: $lightColorPercentage)};
+    --danger-color-light: #{adjust-color($mainThemeDangerColor, $lightness: $lightColorPercentage)};
+
+    --secondary-color-dark: #{adjust-color($mainThemePrimaryColor, $lightness: $darkColorPercentage)};
+    --warning-color-dark: #{adjust-color($mainThemeWarningColor, $lightness: $darkColorPercentage)};
+    --danger-color-dark: #{adjust-color($mainThemeDangerColor, $lightness: $darkColorPercentage)};
+
+}
+
+:root body.dark {
+    --text-color: #1a1a1a;
+    --secondary-color: #63b4d0;
+}
+
+:root body.winter {
+    --main-color: #008cff;
+    --secondary-color: #63b4d0;
+}
+
+html {
+    background-color: var(--background-color);
+}

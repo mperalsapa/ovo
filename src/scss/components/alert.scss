@@ -1,0 +1,12 @@
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+
+    &-error {
+        color: var(--danger-text-color);
+        background-color: var(--danger-color-light);
+        border-color: var(--danger-color);
+    }
+}
