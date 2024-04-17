@@ -7,9 +7,9 @@ import (
 	"ovo-server/internal/controller"
 	"ovo-server/internal/database"
 	customMiddleware "ovo-server/internal/middleware"
-	model "ovo-server/internal/model"
+	"ovo-server/internal/model"
 	"ovo-server/internal/router"
-	customSession "ovo-server/internal/session"
+	"ovo-server/internal/session"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -24,7 +24,7 @@ func init() {
 	// Migrating every time we start the server, this should be addressed to check versioning of database
 	model.Init()
 	// Session setup
-	customSession.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
+	session.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
 }
 
 func main() {
