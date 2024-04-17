@@ -61,7 +61,6 @@ func main() {
 	echoAuthenticatedGroup.Use(customMiddleware.IsAuthenticated)
 	echoAuthenticatedGroup.GET(router.Routes.Logout, controller.Logout)
 	echoAuthenticatedGroup.GET(router.Routes.Home, controller.Home)
-	echoAuthenticatedGroup.GET("/setpassword", controller.SetPassword)
 
 	echoAdminGroup := echoInstance.Group(router.AdminBasePath)
 	echoAdminGroup.Use(customMiddleware.IsAdmin)
