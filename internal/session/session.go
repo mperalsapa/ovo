@@ -54,13 +54,6 @@ func GetUserSession(c echo.Context) (User UserSession) {
 		return UserSession{}
 	}
 
-	// Checking if user exists in the database
-	exists := model.UserExists(user.Username)
-	if !exists {
-		log.Println("User does not exist in the database")
-		return UserSession{}
-	}
-
 	return user
 }
 
@@ -74,6 +67,12 @@ func (u *UserSession) SaveUserSession(c echo.Context) {
 		log.Println("Error getting session when storing: ", err)
 		return
 	}
+
+	// if session is equal, we do not save it again
+	if *u == GetUserSession(c) {
+		return
+	}
+
 	log.Printf("Storing user %s with role %d is authenticated: %t", u.Username, u.Role, u.Authenticated)
 	session.Values["user"] = *u
 	err = session.Save(c.Request(), c.Response())

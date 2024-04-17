@@ -31,7 +31,7 @@ func LoginRequest(context echo.Context) error {
 
 	userSession := session.GetUserSession(context)
 	userSession.Username = reqUser.Username
-
+	log.Println("Login request for user " + reqUser.Username)
 	user := model.GetUserByUsername(reqUser.Username)
 
 	if valid := user.CheckPassword(reqUser.Password); !valid {

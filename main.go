@@ -50,10 +50,12 @@ func main() {
 	customSession.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
 
 	// Route definition
-	echoInstance.GET(router.Routes.Login, controller.Login, customMiddleware.IsNotAuthenticated)
-	echoInstance.POST(router.Routes.Login, controller.LoginRequest, customMiddleware.IsNotAuthenticated)
-	echoInstance.GET(router.Routes.Register, controller.Register, customMiddleware.IsNotAuthenticated)
-	echoInstance.POST(router.Routes.Register, controller.RegisterRequest, customMiddleware.IsNotAuthenticated)
+	echoUnauthenticateGroup := echoInstance.Group("")
+	echoUnauthenticateGroup.Use(customMiddleware.IsNotAuthenticated)
+	echoUnauthenticateGroup.GET(router.Routes.Login, controller.Login)
+	echoUnauthenticateGroup.POST(router.Routes.Login, controller.LoginRequest)
+	echoUnauthenticateGroup.GET(router.Routes.Register, controller.Register)
+	echoUnauthenticateGroup.POST(router.Routes.Register, controller.RegisterRequest)
 
 	echoAuthenticatedGroup := echoInstance.Group("")
 	echoAuthenticatedGroup.Use(customMiddleware.IsAuthenticated)
