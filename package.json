@@ -8,7 +8,7 @@
     "build": "npm run build:sass && npm run build:tailwind && npm run build:tmepl && build:go",
     "watch:sass": "npm run build:sass -- --watch",
     "watch:tailwind": "npm run build:tailwind -- --watch",
-    "watch:templ": "templ generate --watch --proxy='http://localhost:8080' --cmd='go run .'",
+    "watch:templ": "templ generate --watch --proxy=\"http://localhost:8080\" --cmd=\"go run .\"",
     "watch:css": "npm-run-all -p watch:sass watch:tailwind",
     "watch:build-css": "npm-run-all -p watch:css watch:templ",
     "watch:go": "air",
