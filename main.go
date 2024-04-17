@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"ovo-server/internal/config"
 	"ovo-server/internal/controller"
@@ -16,40 +16,38 @@ import (
 )
 
 func init() {
-	fmt.Println("Init...")
+	log.Println("Initializing OVO Server... This build is for development purposes only.")
+	// Initializing configuration, reading .env file and setting up environment variables
 	config.Init()
+	// Initializing database
 	database.Init()
 	// Migrating every time we start the server, this should be addressed to check versioning of database
 	model.Init()
+	// Session setup
+	customSession.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
 }
 
 func main() {
-	fmt.Println("Hello, World!")
+	log.Println("Starting OVO Server...")
 	router.InitRoutes()
 	echoInstance := echo.New()
-
+	// Static files route setup
 	echoInstance.Static("/assets", "public")
+
+	// Middleware setup
+	// 		CORS setup
 	echoInstance.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:8080", "http://localhost:1234"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
+	// 		Request log setup
 	echoInstance.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${time_rfc3339} - STATUS: ${status} - Method: ${method} - URI: ${uri}\n",
 	}))
 
-	// staticFilesRoute := "../ovo-web/dist"
-	// echoInst.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-	// 	Root:   staticFilesRoute,
-	// 	Index:  "index.html",
-	// 	Browse: false,
-	// 	HTML5:  true,
-	// }))
-
-	// echoInst.Use(customMiddleware.AuthMiddleware)
-	customSession.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
-
 	// Route definition
+	// 		Unauthenticated routes (Public routes)
 	echoUnauthenticateGroup := echoInstance.Group("")
 	echoUnauthenticateGroup.Use(customMiddleware.IsNotAuthenticated)
 	echoUnauthenticateGroup.GET(router.Routes.Login, controller.Login)
@@ -57,16 +55,18 @@ func main() {
 	echoUnauthenticateGroup.GET(router.Routes.Register, controller.Register)
 	echoUnauthenticateGroup.POST(router.Routes.Register, controller.RegisterRequest)
 
+	//   	Authenticated routes (Private routes)
+	// 			Visitor routes (unprivileged user)
 	echoAuthenticatedGroup := echoInstance.Group("")
 	echoAuthenticatedGroup.Use(customMiddleware.IsAuthenticated)
 	echoAuthenticatedGroup.GET(router.Routes.Logout, controller.Logout)
 	echoAuthenticatedGroup.GET(router.Routes.Home, controller.Home)
 
+	// 			Admin routes (admin only)
 	echoAdminGroup := echoInstance.Group(router.AdminBasePath)
 	echoAdminGroup.Use(customMiddleware.IsAdmin)
 	echoAdminGroup.GET("", controller.AdminDashboard)
 	echoAdminGroup.GET(router.AdminRoutes.Libraries, controller.AdminLibraries)
-	// TODO IMPLEMENT ADMIN ROUTES
 
 	echoInstance.Start("localhost:8080")
 }
