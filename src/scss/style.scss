@@ -3,6 +3,17 @@
 @use "components/button.scss";
 @use "components/input-fields.scss";
 @use "components/alert.scss";
+@use "components/admin_sidebar.scss";
+
+html {
+    background-color: var(--background-color);
+    color: var(--primary-text-color)
+}
+
+body {
+    background-color: var(--background-color);
+    @apply flex w-screen;
+}
 
 .border-primary {
     border-color: var(--primary-color);

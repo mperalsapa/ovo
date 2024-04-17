@@ -30,11 +30,6 @@
   --secondary-color: #63b4d0;
 }
 
-html {
-  background-color: var(--background-color);
-  color: var(--primary-text-color);
-}
-
 .button {
   background-color: var(--secondary-color);
   color: var(--primary-text-color);
@@ -81,6 +76,33 @@ input[type=password] {
   color: var(--danger-text-color);
   background-color: var(--danger-color-light);
   border-color: var(--danger-color);
+}
+
+.lateral-navbar {
+  @apply my-5 mx-10 flex flex-col;
+}
+.lateral-navbar button {
+  display: flex;
+  align-items: center;
+}
+.lateral-navbar h2 {
+  @apply mb-3;
+}
+.lateral-navbar div {
+  @apply mt-3 mb-5 gap-3 flex flex-col;
+}
+.lateral-navbar div button {
+  @apply w-full ps-5 gap-3;
+}
+
+html {
+  background-color: var(--background-color);
+  color: var(--primary-text-color);
+}
+
+body {
+  background-color: var(--background-color);
+  @apply flex w-screen;
 }
 
 .border-primary {
