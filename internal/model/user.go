@@ -74,7 +74,7 @@ func GetUserByUsername(username string) User {
 	return user
 }
 
-func UserExists(username string) bool {
+func GetUserExists(username string) bool {
 	user := GetUserByUsername(username)
 	return user.Username != ""
 }

@@ -1,8 +1,12 @@
 package page
 
-templ Home(username string) {
+type HomePageData struct {
+	Username string
+}
+
+templ HomePage(pageData HomePageData) {
 	<div>
 		<h1>Home</h1>
-		<p>Welcome to the home page: { username }</p>
+		<p>Welcome to the home page: { pageData.Username }</p>
 	</div>
 }

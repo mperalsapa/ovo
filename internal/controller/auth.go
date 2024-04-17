@@ -76,7 +76,7 @@ func RegisterRequest(context echo.Context) error {
 	}
 
 	userSession.Username = reqUser.Username
-	if model.UserExists(reqUser.Username) {
+	if model.GetUserExists(reqUser.Username) {
 		log.Println("User already exists: " + reqUser.Username)
 		userSession.ErrorMsg = "User already exists"
 		userSession.SaveUserSession(context)
