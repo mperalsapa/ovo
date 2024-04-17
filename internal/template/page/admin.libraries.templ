@@ -1,0 +1,14 @@
+package page
+
+import "ovo-server/internal/template/shared"
+
+type LibrariesPageData struct{}
+
+templ LibrariesPage() {
+	@shared.Page("Libraries") {
+		<div>
+			<h1>Libraries</h1>
+			<p>Here are some libraries that I have created.</p>
+		</div>
+	}
+}

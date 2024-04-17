@@ -1,0 +1,16 @@
+package page
+
+import "ovo-server/internal/template/shared"
+
+type AdminDashboardPageData struct {
+	Username string
+}
+
+templ AdminDashboardPage(pageData AdminDashboardPageData) {
+	@shared.Page("Admin Dashboard") {
+		<div>
+			<h1>Admin Dashboard</h1>
+			<p>Welcome, { pageData.Username }!</p>
+		</div>
+	}
+}
