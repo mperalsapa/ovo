@@ -9,8 +9,19 @@ type route struct {
 	Profile  string
 }
 
+type adminRoute struct {
+	Dashboard string
+	Libraries string
+	Library   string
+	Users     string
+	User      string
+	Settings  string
+}
+
 var Routes route
+var AdminRoutes adminRoute
 var BasePath = "/"
+var AdminBasePath = "/admin"
 
 func BuildRoute(path string) string {
 	// if basepath is root, return the path
@@ -34,4 +45,11 @@ func InitRoutes() {
 	Routes.Home = BuildRoute("/")
 	Routes.Library = BuildRoute("/library/:id")
 	Routes.Profile = BuildRoute("/profile")
+
+	// Admin routes
+	AdminRoutes.Dashboard = BuildRoute(AdminBasePath)
+	AdminRoutes.Libraries = BuildRoute(AdminBasePath + "/libraries")
+	AdminRoutes.Library = BuildRoute(AdminBasePath + "/library/:id")
+	AdminRoutes.Users = BuildRoute(AdminBasePath + "/users")
+	AdminRoutes.User = BuildRoute(AdminBasePath + "/user/:id")
 }

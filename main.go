@@ -63,9 +63,10 @@ func main() {
 	echoAuthenticatedGroup.GET(router.Routes.Home, controller.Home)
 	echoAuthenticatedGroup.GET("/setpassword", controller.SetPassword)
 
-	echoAdminGroup := echoInstance.Group("/admin")
+	echoAdminGroup := echoInstance.Group(router.AdminBasePath)
 	echoAdminGroup.Use(customMiddleware.IsAdmin)
-	echoAdminGroup.GET("/", controller.AdminDashboard)
+	echoAdminGroup.GET("", controller.AdminDashboard)
+	echoAdminGroup.GET(router.AdminRoutes.Libraries, controller.AdminLibraries)
 	// TODO IMPLEMENT ADMIN ROUTES
 
 	echoInstance.Start("localhost:8080")
