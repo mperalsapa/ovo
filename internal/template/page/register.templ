@@ -12,7 +12,7 @@ type RegisterPageData struct {
 
 templ RegisterPage(pageData RegisterPageData) {
 	@shared.Page("Login") {
-		<form method="POST" class="h-full flex items-center">
+		<form method="POST" class="h-full flex items-center mx-auto">
 			<div class="mx-auto w-fit h-fit">
 				if (pageData.AlertMsg != "") {
 					@component.Alert(pageData.AlertMsg, "error")
