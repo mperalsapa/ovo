@@ -5,3 +5,4 @@ node_modules
 *templ.go
 *templ.txt
 public/css/*
+src/css/*
