@@ -72,6 +72,9 @@ input[type=password] {
 .form-group {
   @apply flex flex-col gap-2;
 }
+.form-group label {
+  user-select: none;
+}
 
 .alert {
   padding: 15px;
@@ -265,7 +268,7 @@ input[type=password] {
   transition: all 0.1s ease-in-out;
 }
 .modalContainer .modalContent {
-  transition: all 0.1s ease-in-out;
+  transition: all 0.25s ease-in-out;
   background-color: var(--background-color);
   width: fit-content;
   height: fit-content;
@@ -276,7 +279,6 @@ input[type=password] {
   pointer-events: none;
 }
 .modalContainer.hidden .modalContent {
-  transition: all 0.1s ease-in-out;
   transform: scale(0.2);
 }
 

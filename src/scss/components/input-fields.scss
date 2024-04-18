@@ -9,4 +9,8 @@ input[type=password] {
 
 .form-group {
     @apply flex flex-col gap-2;
+
+    label {
+        user-select: none;
+    }
 }
