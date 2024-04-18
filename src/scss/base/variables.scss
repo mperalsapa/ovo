@@ -24,6 +24,7 @@ $scrollProgressGlowColor: #63b4d0;
 $backgroundColor: #1d1d1b;
 
 $mainThemePrimaryColor: #44a9cc;
+$mainThemeSecondaryColor: #3f7587;
 $mainThemeWarningColor: hsl(24, 100%, 62%);
 $mainThemeDangerColor: hsl(0, 100%, 62%);
 
@@ -33,7 +34,7 @@ $darkColorPercentage: -20%;
 :root {
     --main-color: white;
     --primary-color: #{$mainThemePrimaryColor};
-    --secondary-color: #{$mainThemePrimaryColor};
+    --secondary-color: #{$mainThemeSecondaryColor};
     --background-color: #{$backgroundColor};
     --warning-color: #{$mainThemeWarningColor};
     --danger-color: #{$mainThemeDangerColor};

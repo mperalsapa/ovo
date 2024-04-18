@@ -1,0 +1,18 @@
+package component
+
+import "ovo-server/internal/router"
+
+templ AnimatedImago() {
+	<a class="mx-auto w-fit" href={ templ.SafeURL(router.Routes.Home) }>
+		<div class="imago-container">
+			<img src="assets/imago/05_BG_BLACK_IMAGO.svg" alt=""/>
+			<div class="iris irisR"></div>
+			<div class="iris irisL"></div>
+			<div class="closedEyesContainer">
+				<img class="closedEyeR" src="assets/imago/03_CLOSED_EYE_R_IMAGO.svg" alt=""/>
+				<img class="closedEyeL" src="assets/imago/03_CLOSED_EYE_R_IMAGO.svg" alt=""/>
+			</div>
+			<img src="assets/imago/01_CONTOUR_IMAGO.svg" alt=""/>
+		</div>
+	</a>
+}
