@@ -47,8 +47,11 @@ func main() {
 	}))
 
 	// Route definition
+	// 		Base Path
+	echoBasePath := echoInstance.Group(router.GetBasePath())
+
 	// 		Unauthenticated routes (Public routes)
-	echoUnauthenticateGroup := echoInstance.Group("")
+	echoUnauthenticateGroup := echoBasePath.Group("")
 	echoUnauthenticateGroup.Use(customMiddleware.IsNotAuthenticated)
 	echoUnauthenticateGroup.GET(router.Routes.Login, controller.Login)
 	echoUnauthenticateGroup.POST(router.Routes.Login, controller.LoginRequest)
@@ -57,15 +60,15 @@ func main() {
 
 	//   	Authenticated routes (Private routes)
 	// 			Visitor routes (unprivileged user)
-	echoAuthenticatedGroup := echoInstance.Group("")
+	echoAuthenticatedGroup := echoBasePath.Group("")
 	echoAuthenticatedGroup.Use(customMiddleware.IsAuthenticated)
 	echoAuthenticatedGroup.GET(router.Routes.Logout, controller.Logout)
 	echoAuthenticatedGroup.GET(router.Routes.Home, controller.Home)
 
 	// 			Admin routes (admin only)
-	echoAdminGroup := echoInstance.Group(router.AdminBasePath)
-	echoAdminGroup.Use(customMiddleware.IsAdmin)
-	echoAdminGroup.GET("", controller.AdminDashboard)
+	echoAdminGroup := echoBasePath.Group("")
+	echoAdminGroup.Use(customMiddleware.IsAdmin, customMiddleware.IsAuthenticated)
+	echoAdminGroup.GET(router.AdminRoutes.Dashboard, controller.AdminDashboard)
 	echoAdminGroup.GET(router.AdminRoutes.Libraries, controller.AdminLibraries)
 
 	echoInstance.Start("localhost:8080")
