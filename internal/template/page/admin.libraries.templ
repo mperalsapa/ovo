@@ -2,15 +2,34 @@ package page
 
 import "ovo-server/internal/template/shared"
 import "ovo-server/internal/template/component"
+import "ovo-server/internal/model"
+import "ovo-server/internal/router"
 
-type LibrariesPageData struct{}
+type LibrariesPageData struct {
+	Libraries []model.Library
+}
 
-templ LibrariesPage() {
+templ LibrariesPage(pageData LibrariesPageData) {
 	@shared.Page("Libraries") {
 		@component.AdminSidebar()
-		<div>
-			<h1>Libraries</h1>
-			<p>Here are some libraries that I have created.</p>
-		</div>
+		@component.Container() {
+			<h1 class="text-2xl">Libraries</h1>
+			<button class="button button-primary" id="addLibraryOpenModal">Add</button>
+			<div class="container">
+				for _, library := range pageData.Libraries {
+					<div class="border border-gray-200 p-4 my-4">
+						<h2 class="text-xl">{ library.Name }</h2>
+						<ul>
+							for _, path := range library.Paths {
+								<li>{ path }</li>
+							}
+						</ul>
+						<a href="/admin/libraries/{library.ID}" class="text-blue-500">Edit</a>
+					</div>
+				}
+			</div>
+			@component.FormAddLibrary()
+			<script src={ router.Routes.Assets + "/js/admin.library.js" }></script>
+		}
 	}
 }

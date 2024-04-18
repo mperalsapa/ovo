@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"ovo-server/internal/model"
 	"ovo-server/internal/session"
 	"ovo-server/internal/template/page"
 
@@ -17,7 +18,8 @@ func AdminDashboard(context echo.Context) error {
 }
 
 func AdminLibraries(context echo.Context) error {
-	// pageData := page.LibrariesPageData{}
-	component := page.LibrariesPage()
+	pageData := page.LibrariesPageData{}
+	pageData.Libraries = model.GetLibraries()
+	component := page.LibrariesPage(pageData)
 	return RenderView(context, http.StatusOK, component)
 }

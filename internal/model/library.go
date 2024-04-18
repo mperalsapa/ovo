@@ -1,6 +1,10 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	db "ovo-server/internal/database"
+
+	"gorm.io/gorm"
+)
 
 type LibraryType string
 
@@ -11,5 +15,13 @@ const (
 
 type Library struct {
 	gorm.Model
-	Type LibraryType `json:"type" gorm:"not null; enum('movie', 'show')"`
+	Type  LibraryType `json:"type" gorm:"not null; enum('movie', 'show')"`
+	Name  string      `json:"name" gorm:"not null"`
+	Paths []string    `json:"paths" gorm:"type:text[]"`
+}
+
+func GetLibraries() []Library {
+	var libraries []Library
+	db.GetDB().Find(&libraries)
+	return libraries
 }

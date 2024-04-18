@@ -11,4 +11,8 @@ func Init() {
 	db.Migrate(&User{})
 	log.Println("Migrating Movie schema...")
 	db.Migrate(&Movie{})
+	log.Println("Migrating Show schema...")
+	db.Migrate(&Show{})
+	log.Println("Migrating Library schema...")
+	db.Migrate(&Library{})
 }
