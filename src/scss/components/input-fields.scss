@@ -6,3 +6,7 @@ input[type=password] {
     background-color: transparent;
     color: var(--primary-text-color);
 }
+
+.form-group {
+    @apply flex flex-col gap-2;
+}

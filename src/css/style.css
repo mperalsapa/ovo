@@ -4,7 +4,7 @@
 :root {
   --main-color: white;
   --primary-color: #44a9cc;
-  --secondary-color: #44a9cc;
+  --secondary-color: #3f7587;
   --background-color: #1d1d1b;
   --warning-color: hsl(24, 100%, 62%);
   --danger-color: hsl(0, 100%, 62%);
@@ -38,6 +38,9 @@
 .button:hover {
   background-color: var(--secondary-color-light);
 }
+.button-secondary {
+  background-color: var(--secondary-color);
+}
 .button-primary {
   background-color: var(--primary-color);
 }
@@ -64,6 +67,10 @@ input[type=password] {
   @apply outline hover:outline-dashed outline-2 outline-secondary;
   background-color: transparent;
   color: var(--primary-text-color);
+}
+
+.form-group {
+  @apply flex flex-col gap-2;
 }
 
 .alert {
@@ -93,6 +100,184 @@ input[type=password] {
 }
 .lateral-navbar div button {
   @apply w-full ps-5 gap-3;
+}
+
+.imago-container {
+  position: relative;
+  width: 82px;
+  height: 60px;
+  align-self: center;
+  filter: drop-shadow(4px 4px 4px #141414);
+}
+.imago-container div {
+  margin: 0;
+}
+.imago-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.imago-container .rightEye {
+  transform: scaleX(-1);
+}
+.imago-container .iris {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  position: absolute;
+  animation-duration: 12s;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+  animation-name: iris;
+}
+.imago-container .irisL {
+  left: 9.6px;
+  top: 19px;
+  background: radial-gradient(circle at 50% 50%, #a64d00 0%, #a38000 90%);
+}
+.imago-container .irisR {
+  left: 52.329px;
+  top: 19px;
+  background: radial-gradient(circle at 50% 50%, #ff7600 0%, #ffc800 90%);
+}
+.imago-container .iris:before {
+  content: "";
+  width: 40%;
+  height: 40%;
+  border-radius: 100%;
+  position: absolute;
+  left: 31%;
+  top: 31%;
+  background: black;
+  animation-name: pupil;
+  animation-duration: inherit;
+  animation-timing-function: inherit;
+  animation-iteration-count: inherit;
+}
+.imago-container .iris:after {
+  content: "";
+  width: 23%;
+  height: 23%;
+  border-radius: 100%;
+  position: absolute;
+  left: 55%;
+  top: 30%;
+  background: rgba(255, 255, 255, 0.4);
+  animation-name: pupil;
+  animation-duration: inherit;
+  animation-timing-function: inherit;
+  animation-iteration-count: inherit;
+}
+.imago-container .irisL:after {
+  background: rgba(255, 255, 255, 0.2);
+}
+@keyframes iris {
+  0% {
+    transform: scale(1.1);
+  }
+  20% {
+    transform: none;
+  }
+  25%, 40% {
+    transform: scale(1.1);
+  }
+  60% {
+    transform: none;
+  }
+  65%, 100% {
+    transform: scale(1.1);
+  }
+}
+@keyframes pupil {
+  0% {
+    transform: none;
+  }
+  20% {
+    transform: translateX(2px) translateY(2px) scale(1.1);
+  }
+  25%, 40% {
+    transform: none;
+  }
+  60% {
+    transform: translateX(-2px) translateY(2px) scale(1.1);
+  }
+  65%, 100% {
+    transform: none;
+  }
+}
+.imago-container .closedEyesContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  mask: url("../imago/05_BG_BLACK_IMAGO.svg");
+  width: 100%;
+  height: 100%;
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+.imago-container .closedEyeR {
+  animation: blinkR 12s infinite;
+}
+@keyframes blinkR {
+  0% {
+    transform: rotate(-40deg) translate(0px, -10px) scaleX(1) scaleY(0);
+  }
+  3.8% {
+    transform: rotate(-40deg) translate(0px, 0px) scaleX(0.95) scaleY(1);
+    animation-timing-function: ease-in;
+  }
+  5.8% {
+    transform: rotate(-40deg) translate(0px, -10px) scaleX(1) scaleY(0);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: rotate(-40deg) translate(0px, -10px) scaleX(1) scaleY(0);
+  }
+}
+.imago-container .closedEyeL {
+  animation: blinkL 12s infinite;
+}
+@keyframes blinkL {
+  0% {
+    transform: rotate(40deg) translate(0px, -10px) scaleX(-1) scaleY(0);
+  }
+  3.6% {
+    transform: rotate(40deg) translate(0px, 0px) scaleX(-0.95) scaleY(1);
+    animation-timing-function: ease-in;
+  }
+  5.6% {
+    transform: rotate(40deg) translate(0px, -10px) scaleX(-1) scaleY(0);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: rotate(40deg) translate(0px, -10px) scaleX(-1) scaleY(0);
+  }
+}
+
+.modalContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  @apply flex items-center justify-center;
+  transition: all 0.1s ease-in-out;
+}
+.modalContainer .modalContent {
+  transition: all 0.1s ease-in-out;
+  background-color: var(--background-color);
+  width: fit-content;
+  height: fit-content;
+  @apply p-4 flex flex-col gap-4;
+}
+.modalContainer.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.modalContainer.hidden .modalContent {
+  transition: all 0.1s ease-in-out;
+  transform: scale(0.2);
 }
 
 html {
