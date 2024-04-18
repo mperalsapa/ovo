@@ -1,11 +1,13 @@
 package page
 
 import "ovo-server/internal/template/shared"
+import "ovo-server/internal/template/component"
 
 type LibrariesPageData struct{}
 
 templ LibrariesPage() {
 	@shared.Page("Libraries") {
+		@component.AdminSidebar()
 		<div>
 			<h1>Libraries</h1>
 			<p>Here are some libraries that I have created.</p>

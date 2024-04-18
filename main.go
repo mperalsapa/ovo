@@ -32,7 +32,7 @@ func main() {
 	router.InitRoutes()
 	echoInstance := echo.New()
 	// Static files route setup
-	echoInstance.Static("/assets", "public")
+	echoInstance.Static(router.Routes.Assets, "public")
 
 	// Middleware setup
 	// 		CORS setup
@@ -47,11 +47,8 @@ func main() {
 	}))
 
 	// Route definition
-	// 		Base Path
-	echoBasePath := echoInstance.Group(router.GetBasePath())
-
 	// 		Unauthenticated routes (Public routes)
-	echoUnauthenticateGroup := echoBasePath.Group("")
+	echoUnauthenticateGroup := echoInstance.Group("")
 	echoUnauthenticateGroup.Use(customMiddleware.IsNotAuthenticated)
 	echoUnauthenticateGroup.GET(router.Routes.Login, controller.Login)
 	echoUnauthenticateGroup.POST(router.Routes.Login, controller.LoginRequest)
@@ -60,16 +57,20 @@ func main() {
 
 	//   	Authenticated routes (Private routes)
 	// 			Visitor routes (unprivileged user)
-	echoAuthenticatedGroup := echoBasePath.Group("")
+	echoAuthenticatedGroup := echoInstance.Group("")
 	echoAuthenticatedGroup.Use(customMiddleware.IsAuthenticated)
 	echoAuthenticatedGroup.GET(router.Routes.Logout, controller.Logout)
 	echoAuthenticatedGroup.GET(router.Routes.Home, controller.Home)
 
 	// 			Admin routes (admin only)
-	echoAdminGroup := echoBasePath.Group("")
+	echoAdminGroup := echoInstance.Group("")
 	echoAdminGroup.Use(customMiddleware.IsAdmin, customMiddleware.IsAuthenticated)
 	echoAdminGroup.GET(router.AdminRoutes.Dashboard, controller.AdminDashboard)
 	echoAdminGroup.GET(router.AdminRoutes.Libraries, controller.AdminLibraries)
 
+	// Print current echo routes
+	for _, route := range echoInstance.Routes() {
+		log.Println(route.Method, route.Path)
+	}
 	echoInstance.Start("localhost:8080")
 }

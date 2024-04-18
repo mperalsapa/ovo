@@ -1,6 +1,7 @@
 package page
 
 import "ovo-server/internal/template/shared"
+import "ovo-server/internal/router"
 
 type HomePageData struct {
 	Username string
@@ -13,9 +14,9 @@ templ HomePage(pageData HomePageData) {
 			<p>Welcome to the home page: { pageData.Username }</p>
 			<ul>
 				<li></li>
-				<a href="/admin">Admin Panel</a>
+				<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) }>Admin Panel</a>
 				<li></li>
-				<a href="/logout">Logout</a>
+				<a href={ templ.SafeURL(router.Routes.Logout) }>Logout</a>
 			</ul>
 		</div>
 	}

@@ -1,6 +1,13 @@
 package router
 
+import (
+	"fmt"
+	"log"
+	"net/url"
+)
+
 type route struct {
+	Assets   string
 	Login    string
 	Logout   string
 	Register string
@@ -20,43 +27,28 @@ type adminRoute struct {
 
 var Routes route
 var AdminRoutes adminRoute
-var BasePath = "/"
+var BasePath = "/ovo"
 var AdminBasePath = "/admin"
 
+// func BuildRoute(path string) (string, error) {
+// 	return url.JoinPath(BasePath, path)
+// }
+
 func BuildRoute(path string) string {
-	// if basepath is root, return the path
-	if BasePath == "/" {
-		return path
+	route, err := url.JoinPath(BasePath, path)
+	fmt.Println("Building route: ", route, " with path: ", path, " and basepath: ", BasePath)
+	if err != nil {
+		log.Println(err)
 	}
-
-	// check that basepath begins with a slash
-	if BasePath[0] != '/' || BasePath == "" {
-		BasePath = "/" + BasePath
-	}
-
-	// return the basepath concatenated with the path
-	return BasePath + path
+	return route
 }
 
 func BuildAdminRoute(path string) string {
-	// ensuring path contains / at the start
-	if path[0] != '/' {
-		path = "/" + path
+	path, err := url.JoinPath(BasePath, AdminBasePath, path)
+	if err != nil {
+		log.Println(err)
 	}
-
-	// check that basepath begins with a slash
-	if AdminBasePath[0] != '/' || AdminBasePath == "" {
-		AdminBasePath = "/" + AdminBasePath
-	}
-
-	// if basepath is root, return the path with hardcoded /admin
-	// this is to prevent double handlers on the same route
-	if AdminBasePath == "/" {
-		return "/admin" + path
-	}
-
-	// return the basepath concatenated with the path
-	return AdminBasePath + path
+	return path
 }
 
 func GetBasePath() string {
@@ -68,17 +60,18 @@ func GetBasePath() string {
 }
 
 func InitRoutes() {
-	Routes.Login = "/login"
-	Routes.Logout = "/logout"
-	Routes.Register = "/register"
-	Routes.Home = "/"
-	Routes.Library = "/library/:id"
-	Routes.Profile = "/profile"
+	Routes.Assets = BuildRoute("/assets")
+	Routes.Login = BuildRoute("/login")
+	Routes.Logout = BuildRoute("/logout")
+	Routes.Register = BuildRoute("/register")
+	Routes.Home = BuildRoute("/")
+	Routes.Library = BuildRoute("/library/:id")
+	Routes.Profile = BuildRoute("/profile")
 
 	// Admin routes
-	AdminRoutes.Dashboard = AdminBasePath
-	AdminRoutes.Libraries = AdminBasePath + "/libraries"
-	AdminRoutes.Library = AdminBasePath + "/library/:id"
-	AdminRoutes.Users = AdminBasePath + "/users"
-	AdminRoutes.User = AdminBasePath + "/user/:id"
+	AdminRoutes.Dashboard = BuildAdminRoute("")
+	AdminRoutes.Libraries = BuildAdminRoute("/libraries")
+	AdminRoutes.Library = BuildAdminRoute("/library/:id")
+	AdminRoutes.Users = BuildAdminRoute("/users")
+	AdminRoutes.User = BuildAdminRoute("/user/:id")
 }
