@@ -12,7 +12,8 @@ type LoginPageData struct {
 
 templ LoginPage(pageData LoginPageData) {
 	@shared.Page("Login") {
-		<form method="POST" class="h-full flex items-center mx-auto">
+		<form method="POST" class="h-full flex flex-col items-center justify-center gap-10 mx-auto">
+			@component.AnimatedImago()
 			<div class="mx-auto w-fit h-fit">
 				if (pageData.AlertMsg != "") {
 					@component.Alert(pageData.AlertMsg, "error")
