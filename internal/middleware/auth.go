@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 	"ovo-server/internal/model"
 	"ovo-server/internal/router"
@@ -12,12 +13,8 @@ import (
 func IsAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		auth := session.IsAuth(c)
-		if !auth {
-			return c.Redirect(http.StatusFound, "/login")
-		}
-
-		if !UserExist(c) {
-			return c.Redirect(http.StatusFound, "/login")
+		if !auth || !UserExist(c) {
+			return c.Redirect(http.StatusFound, router.Routes.Login)
 		}
 
 		return next(c)
@@ -28,6 +25,7 @@ func IsNotAuthenticated(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		auth := session.IsAuth(c)
 		if auth {
+			log.Println("User is already authenticated, redirecting to home: ", router.Routes.Home)
 			return c.Redirect(http.StatusFound, router.Routes.Home)
 		}
 		return next(c)
@@ -38,10 +36,12 @@ func IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		session := session.GetUserSession(c)
 		if session.Username == "" {
+			log.Println("No session found, redirecting to login: ", router.Routes.Login)
 			return c.Redirect(http.StatusFound, router.Routes.Login)
 		}
 
 		if session.Role != model.Admin {
+			log.Println("User is not an admin, redirecting to home: ", router.Routes.Home)
 			return c.Redirect(http.StatusFound, router.Routes.Home)
 		}
 		return next(c)
