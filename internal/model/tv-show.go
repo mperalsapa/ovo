@@ -19,11 +19,14 @@ type Show struct {
 
 type Season struct {
 	gorm.Model
-	SeasonNumber uint `json:"season_number" gorm:"not null"`
+	ShowID       uint `json:"show_id" gorm:"not null"`
+	SeasonNumber uint `json:"season_number"`
 	Episodes     []Episode
 }
 
 type Episode struct {
 	gorm.Model
-	TmdbID uint `json:"tmdb_id" gorm:"not null"`
+	SeasonID      uint
+	EpisodeNumber uint `json:"episode_number" gorm:"not null"`
+	TmdbID        uint `json:"tmdb_id" gorm:"not null"`
 }

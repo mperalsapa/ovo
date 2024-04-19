@@ -6,13 +6,6 @@ import (
 )
 
 func Init() {
-	log.Println("Migrating database schema...")
-	log.Println("Migrating User schema...")
-	db.Migrate(&User{})
-	log.Println("Migrating Movie schema...")
-	db.Migrate(&Movie{})
-	log.Println("Migrating Show schema...")
-	db.Migrate(&Show{})
-	log.Println("Migrating Library schema...")
-	db.Migrate(&Library{})
+	log.Println("Automigrating database schema...")
+	db.GetDB().AutoMigrate(&User{}, &Library{}, &Movie{}, &Show{})
 }
