@@ -17,7 +17,7 @@ type Library struct {
 	gorm.Model
 	Type  LibraryType `json:"type" gorm:"not null; enum('movie', 'show')"`
 	Name  string      `json:"name" gorm:"not null"`
-	Paths []string    `json:"paths" gorm:"type:text[]"`
+	Paths []string    `json:"paths" gorm:"serializer:json"`
 }
 
 func GetLibraries() []Library {
