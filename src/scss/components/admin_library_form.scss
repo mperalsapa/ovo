@@ -1,0 +1,15 @@
+.pathList {
+    @apply flex flex-col gap-2 p-2 outline outline-2 outline-secondary;
+
+    &.hidden {
+        display: none;
+    }
+
+    span {
+        @apply p-1;
+    }
+
+    .path {
+        @apply flex justify-between;
+    }
+}

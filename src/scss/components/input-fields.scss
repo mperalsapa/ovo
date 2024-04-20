@@ -1,6 +1,9 @@
+@use "admin_library_form.scss";
+
 input[type=text],
 input[type=password] {
-    width: 300px;
+    min-width: 300px;
+    width: 100%;
     @apply rounded p-1 px-2;
     @apply outline hover:outline-dashed outline-2 outline-secondary;
     background-color: transparent;

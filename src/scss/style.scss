@@ -9,7 +9,18 @@
 
 html {
     background-color: var(--background-color);
-    color: var(--primary-text-color)
+    color: var(--primary-text-color);
+
+    // Hide scroll bar
+    // IE and Edge
+    -ms-overflow-style: none;
+    // Firefox
+    scrollbar-width: none;
+
+    /* For Webkit-based browsers (Chrome, Safari and Opera) */
+    *::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 body {

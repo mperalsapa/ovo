@@ -1,7 +1,11 @@
 .button {
     background-color: var(--secondary-color);
     color: var(--primary-text-color);
+
+    min-width: 2.5rem;
     @apply rounded p-2;
+    @apply outline hover:outline-dashed outline-2;
+    outline-color: var(--secondary-color);
 
     &:hover {
         background-color: var(--secondary-color-light);
@@ -29,6 +33,7 @@
 
     &-danger {
         background-color: var(--danger-color);
+        outline-color: var(--danger-color-light);
 
         &:hover {
             background-color: var(--danger-color-light);
