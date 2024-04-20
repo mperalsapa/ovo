@@ -46,10 +46,26 @@ func GetLibraries() []Library {
 	return libraries
 }
 
-func GetLibraryById(id uint) Library {
+func GetLibraryById(id uint) (Library, error) {
 	var library Library
-	db.GetDB().First(&library, id)
-	return library
+	transaction := db.GetDB().First(&library, id)
+	if transaction.Error != nil {
+		return Library{}, transaction.Error
+	}
+	return library, nil
+}
+
+func DeleteLibrary(id uint) error {
+	library, err := GetLibraryById(id)
+	if err != nil {
+		return err
+	}
+
+	transaction := db.GetDB().Delete(&library)
+	if transaction.Error != nil {
+		return transaction.Error
+	}
+	return nil
 }
 
 func (library *Library) SaveLibrary() error {

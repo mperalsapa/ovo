@@ -67,6 +67,7 @@ func main() {
 	echoApiGroup.GET(router.ApiRoutes.Libraries, controller.APIGetLibraries)
 	echoApiGroup.GET(router.ApiRoutes.Library, controller.APIGetLibrary)
 	echoApiGroup.POST(router.ApiRoutes.Library, controller.APIAddLibrary)
+	echoApiGroup.DELETE(router.ApiRoutes.Library, controller.APIDeleteLibrary)
 
 	// 			Admin routes (admin only)
 	echoAdminGroup := echoInstance.Group("")
