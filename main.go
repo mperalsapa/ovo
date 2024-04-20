@@ -65,6 +65,7 @@ func main() {
 	// 			API routes
 	echoApiGroup := echoAuthenticatedGroup.Group("")
 	echoApiGroup.GET(router.ApiRoutes.Libraries, controller.APIGetLibraries)
+	echoApiGroup.GET(router.ApiRoutes.Library, controller.APIGetLibrary)
 	echoApiGroup.POST(router.ApiRoutes.Library, controller.APIAddLibrary)
 
 	// 			Admin routes (admin only)

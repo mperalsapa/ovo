@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"log"
 	"net/url"
 )
@@ -44,7 +43,7 @@ var AdminBasePath = "/admin"
 
 func BuildRoute(path string) string {
 	route, err := url.JoinPath(BasePath, path)
-	fmt.Println("Building route: ", route, " with path: ", path, " and basepath: ", BasePath)
+	log.Println("Building route: ", route, " with path: ", path, " and basepath: ", BasePath)
 	if err != nil {
 		log.Println(err)
 	}
@@ -93,6 +92,6 @@ func InitRoutes() {
 	AdminRoutes.User = BuildAdminRoute("/user/:id")
 
 	// Api routes
-	ApiRoutes.Library = BuildApiRoute("/library")
+	ApiRoutes.Library = BuildApiRoute("/library/:id")
 	ApiRoutes.Libraries = BuildApiRoute("/libraries")
 }

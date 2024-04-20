@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"ovo-server/internal/model"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -26,5 +27,15 @@ func APIAddLibrary(echo echo.Context) error {
 		return echo.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
+	return echo.JSON(http.StatusOK, library)
+}
+
+func APIGetLibrary(echo echo.Context) error {
+	idStr := echo.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return echo.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid ID"})
+	}
+	library := model.GetLibraryById(uint(id))
 	return echo.JSON(http.StatusOK, library)
 }
