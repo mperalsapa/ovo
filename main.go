@@ -62,6 +62,11 @@ func main() {
 	echoAuthenticatedGroup.GET(router.Routes.Logout, controller.Logout)
 	echoAuthenticatedGroup.GET(router.Routes.Home, controller.Home)
 
+	// 			API routes
+	echoApiGroup := echoAuthenticatedGroup.Group("")
+	echoApiGroup.GET(router.ApiRoutes.Libraries, controller.APIGetLibraries)
+	echoApiGroup.POST(router.ApiRoutes.Library, controller.APIAddLibrary)
+
 	// 			Admin routes (admin only)
 	echoAdminGroup := echoInstance.Group("")
 	echoAdminGroup.Use(customMiddleware.IsAdmin, customMiddleware.IsAuthenticated)

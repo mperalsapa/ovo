@@ -8,6 +8,7 @@ import (
 
 type route struct {
 	Assets   string
+	Api      string
 	Login    string
 	Logout   string
 	Register string
@@ -25,8 +26,15 @@ type adminRoute struct {
 	Settings  string
 }
 
+type apiRoutes struct {
+	Library   string
+	Libraries string
+}
+
 var Routes route
+var ApiRoutes apiRoutes
 var AdminRoutes adminRoute
+
 var BasePath = "/ovo"
 var AdminBasePath = "/admin"
 
@@ -41,6 +49,14 @@ func BuildRoute(path string) string {
 		log.Println(err)
 	}
 	return route
+}
+
+func BuildApiRoute(path string) string {
+	path, err := url.JoinPath(Routes.Api, path)
+	if err != nil {
+		log.Println(err)
+	}
+	return path
 }
 
 func BuildAdminRoute(path string) string {
@@ -61,6 +77,7 @@ func GetBasePath() string {
 
 func InitRoutes() {
 	Routes.Assets = BuildRoute("/assets")
+	Routes.Api = BuildRoute("/api")
 	Routes.Login = BuildRoute("/login")
 	Routes.Logout = BuildRoute("/logout")
 	Routes.Register = BuildRoute("/register")
@@ -74,4 +91,8 @@ func InitRoutes() {
 	AdminRoutes.Library = BuildAdminRoute("/library/:id")
 	AdminRoutes.Users = BuildAdminRoute("/users")
 	AdminRoutes.User = BuildAdminRoute("/user/:id")
+
+	// Api routes
+	ApiRoutes.Library = BuildApiRoute("/library")
+	ApiRoutes.Libraries = BuildApiRoute("/libraries")
 }
