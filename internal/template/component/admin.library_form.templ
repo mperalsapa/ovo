@@ -1,0 +1,39 @@
+package component
+
+import "ovo-server/internal/model"
+
+type AdminLibraryFormData struct {
+	Name        string   `json:"name"`
+	Paths       []string `json:"paths"`
+	Description string   `json:"description"`
+	Error       string   `json:"error"`
+}
+
+templ AdminLibraryForm() {
+	<form class="modalContainer hidden" method="POST">
+		<div class="modalContent">
+			<input type="hidden" value="0" id="library_id" name="ID"/>
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input type="text" class="form-control" id="name" placeholder="Enter name"/>
+			</div>
+			<div class="form-group">
+				<label for="libraryType">Type</label>
+				<select class="form-control" id="libraryType" name="libraryType">
+					<option value={ string(model.LibraryTypeMovie) }>Movie</option>
+					<option value={ string(model.LibraryTypeShow) }>Show</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="path">Paths</label>
+				<div class="hidden" id="pathList"></div>
+				<div class="flex gap-3">
+					<input type="text" class="form-control" id="newPath" placeholder="Enter new path"/>
+					<button class="button button-primary" id="addPathToForm" type="button">+</button>
+				</div>
+			</div>
+			// @Alert(pageData.Error, "danger")
+			<button class="button button-primary" id="submit" type="button">Save</button>
+		</div>
+	</form>
+}

@@ -51,7 +51,7 @@ func APIGetLibrary(echo echo.Context) error {
 	}
 
 	library, err := model.GetLibraryById(uint(id))
-	if err != nil {
+	if err != nil && id != 0 {
 		return echo.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 

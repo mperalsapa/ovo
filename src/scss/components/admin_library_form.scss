@@ -1,4 +1,4 @@
-.pathList {
+#pathList {
     @apply flex flex-col gap-2 p-2 outline outline-2 outline-secondary;
 
     &.hidden {
@@ -9,7 +9,11 @@
         @apply p-1;
     }
 
-    .path {
+    .pathElement {
         @apply flex justify-between;
     }
+}
+
+#libraryContainer {
+    @apply grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
 }

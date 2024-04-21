@@ -64,20 +64,20 @@
   background-color: var(--danger-color-light);
 }
 
-.pathList {
+#pathList {
   @apply flex flex-col gap-2 p-2 outline outline-2 outline-secondary;
 }
-.pathList.hidden {
+#pathList.hidden {
   display: none;
 }
-.pathList span {
+#pathList span {
   @apply p-1;
 }
-.pathList .path {
+#pathList .pathElement {
   @apply flex justify-between;
 }
 
-#grid-container-test {
+#libraryContainer {
   @apply grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
 }
 

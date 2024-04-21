@@ -5,7 +5,7 @@ $(document).ready(function () {
     console.log("Document ready, adding listeners...")
 
     $("#addLibraryOpenModal").click("click", () => {
-        $(".modalContainer").toggleClass("hidden");
+        EditLibrary(0)
     })
 
     $(".modalContainer").click("click", (e) => {
@@ -14,52 +14,106 @@ $(document).ready(function () {
         }
     })
 
+    $("#libraryContainer").find("button").on("click", (e) => {
+        EditLibrary(e.currentTarget.getAttribute("data-ID"))
+    })
+
+    $("#addPathToForm").click("click", () => {
+        let path = $("#newPath").val()
+        AddPathToLibrary(path)
+    })
+
+    $("#submit").click("click", () => {
+        SaveLibrary()
+    })
+
 });
 
-function OpenAddLibraryModal() {
-    Swal.fire({
-        title: "Add new Library",
-        input: "text",
-        inputAttributes: {
-            autocapitalize: "off"
+
+async function EditLibrary(id) {
+    console.log("Edit Library: " + id)
+    let libraryData = await fetch(`/ovo/api/library/${id}`)
+    libraryData = await libraryData.json()
+    OpenDialog(libraryData)
+}
+
+function OpenDialog(data) {
+    console.log(data)
+    $("#library_id").val(data.ID)
+    $("#name").val(data.name)
+    SetPathList(data.paths)
+
+    $(".modalContainer").toggleClass("hidden");
+}
+
+function SaveLibrary() {
+    let id = $("#library_id").val()
+    let name = $("#name").val()
+    let type = $("#libraryType").val()
+    let paths = $("#pathList").find(".pathElement").find("span").map((i, e) => e.innerHTML).get()
+
+    let data = {
+        "ID": parseInt(id),
+        "name": name,
+        "type": type,
+        "paths": paths
+    }
+
+    console.log("Saving library: " + id)
+    console.log(data)
+
+    fetch(`/ovo/api/library/${id}`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
         },
-        showCancelButton: true,
-        confirmButtonText: "Create",
-        showLoaderOnConfirm: true,
-        preConfirm: async (login) => {
-            try {
-                const addLibEndpoint = `./`;
-                const method = "POST";
-                const libraryName = $("#addLibraryModalInput").val();
-                const body = {
-                    "libraryName": libraryName
-                };
-                const response = await fetch(addLibEndpoint, {
-                    method: method,
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(body)
-                });
-                if (!response.ok) {
-                    return Swal.showValidationMessage(`
-                        ${JSON.stringify(await response.json())}
-                        `);
-                }
-                return response.json();
-            } catch (error) {
-                Swal.showValidationMessage(`
-                    Request failed: ${error}
-                    `);
-            }
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: `${result.value.login}'s avatar`,
-                imageUrl: result.value.avatar_url
-            });
+        body: JSON.stringify(data)
+    }).then((response) => {
+        console.log(response)
+        if (response.status == 200) {
+            location.reload()
         }
     })
+}
+
+function SetPathList(paths) {
+    $("#pathList").empty()
+    if (paths == null || paths == undefined) {
+        $("#pathList").hasClass("hidden") ? null : $("#pathList").toggleClass("hidden")
+        return
+    }
+
+    paths.forEach(path => {
+        AddPathToLibrary(path)
+    })
+
+    // Add erase button listener
+    $(".pathElement").find("button").on("click", (e) => {
+        e.currentTarget.parentElement.remove()
+    })
+}
+
+function AddPathToLibrary(path) {
+    if (path == "") {
+        return
+    }
+
+    if ($("#pathList").hasClass("hidden")) {
+        $("#pathList").toggleClass("hidden")
+    }
+
+    let pathElement = document.createElement("div")
+    let pathText = document.createElement("span")
+    let pathDelete = document.createElement("button")
+
+    pathText.innerHTML = path
+    pathDelete.classList.add("button", "button-danger")
+    pathDelete.innerHTML = "-"
+    pathElement.classList.add("pathElement")
+    pathElement.appendChild(pathText)
+    pathElement.appendChild(pathDelete)
+
+    $("#pathList").append(pathElement)
+
+    $("#newPath").val("")
 }
