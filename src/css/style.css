@@ -12,9 +12,11 @@
   --secondary-text-color: white;
   --warning-text-color: white;
   --danger-text-color: white;
+  --primary-color-light: #6cbbd7;
   --secondary-color-light: #6cbbd7;
   --warning-color-light: #ffa970;
   --danger-color-light: #ff7070;
+  --primary-color-dark: #246d86;
   --secondary-color-dark: #246d86;
   --warning-color-dark: #d65600;
   --danger-color-dark: #d60000;
@@ -64,8 +66,12 @@
   background-color: var(--danger-color-light);
 }
 
+a.button {
+  display: inline-block;
+}
+
 #pathList {
-  @apply flex flex-col gap-2 p-2 outline outline-2 outline-secondary;
+  @apply flex flex-col gap-2 p-2 outline outline-2 outline-secondary rounded;
 }
 #pathList.hidden {
   display: none;
@@ -86,8 +92,22 @@ input[type=password] {
   min-width: 300px;
   width: 100%;
   @apply rounded p-1 px-2;
-  @apply outline hover:outline-dashed outline-2 outline-secondary;
+  @apply outline hover:outline-4 outline-2 outline-secondary;
   background-color: transparent;
+  color: var(--primary-text-color);
+}
+
+select {
+  min-width: 300px;
+  width: 100%;
+  @apply rounded p-1 px-2;
+  @apply outline hover:outline-4 outline-2 outline-secondary;
+  background-color: transparent;
+  color: var(--primary-text-color);
+}
+
+select option {
+  background-color: var(--secondary-color);
   color: var(--primary-text-color);
 }
 

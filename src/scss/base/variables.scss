@@ -44,10 +44,12 @@ $darkColorPercentage: -20%;
     --warning-text-color: white;
     --danger-text-color: white;
 
+    --primary-color-light: #{adjust-color($mainThemePrimaryColor, $lightness: $lightColorPercentage)};
     --secondary-color-light: #{adjust-color($mainThemePrimaryColor, $lightness: $lightColorPercentage)};
     --warning-color-light: #{adjust-color($mainThemeWarningColor, $lightness: $lightColorPercentage)};
     --danger-color-light: #{adjust-color($mainThemeDangerColor, $lightness: $lightColorPercentage)};
 
+    --primary-color-dark: #{adjust-color($mainThemePrimaryColor, $lightness: $darkColorPercentage)};
     --secondary-color-dark: #{adjust-color($mainThemePrimaryColor, $lightness: $darkColorPercentage)};
     --warning-color-dark: #{adjust-color($mainThemeWarningColor, $lightness: $darkColorPercentage)};
     --danger-color-dark: #{adjust-color($mainThemeDangerColor, $lightness: $darkColorPercentage)};

@@ -1,5 +1,5 @@
 #pathList {
-    @apply flex flex-col gap-2 p-2 outline outline-2 outline-secondary;
+    @apply flex flex-col gap-2 p-2 outline outline-2 outline-secondary rounded;
 
     &.hidden {
         display: none;
