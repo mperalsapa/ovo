@@ -25,11 +25,12 @@ func init() {
 	model.Init()
 	// Session setup
 	session.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
+	// Router setup
+	router.InitRoutes()
 }
 
 func main() {
 	log.Println("Starting OVO Server...")
-	router.InitRoutes()
 	echoInstance := echo.New()
 	// Static files route setup
 	echoInstance.Static(router.Routes.Assets, "public")
@@ -74,6 +75,8 @@ func main() {
 	echoAdminGroup.Use(customMiddleware.IsAdmin, customMiddleware.IsAuthenticated)
 	echoAdminGroup.GET(router.AdminRoutes.Dashboard, controller.AdminDashboard)
 	echoAdminGroup.GET(router.AdminRoutes.Libraries, controller.AdminLibraries)
+	echoAdminGroup.GET(router.AdminRoutes.Library, controller.AdminLibrary)
+	echoAdminGroup.POST(router.AdminRoutes.Library, controller.StoreAdminLibrary)
 
 	// Print current echo routes
 	for _, route := range echoInstance.Routes() {

@@ -1,0 +1,57 @@
+package page
+
+import "ovo-server/internal/template/shared"
+import "ovo-server/internal/template/component"
+import "ovo-server/internal/model"
+import "ovo-server/internal/router"
+import "fmt"
+
+type AdminLibraryFormPageData struct {
+	Editing  bool
+	Library  model.Library
+	ErrorMsg string
+}
+
+func getTitle(editing bool) string {
+	if editing {
+		return "Edit Library"
+	}
+	return "New Library"
+}
+
+templ AdminLibraryForm(pageData AdminLibraryFormPageData) {
+	@shared.Page(getTitle(pageData.Editing)) {
+		@component.AdminSidebar()
+		@component.Container() {
+			<form method="POST" class="mx-auto w-1/2 flex flex-col gap-3" action={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, pageData.Library.ID)) }>
+				<input type="hidden" value={ fmt.Sprintf("%d", pageData.Library.ID) } id="library_id" name="ID"/>
+				<div class="form-group">
+					<label for="name">Name</label>
+					<input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value={ pageData.Library.Name }/>
+				</div>
+				<div class="form-group">
+					<label for="libraryType">Type</label>
+					<select class="form-control" id="libraryType" name="type">
+						<option value={ string(model.LibraryTypeMovie) }>Movie</option>
+						<option value={ string(model.LibraryTypeShow) }>Show</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="path">Paths</label>
+					<div id="pathList">
+						for _, path := range pageData.Library.Paths {
+							<input type="text" name="paths[]" placeholder="Path to directory" value={ path }/>
+						}
+						<input type="text" name="paths[]" placeholder="Path to directory"/>
+					</div>
+				</div>
+				if pageData.ErrorMsg != "" {
+					@component.Alert(pageData.ErrorMsg, "error")
+				}
+				<input class="button button-primary" type="submit" name="submit" value="Save"/>
+				<input class="button button-danger" type="submit" name="submit" value="Delete"/>
+			</form>
+			<script src={ router.Routes.Assets + "/js/library_form.js" }></script>
+		}
+	}
+}

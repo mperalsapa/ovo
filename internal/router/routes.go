@@ -1,8 +1,10 @@
 package router
 
 import (
+	"fmt"
 	"log"
 	"net/url"
+	"strings"
 )
 
 type route struct {
@@ -74,7 +76,12 @@ func GetBasePath() string {
 	return BasePath
 }
 
-func InitRoutes() {
+// generate route with id
+func GenerateRouteWithId(route string, id uint) string {
+	return strings.ReplaceAll(route, ":id", fmt.Sprintf("%d", id))
+}
+
+func InitRoutes() bool {
 	Routes.Assets = BuildRoute("/assets")
 	Routes.Api = BuildRoute("/api")
 	Routes.Login = BuildRoute("/login")
@@ -94,4 +101,6 @@ func InitRoutes() {
 	// Api routes
 	ApiRoutes.Library = BuildApiRoute("/library/:id")
 	ApiRoutes.Libraries = BuildApiRoute("/libraries")
+
+	return true
 }

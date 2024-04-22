@@ -16,12 +16,12 @@ templ LibrariesPage(pageData LibrariesPageData) {
 		@component.AdminSidebar()
 		@component.Container() {
 			<h1 class="text-2xl">Libraries</h1>
-			<button class="button button-primary" id="addLibraryOpenModal">Add</button>
+			<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, 0)) } id="addLibraryOpenModal">Add</a>
 			<div class="container grid gap-3" id="libraryContainer">
 				for _, library := range pageData.Libraries {
-					<button class="border border-gray-200 my-4" data-ID={ fmt.Sprintf("%d", library.ID) }>
+					<a class="border border-gray-200 my-4" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, library.ID)) } data-ID={ fmt.Sprintf("%d", library.ID) }>
 						<h2 class="text-xl p-4">{ library.Name }</h2>
-					</button>
+					</a>
 				}
 			</div>
 			@component.AdminLibraryForm()

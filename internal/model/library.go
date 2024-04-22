@@ -16,9 +16,9 @@ const (
 
 type Library struct {
 	gorm.Model
-	Type  LibraryType `json:"type" gorm:"not null; enum('movie', 'show')"`
-	Name  string      `json:"name" gorm:"not null"`
-	Paths []string    `json:"paths" gorm:"serializer:json"`
+	Type  LibraryType `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
+	Name  string      `json:"name" form:"name" gorm:"not null"`
+	Paths []string    `json:"paths" form:"paths[]" gorm:"serializer:json"`
 }
 
 func (library *Library) Equals(other Library) bool {
@@ -34,10 +34,23 @@ func (library *Library) Validate() error {
 	if library.Name == "" {
 		return errors.New("name is required")
 	}
+
+	library.removeEmptyPaths()
 	if len(library.Paths) == 0 {
 		return errors.New("paths is required")
 	}
+
 	return nil
+}
+
+func (library *Library) removeEmptyPaths() {
+	var paths []string
+	for _, path := range library.Paths {
+		if path != "" {
+			paths = append(paths, path)
+		}
+	}
+	library.Paths = paths
 }
 
 func GetLibraries() []Library {
@@ -66,6 +79,10 @@ func DeleteLibrary(id uint) error {
 		return transaction.Error
 	}
 	return nil
+}
+
+func (library *Library) DeleteLibrary() {
+	db.GetDB().Delete(&library)
 }
 
 func (library *Library) SaveLibrary() error {
