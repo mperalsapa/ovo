@@ -76,7 +76,8 @@ func main() {
 	echoAdminGroup.GET(router.AdminRoutes.Dashboard, controller.AdminDashboard)
 	echoAdminGroup.GET(router.AdminRoutes.Libraries, controller.AdminLibraries)
 	echoAdminGroup.GET(router.AdminRoutes.Library, controller.AdminLibrary)
-	echoAdminGroup.POST(router.AdminRoutes.Library, controller.StoreAdminLibrary)
+	echoAdminGroup.POST(router.AdminRoutes.Library, controller.AdminStoreLibrary)
+	echoAdminGroup.GET(router.AdminRoutes.Command, controller.AdminCommand)
 
 	// Print current echo routes
 	for _, route := range echoInstance.Routes() {

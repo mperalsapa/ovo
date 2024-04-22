@@ -25,6 +25,7 @@ type adminRoute struct {
 	Users     string
 	User      string
 	Settings  string
+	Command   string
 }
 
 type apiRoutes struct {
@@ -81,6 +82,11 @@ func GenerateRouteWithId(route string, id uint) string {
 	return strings.ReplaceAll(route, ":id", fmt.Sprintf("%d", id))
 }
 
+// generate route with string parameter
+func GenerateRouteWithCommand(route string, param string) string {
+	return strings.ReplaceAll(route, ":action", param)
+}
+
 func InitRoutes() bool {
 	Routes.Assets = BuildRoute("/assets")
 	Routes.Api = BuildRoute("/api")
@@ -97,6 +103,8 @@ func InitRoutes() bool {
 	AdminRoutes.Library = BuildAdminRoute("/library/:id")
 	AdminRoutes.Users = BuildAdminRoute("/users")
 	AdminRoutes.User = BuildAdminRoute("/user/:id")
+	AdminRoutes.Settings = BuildAdminRoute("/settings")
+	AdminRoutes.Command = BuildAdminRoute("/command/:action")
 
 	// Api routes
 	ApiRoutes.Library = BuildApiRoute("/library/:id")

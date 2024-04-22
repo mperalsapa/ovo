@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"log"
 	"net/http"
+	"ovo-server/internal/file"
 	"ovo-server/internal/model"
 	"ovo-server/internal/router"
 	"ovo-server/internal/session"
@@ -58,7 +60,7 @@ type LibraryForm struct {
 	Paths  []string `form:"paths[]"`
 }
 
-func StoreAdminLibrary(context echo.Context) error {
+func AdminStoreLibrary(context echo.Context) error {
 
 	libraryForm := LibraryForm{}
 
@@ -104,4 +106,25 @@ func StoreAdminLibrary(context echo.Context) error {
 
 	// if everything is ok, redirect to libraries
 	return context.Redirect(http.StatusFound, router.AdminRoutes.Libraries)
+}
+
+func AdminCommand(context echo.Context) error {
+	command := context.Param("action")
+	log.Println("Received command request: ", command)
+
+	switch command {
+	case "ScanLibraries":
+		log.Println("Scanning libraries")
+		libraries := model.GetLibraries()
+		for _, library := range libraries {
+			log.Println("Scanning library: ", library.Name)
+			for _, path := range library.Paths {
+				file.ScanPath(path)
+			}
+		}
+	default:
+		log.Println("Unknown command")
+	}
+
+	return context.Redirect(http.StatusFound, router.AdminRoutes.Dashboard)
 }

@@ -19,7 +19,7 @@ templ LibrariesPage(pageData LibrariesPageData) {
 				<h1 class="text-2xl">Libraries</h1>
 				<div>
 					<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, 0)) }>Add</a>
-					<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, 0)) }>Scan Libraries</a>
+					<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithCommand(router.AdminRoutes.Command, "ScanLibraries")) }>Scan Libraries</a>
 				</div>
 				<div class="container grid gap-3" id="libraryContainer">
 					for _, library := range pageData.Libraries {
