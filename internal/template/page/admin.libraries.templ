@@ -15,16 +15,21 @@ templ LibrariesPage(pageData LibrariesPageData) {
 	@shared.Page("Libraries") {
 		@component.AdminSidebar()
 		@component.Container() {
-			<h1 class="text-2xl">Libraries</h1>
-			<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, 0)) } id="addLibraryOpenModal">Add</a>
-			<div class="container grid gap-3" id="libraryContainer">
-				for _, library := range pageData.Libraries {
-					<a class="border border-gray-200 my-4" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, library.ID)) } data-ID={ fmt.Sprintf("%d", library.ID) }>
-						<h2 class="text-xl p-4">{ library.Name }</h2>
-					</a>
-				}
+			<div class="flex flex-col gap-3">
+				<h1 class="text-2xl">Libraries</h1>
+				<div>
+					<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, 0)) }>Add</a>
+					<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, 0)) }>Scan Libraries</a>
+				</div>
+				<div class="container grid gap-3" id="libraryContainer">
+					for _, library := range pageData.Libraries {
+						<a class="border border-gray-200 my-4" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, library.ID)) } data-ID={ fmt.Sprintf("%d", library.ID) }>
+							<h2 class="text-xl p-4">{ library.Name }</h2>
+						</a>
+					}
+				</div>
+				<script src={ router.Routes.Assets + "/js/admin.library.js" }></script>
 			</div>
-			<script src={ router.Routes.Assets + "/js/admin.library.js" }></script>
 		}
 	}
 }
