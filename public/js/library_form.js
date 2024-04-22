@@ -6,7 +6,8 @@ $(document).ready(function () {
 function PathListener() {
     if (GetEmptyPathCount() === 0) {
         console.log("Adding new input field");
-        let pathChildren = $("#pathList").find("input[type='text']");
+        let pathList = $("#pathList");
+        let pathChildren = pathList.find("input[type='text']");
         let lastPath = pathChildren[pathChildren.length - 1];
         let newPath = $(lastPath).clone();
         newPath.val("");
@@ -15,9 +16,9 @@ function PathListener() {
     }
 
     if ($(this).val() === "" && GetEmptyPathCount() > 1) {
-        console.log("Removing input field");
         let pathChildren = $("#pathList").find("input[type='text']");
         if (pathChildren.length > 1) {
+            console.log("Removing input field");
             $(this).remove();
         }
     }
