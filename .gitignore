@@ -6,3 +6,4 @@ node_modules
 *templ.txt
 public/css/*
 src/css/*
+testing_media_dir/*
