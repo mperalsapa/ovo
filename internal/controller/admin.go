@@ -3,7 +3,6 @@ package controller
 import (
 	"log"
 	"net/http"
-	"ovo-server/internal/file"
 	"ovo-server/internal/model"
 	"ovo-server/internal/router"
 	"ovo-server/internal/session"
@@ -118,9 +117,22 @@ func AdminCommand(context echo.Context) error {
 		libraries := model.GetLibraries()
 		for _, library := range libraries {
 			log.Println("Scanning library: ", library.Name)
-			for _, path := range library.Paths {
-				file.ScanPath(path)
-			}
+			library.ScanLibrary()
+			// for _, path := range library.Paths {
+			// 	files := file.ScanPath(path)
+			// 	for _, f := range files {
+			// 		log.Println("Found file: ", f)
+			// 		fileInfo := file.ParseFilename(f)
+			// 		log.Printf("Name: %s, Year: %d, Meta Prov.: %s, Meta ID: %s", fileInfo.Name, fileInfo.Year, fileInfo.MetaProvider, fileInfo.MetaId)
+			// 		movie := tmdb.FindMovieByFileInfo(fileInfo)
+
+			// 		if movie != nil {
+			// 			log.Printf("Found movie: %s (%s)\n%s\n\n", movie.Title, movie.ReleaseDate, movie.Overview)
+			// 		} else {
+
+			// 		}
+			// 	}
+			// }
 		}
 	default:
 		log.Println("Unknown command")

@@ -2,7 +2,11 @@ package model
 
 import (
 	"errors"
+	"log"
 	db "ovo-server/internal/database"
+	"ovo-server/internal/file"
+	"ovo-server/internal/tmdb"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -19,6 +23,20 @@ type Library struct {
 	Type  LibraryType `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
 	Name  string      `json:"name" form:"name" gorm:"not null"`
 	Paths []string    `json:"paths" form:"paths[]" gorm:"serializer:json"`
+}
+
+type LibraryHasMovie struct {
+	gorm.Model
+	LibraryID uint   `gorm:"index"`
+	MovieID   uint   `gorm:"index"`
+	Path      string `gorm:"not null"`
+}
+
+type LibraryHasEpisode struct {
+	gorm.Model
+	LibraryID uint   `gorm:"index"`
+	EpisodeID uint   `gorm:"index"`
+	Path      string `gorm:"not null"`
 }
 
 func (library *Library) Equals(other Library) bool {
@@ -93,6 +111,47 @@ func (library *Library) SaveLibrary() error {
 
 	if transaction.Error != nil {
 		return transaction.Error
+	}
+
+	return nil
+}
+
+func (library *Library) ScanLibrary() error {
+	// checking if library has paths
+	if len(library.Paths) == 0 {
+		return errors.New("no paths to scan")
+	}
+
+	// var movies []Movie
+	var parsedFiles []file.FileMetaInfo
+	// running scan for each path
+	for _, path := range library.Paths {
+		files := file.ScanPath(path)
+		for _, f := range files {
+			parsedFiles = append(parsedFiles, file.ParseFilename(f))
+		}
+	}
+
+	// finding movies by file info
+	moviesMetadata := tmdb.FindMovieByFileInfoList(parsedFiles)
+
+	// converting metadata to movies
+	for _, metadata := range moviesMetadata {
+		releaseDate, _ := time.Parse("2024-04-24", metadata.ReleaseDate)
+		movie := Movie{
+			TmdbID:           uint(metadata.ID),
+			Title:            metadata.Title,
+			OriginalTitle:    metadata.OriginalTitle,
+			Description:      metadata.Overview,
+			ReleaseDate:      releaseDate,
+			PosterPath:       metadata.PosterPath,
+			FilePath:         "",
+			LastMetadataScan: time.Now(),
+		}
+		err := movie.Save()
+		if err != nil {
+			log.Printf("Error saving movie: %s. Error: %s", movie.Title, err)
+		}
 	}
 
 	return nil

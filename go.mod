@@ -15,6 +15,7 @@ require (
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
+	github.com/ryanbradynd05/go-tmdb v0.0.0-20230108222638-2a68dc6ff40c // indirect
 )
 
 require (

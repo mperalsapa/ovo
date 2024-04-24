@@ -10,6 +10,7 @@ import (
 	"ovo-server/internal/model"
 	"ovo-server/internal/router"
 	"ovo-server/internal/session"
+	"ovo-server/internal/tmdb"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -27,6 +28,9 @@ func init() {
 	session.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
 	// Router setup
 	router.InitRoutes()
+
+	// Initialize TMDB API
+	tmdb.Init()
 }
 
 func main() {
@@ -79,9 +83,9 @@ func main() {
 	echoAdminGroup.POST(router.AdminRoutes.Library, controller.AdminStoreLibrary)
 	echoAdminGroup.GET(router.AdminRoutes.Command, controller.AdminCommand)
 
-	// Print current echo routes
-	for _, route := range echoInstance.Routes() {
-		log.Println(route.Method, route.Path)
-	}
+	// DEBUG Print current echo routes
+	// for _, route := range echoInstance.Routes() {
+	// 	log.Println(route.Method, route.Path)
+	// }
 	echoInstance.Start("localhost:8080")
 }
