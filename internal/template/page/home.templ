@@ -13,7 +13,7 @@ type HomePageData struct {
 
 templ homeLibraries() {
 	for _, lib := range model.GetLibraries() {
-		<div class="flex justify-center w-96 aspect-video border-4 border-red-500">
+		<div class="flex justify-center w-full h-auto aspect-video border-4 border-red-500">
 			<h1>
 				{ lib.Name }
 			</h1>
@@ -26,9 +26,11 @@ templ HomePage(pageData HomePageData) {
 		@component.UserSidebar(component.UserSidebarData{
 			UserSession: pageData.UserSession,
 		})
-		@component.PageContainer() {
+		@component.PageContainer("") {
 			@component.UserNavbar()
-			@homeLibraries()
+			@component.Container("grid grid-cols-2 sm:grid-cols-4 gap-4") {
+				@homeLibraries()
+			}
 		}
 	}
 }
