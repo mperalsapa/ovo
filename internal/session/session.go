@@ -130,3 +130,7 @@ func IsAdmin(c echo.Context) (Admin bool) {
 	role := userSession.Role
 	return role == model.Admin
 }
+
+func (userSession *UserSession) IsAdmin() bool {
+	return userSession.Role == model.Admin
+}

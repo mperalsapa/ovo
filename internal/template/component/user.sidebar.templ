@@ -1,0 +1,40 @@
+package component
+
+import "ovo-server/internal/router"
+import "ovo-server/internal/model"
+import "ovo-server/internal/session"
+
+type UserSidebarData struct {
+	UserSession session.UserSession
+}
+
+templ libraryList() {
+	<div class="flex flex-wrap justify-center">
+		for _, lib := range model.GetLibraries() {
+			<a href={ templ.SafeURL(router.GenerateRouteWithId(router.Routes.Library, lib.ID)) } class="button button-primary">{ lib.Name }</a>
+		}
+	</div>
+}
+
+templ UserSidebar(pageData UserSidebarData) {
+	<div class="min-h-screen inline w-fit min-w-72 bg-stone-800 text-white sidebar-container closed" id="sidebar">
+		<div class="lateral-navbar">
+			@AnimatedImago()
+			<h2>Dashboard</h2>
+			<hr/>
+			<div>
+				<a href={ templ.SafeURL(router.Routes.Home) } class="button button-secondary"><span>Home</span></a>
+			</div>
+			<h2>Media</h2>
+			<hr/>
+			@libraryList()
+			if pageData.UserSession.Role > model.Visitor {
+				<h2>Admin</h2>
+				<hr/>
+				<div>
+					<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-secondary"><span>Dashboard</span></a>
+				</div>
+			}
+		</div>
+	</div>
+}

@@ -12,7 +12,7 @@ func Home(c echo.Context) error {
 	userSession := session.GetUserSession(c)
 
 	pageData := page.HomePageData{
-		Username: userSession.Username,
+		UserSession: userSession,
 	}
 	component := page.HomePage(pageData)
 	return RenderView(c, http.StatusOK, component)
