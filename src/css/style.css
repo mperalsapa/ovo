@@ -370,11 +370,6 @@ header .headerSection.center {
 header .headerSection.end {
   justify-content: end;
 }
-header .imago {
-  background: url("../img/LOGO.svg");
-  width: 80px;
-  height: 100%;
-}
 header .searchContainer {
   display: flex;
   position: relative;

@@ -3,7 +3,7 @@ package component
 import "ovo-server/internal/router"
 
 templ AnimatedImago() {
-	<a class="mx-auto w-fit" href={ templ.SafeURL(router.Routes.Home) }>
+	<a class="size-fit self-center" href={ templ.SafeURL(router.Routes.Home) }>
 		<div class="imago-container">
 			<img src={ router.Routes.Assets + "/imago/05_BG_BLACK_IMAGO.svg" } alt=""/>
 			<div class="iris irisR"></div>
