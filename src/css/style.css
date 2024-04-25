@@ -131,7 +131,7 @@ select option {
 }
 
 .lateral-navbar {
-  @apply my-5 mx-10 flex flex-col;
+  @apply my-5 mx-10 flex flex-col w-52;
 }
 .lateral-navbar button {
   display: flex;
@@ -324,20 +324,110 @@ select option {
   transform: scale(0.2);
 }
 
+.sidebar-container {
+  position: fixed;
+  top: 72px;
+  left: 0;
+  transition-property: width, min-width;
+  transition-duration: 0.3s;
+  scrollbar-width: thin;
+  -ms-overflow-style: initial;
+  scrollbar-width: thin;
+  /* For Webkit-based browsers (Chrome, Safari and Opera) */
+  @apply w-72 sm:sticky sm:top-0 sm:left-0;
+}
+
+.sidebar-container.closed {
+  min-width: 0;
+  @apply w-0;
+}
+
+header {
+  display: flex;
+  position: sticky;
+  top: 0;
+  justify-content: space-between;
+  gap: 30px;
+  z-index: 2;
+  background: linear-gradient(90deg, #1a1a1a 0%, #333 50%, #1a1a1a 100%);
+  background-color: #333;
+  padding-right: 30px;
+  padding-left: 30px;
+  width: 100%;
+  height: 72px;
+}
+header .headerSection {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+}
+header .headerSection.start {
+  justify-content: start;
+}
+header .headerSection.center {
+  justify-content: center;
+}
+header .headerSection.end {
+  justify-content: end;
+}
+header .imago {
+  background: url("../img/LOGO.svg");
+  width: 80px;
+  height: 100%;
+}
+header .searchContainer {
+  display: flex;
+  position: relative;
+}
+header .searchContainer .searchBackground {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  justify-content: flex-end;
+  align-items: center;
+  transition: all 200ms ease-in-out;
+  background-color: transparent;
+  width: 0px;
+  height: 100%;
+  overflow: hidden;
+}
+header .searchContainer .searchField {
+  transition: all 200ms ease-in-out;
+  margin-right: 15px;
+  border-radius: 5px;
+  width: 210px;
+  height: 50px;
+}
+header::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  background: repeating-linear-gradient(rgba(0, 21, 255, 0), #393939 5px);
+  width: 100%;
+  height: 100%;
+  content: "";
+}
+
 html {
   background-color: var(--background-color);
   color: var(--primary-text-color);
   -ms-overflow-style: none;
   scrollbar-width: none;
   /* For Webkit-based browsers (Chrome, Safari and Opera) */
+  scrollbar-color: var(--secondary-color) var(--background-color);
 }
 html *::-webkit-scrollbar {
   display: none;
 }
+html *::-webkit-scrollbar-track {
+  background: var(--secondary-color);
+}
 
 body {
   background-color: var(--background-color);
-  @apply flex w-screen;
+  @apply flex w-screen min-h-screen h-fit;
 }
 
 .border-primary {

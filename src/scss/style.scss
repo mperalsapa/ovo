@@ -3,9 +3,11 @@
 @use "components/button.scss";
 @use "components/input-fields.scss";
 @use "components/alert.scss";
-@use "components/admin_sidebar.scss";
+@use "components/sidebar.scss";
 @use "components/animated_imago.scss";
 @use "components/modal.scss";
+@use "components/user_sidebar.scss";
+@use "components/navbar.scss";
 
 html {
     background-color: var(--background-color);
@@ -21,11 +23,19 @@ html {
     *::-webkit-scrollbar {
         display: none;
     }
+
+    // Change scrollbar color in case that any component needs it
+    *::-webkit-scrollbar-track {
+        background: var(--secondary-color);
+    }
+
+    scrollbar-color: var(--secondary-color) var(--background-color);
+
 }
 
 body {
     background-color: var(--background-color);
-    @apply flex w-screen;
+    @apply flex w-screen min-h-screen h-fit;
 }
 
 .border-primary {

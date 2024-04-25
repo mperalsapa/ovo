@@ -1,23 +1,49 @@
 package component
 
 templ UserNavbar() {
-	<div class="w-full">
-		<nav class="flex justify-between px-5 bg-stone-800 text-white navbar">
-			<div class="flex gap-3 button-icon-container">
-				<button id="sidebar-menu-button"><span>menu</span></button>
-				<div class="bg-white box-border my-3 w-28"></div>
-				<!-- <img class="h-full py-3" src="https://tv.arbros.online/web/assets/img/banner-light.png" alt=""> -->
+	<header>
+		<div class="headerSection start">
+			<button class="labeledButton" id="sidebar-menu-button">
+				<div class="buttonIcon"></div>
+				<span class="buttonLabel material-symbols-outlined">MENU</span>
+			</button>
+			@AnimatedImago()
+		</div>
+		<div class="headerSection center">
+			<button class="labeledButton">
+				<div class="buttonIcon"></div>
+				<span class="buttonLabel material-symbols-outlined">HOME</span>
+			</button>
+			<button class="labeledButton">
+				<div class="buttonIcon"></div>
+				<span class="buttonLabel material-symbols-outlined">FAVORITE</span>
+			</button>
+		</div>
+		<div class="headerSection end">
+			<button class="labeledButton">
+				<div class="buttonIcon"></div>
+				<span class="buttonLabel material-symbols-outlined">SYNC</span>
+			</button>
+			<button class="labeledButton">
+				<div class="buttonIcon"></div>
+				<span class="buttonLabel material-symbols-outlined">CAST</span>
+			</button>
+			<button class="labeledButton">
+				<div class="buttonIcon"></div>
+				<span class="buttonLabel material-symbols-outlined">PERSON</span>
+			</button>
+			<div class="searchContainer">
+				<div class="searchBackground">
+					<input type="text" name="" id="" class="searchField"/>
+				</div>
+				<button class="labeledButton searchButton">
+					<div class="buttonIcon"></div>
+					<span class="buttonLabel material-symbols-outlined">SEARCH</span>
+				</button>
 			</div>
-			<div class="flex gap-3">
-				<button>Home</button>
-				<button>Favourites</button>
-			</div>
-			<div class="flex gap-3 button-icon-container">
-				<button><span>groups</span></button>
-				<button><span>cast</span></button>
-				<button><span>search</span></button>
-				<button><span>person</span></button>
-			</div>
-		</nav>
-	</div>
+		</div>
+		<div class="scrollIndicator">
+			<div class="scrollProgress"></div>
+		</div>
+	</header>
 }

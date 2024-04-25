@@ -17,11 +17,8 @@ templ libraryList() {
 }
 
 templ UserSidebar(pageData UserSidebarData) {
-	<div class="min-h-screen inline w-fit min-w-72 bg-stone-800 text-white sidebar-container closed" id="sidebar">
+	<div class="h-screen inline w-fit min-w-72 bg-stone-800 text-white overflow-x-hidden overflow-y-scroll sidebar-container closed" id="sidebar">
 		<div class="lateral-navbar">
-			@AnimatedImago()
-			<h2>Dashboard</h2>
-			<hr/>
 			<div>
 				<a href={ templ.SafeURL(router.Routes.Home) } class="button button-secondary"><span>Home</span></a>
 			</div>

@@ -5,9 +5,20 @@ import "ovo-server/internal/template/shared"
 // import "ovo-server/internal/router"
 import "ovo-server/internal/template/component"
 import "ovo-server/internal/session"
+import "ovo-server/internal/model"
 
 type HomePageData struct {
 	UserSession session.UserSession
+}
+
+templ homeLibraries() {
+	for _, lib := range model.GetLibraries() {
+		<div class="flex justify-center w-96 aspect-video border-4 border-red-500">
+			<h1>
+				{ lib.Name }
+			</h1>
+		</div>
+	}
 }
 
 templ HomePage(pageData HomePageData) {
@@ -15,16 +26,9 @@ templ HomePage(pageData HomePageData) {
 		@component.UserSidebar(component.UserSidebarData{
 			UserSession: pageData.UserSession,
 		})
-		@component.UserNavbar()
-		// <div>
-		// 	<h1>Home</h1>
-		// 	<p>Welcome to the home page: { pageData.UserSession.Username }</p>
-		// 	<ul>
-		// 		<li></li>
-		// 		<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) }>Admin Panel</a>
-		// 		<li></li>
-		// 		<a href={ templ.SafeURL(router.Routes.Logout) }>Logout</a>
-		// 	</ul>
-		// </div>
+		@component.PageContainer() {
+			@component.UserNavbar()
+			@homeLibraries()
+		}
 	}
 }

@@ -1,0 +1,91 @@
+// @import "scroll-indicator.scss";
+// @import "labeled-button.scss";
+@use "../base/variables.scss" as vars;
+
+header {
+    display: flex;
+
+    // position: fixed;
+    position: sticky;
+    top: 0;
+    justify-content: space-between;
+    gap: vars.$header-gap;
+    z-index: +2;
+    // box-shadow: 0px 20px 20px 8px #00000073;
+    // justify-content: center;
+    background: linear-gradient(90deg, #1a1a1a 0%, #333 50%, #1a1a1a 100%);
+    background-color: #333;
+    padding-right: 30px;
+    padding-left: 30px;
+    width: 100%;
+    height: vars.$header-height;
+
+    .headerSection {
+        display: flex;
+        gap: 30px;
+        width: 100%;
+
+        &.start {
+            justify-content: start;
+        }
+
+        &.center {
+            justify-content: center;
+        }
+
+        &.end {
+            justify-content: end;
+        }
+    }
+
+    .imago {
+        background: url("../img/LOGO.svg");
+        width: 80px;
+        height: 100%;
+    }
+
+
+    .searchContainer {
+        display: flex;
+        position: relative;
+
+        .searchBackground {
+            display: flex;
+            position: absolute;
+            top: 0;
+            left: 0;
+            justify-content: flex-end;
+            align-items: center;
+            transition: all 200ms ease-in-out;
+            // background-color: #333;
+            background-color: transparent;
+            width: 0px;
+            height: 100%;
+            overflow: hidden;
+
+            // border: 1px solid red;
+            // box-shadow: -18px 0px 20px 0px black;
+        }
+
+        .searchField {
+            transition: all 200ms ease-in-out;
+            margin-right: 15px;
+            border-radius: 5px;
+
+            width: vars.$labeledButton_width * 3 + vars.$header-gap * 3;
+            height: 50px;
+        }
+
+    }
+
+    &::after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        background: repeating-linear-gradient(#0015ff00, #393939 5px);
+        width: 100%;
+        height: 100%;
+        content: "";
+    }
+}

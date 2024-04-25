@@ -1,0 +1,29 @@
+@use '../base/variables.scss' as vars;
+
+.sidebar-container {
+    position: fixed;
+    top: vars.$header-height;
+    left: 0;
+    transition-property: width, min-width;
+    transition-duration: 0.3s;
+
+    scrollbar-width: thin;
+
+    // Hide scroll bar
+    // IE and Edge
+    -ms-overflow-style: initial;
+    // Firefox
+    scrollbar-width: thin;
+
+    /* For Webkit-based browsers (Chrome, Safari and Opera) */
+    // *::-webkit-scrollbar {
+    //     display: block;
+    // }
+
+    @apply w-72 sm:sticky sm:top-0 sm:left-0;
+}
+
+.sidebar-container.closed {
+    min-width: 0;
+    @apply w-0;
+}
