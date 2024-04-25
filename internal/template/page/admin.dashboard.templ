@@ -10,7 +10,7 @@ type AdminDashboardPageData struct {
 templ AdminDashboardPage(pageData AdminDashboardPageData) {
 	@shared.Page("Admin Dashboard") {
 		@component.AdminSidebar()
-		@component.Container() {
+		@component.Container("") {
 			<div>
 				<h1>Admin Dashboard</h1>
 				<p>Welcome, { pageData.Username }!</p>

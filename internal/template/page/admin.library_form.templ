@@ -22,7 +22,7 @@ func getTitle(editing bool) string {
 templ AdminLibraryForm(pageData AdminLibraryFormPageData) {
 	@shared.Page(getTitle(pageData.Editing)) {
 		@component.AdminSidebar()
-		@component.Container() {
+		@component.Container("") {
 			<form method="POST" class="mx-auto w-1/2 flex flex-col gap-3" action={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, pageData.Library.ID)) }>
 				<input type="hidden" value={ fmt.Sprintf("%d", pageData.Library.ID) } id="library_id" name="ID"/>
 				<div class="form-group">
