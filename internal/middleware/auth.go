@@ -49,11 +49,12 @@ func IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func UserExist(echo echo.Context) bool {
-	user := session.GetUserSession(echo)
-	exists := model.GetUserExists(user.Username)
-	if !exists {
-		user.Authenticated = false
-		user.SaveUserSession(echo)
+	userSession := session.GetUserSession(echo)
+	user := model.GetUserByUsername(userSession.Username)
+	// exists := model.GetUserExists(userSession.Username)
+	if user.Username == "" || !user.Enabled {
+		userSession.Authenticated = false
+		userSession.SaveUserSession(echo)
 		return false
 	}
 

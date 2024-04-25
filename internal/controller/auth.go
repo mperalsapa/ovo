@@ -41,6 +41,13 @@ func LoginRequest(context echo.Context) error {
 		return context.Redirect(http.StatusFound, router.Routes.Login)
 	}
 
+	if !user.Enabled {
+		userSession.Authenticated = false
+		userSession.ErrorMsg = "This user is disabled"
+		userSession.SaveUserSession(context)
+		return context.Redirect(http.StatusFound, router.Routes.Login)
+	}
+
 	userSession.Authenticated = true
 	userSession.ErrorMsg = ""
 	userSession.Role = user.Role
