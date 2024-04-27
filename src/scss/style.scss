@@ -8,6 +8,8 @@
 @use "components/modal.scss";
 @use "components/user_sidebar.scss";
 @use "components/navbar.scss";
+@use "components/cards.scss";
+@use "components/containers.scss";
 
 html {
     background-color: var(--background-color);

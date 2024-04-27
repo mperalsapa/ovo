@@ -405,6 +405,16 @@ header::after {
   content: "";
 }
 
+.horizontal-card {
+  border: solid 1px red;
+  aspect-ratio: 1.789;
+}
+
+.home-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+}
+
 html {
   background-color: var(--background-color);
   color: var(--primary-text-color);
