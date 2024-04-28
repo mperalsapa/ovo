@@ -23,7 +23,7 @@ type Library struct {
 	Type  LibraryType `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
 	Name  string      `json:"name" form:"name" gorm:"not null"`
 	Paths []string    `json:"paths" form:"paths[]" gorm:"serializer:json"`
-	Items []Item      `json:"items" gorm:"foreignKey:LibraryID"`
+	Items []Item      `json:"items"`
 }
 
 func (library *Library) Equals(other Library) bool {
@@ -103,6 +103,18 @@ func (library *Library) SaveLibrary() error {
 	return nil
 }
 
+// GetItems load all items from library into its Items field and also return them
+func (library *Library) GetItems() ([]Item, error) {
+	// var items []Item
+	// err := db.GetDB().Where("library_id = ?", library.ID).Find(&items).Error
+	err := db.GetDB().Preload("Items").First(&library, library.ID).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return library.Items, nil
+}
+
 func (library *Library) ScanLibrary() error {
 	// checking if library has paths
 	if len(library.Paths) == 0 {
@@ -125,16 +137,6 @@ func (library *Library) ScanLibrary() error {
 	// converting metadata to movies
 	for _, metadata := range moviesMetadata {
 		releaseDate, _ := time.Parse(`2006-01-02`, metadata.ReleaseDate)
-		// movie := Movie{
-		// 	TmdbID:           uint(metadata.ID),
-		// 	Title:            metadata.Title,
-		// 	OriginalTitle:    metadata.OriginalTitle,
-		// 	Description:      metadata.Overview,
-		// 	ReleaseDate:      releaseDate,
-		// 	PosterPath:       metadata.PosterPath,
-		// 	FilePath:         "",
-		// 	LastMetadataScan: time.Now(),
-		// }
 
 		movie := Item{
 			LibraryID:     library.ID,

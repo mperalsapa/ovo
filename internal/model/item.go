@@ -9,7 +9,7 @@ import (
 
 type Item struct {
 	gorm.Model
-	LibraryID        uint      `json:"library_id"` // Library ID
+	LibraryID        uint      `json:"library" gorm:"not null"`
 	ItemType         string    `gorm:"enum:show,season,episode,movie"`
 	TmdbID           uint      `json:"tmdb_id" gorm:"not null"`
 	Title            string    `json:"title" gorm:"not null"`
