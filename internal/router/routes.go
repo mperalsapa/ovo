@@ -13,9 +13,10 @@ type route struct {
 	Login    string
 	Logout   string
 	Register string
+	Profile  string
 	Home     string
 	Library  string
-	Profile  string
+	Item     string
 }
 
 type adminRoute struct {
@@ -93,9 +94,10 @@ func InitRoutes() bool {
 	Routes.Login = BuildRoute("/login")
 	Routes.Logout = BuildRoute("/logout")
 	Routes.Register = BuildRoute("/register")
+	Routes.Profile = BuildRoute("/profile")
 	Routes.Home = BuildRoute("/")
 	Routes.Library = BuildRoute("/library/:id")
-	Routes.Profile = BuildRoute("/profile")
+	Routes.Item = BuildRoute("/item/:id")
 
 	// Admin routes
 	AdminRoutes.Dashboard = BuildAdminRoute("")

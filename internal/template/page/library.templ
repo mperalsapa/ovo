@@ -1,0 +1,38 @@
+package page
+
+import "ovo-server/internal/session"
+import "ovo-server/internal/template/shared"
+import "ovo-server/internal/model"
+import "ovo-server/internal/template/component"
+import "ovo-server/internal/router"
+import "fmt"
+
+type LibraryPageData struct {
+	UserSession session.UserSession
+	Library     model.Library
+}
+
+templ itemList(library model.Library) {
+	for k, item := range library.Items {
+		<a class={ "w-full flex flex-col items-center masonry-item", templ.KV("grid-sizer", k == 0) } href={ templ.SafeURL(router.GenerateRouteWithId(router.Routes.Item, library.ID)) }>
+			<img class="w-full" src={ fmt.Sprintf("https://media.themoviedb.org/t/p/w300_and_h450_bestv2/%s", item.PosterPath) }/>
+			<h3>{ item.Title }</h3>
+		</a>
+	}
+}
+
+templ Library(pageData LibraryPageData) {
+	@shared.Page(pageData.Library.Name) {
+		@component.UserSidebar(component.UserSidebarData{
+			UserSession: pageData.UserSession,
+		})
+		@component.PageContainer("") {
+			@component.UserNavbar()
+			@component.Container("") {
+				@component.Container("masonry-container") {
+					@itemList(pageData.Library)
+				}
+			}
+		}
+	}
+}

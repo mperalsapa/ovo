@@ -1,4 +1,13 @@
 .home-container {
-    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    // transition: all 1s;
+}
+
+.masonry-container {
+    display: block;
+    padding: 0;
+
+    .masonry-item {
+        @apply w-1/2 md:w-1/4 lg:w-1/5 xl:w-1/6;
+    }
 }
