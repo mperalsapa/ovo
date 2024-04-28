@@ -6,6 +6,7 @@ import "ovo-server/internal/template/shared"
 import "ovo-server/internal/template/component"
 import "ovo-server/internal/session"
 import "ovo-server/internal/model"
+import "ovo-server/internal/router"
 
 type HomePageData struct {
 	UserSession session.UserSession
@@ -13,7 +14,7 @@ type HomePageData struct {
 
 templ homeLibraries() {
 	for _, lib := range model.GetLibraries() {
-		@component.HorizontalCard(lib.Name)
+		@component.HorizontalCard(lib.Name, router.GenerateRouteWithId(router.Routes.Library, lib.ID))
 	}
 }
 
