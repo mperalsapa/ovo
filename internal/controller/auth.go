@@ -19,6 +19,11 @@ func Login(context echo.Context) error {
 		AlertMsg: userSession.PopErrorMessage(context),
 	}
 
+	userCount := model.UserCount()
+	if userCount == 0 {
+		context.Redirect(http.StatusFound, router.Routes.Register)
+	}
+
 	component := page.LoginPage(pageData)
 	return RenderView(context, http.StatusOK, component)
 }
