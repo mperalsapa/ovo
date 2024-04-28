@@ -18,12 +18,13 @@ const (
 
 type User struct {
 	gorm.Model
-	Username       string    `form:"username" json:"username" gorm:"not null"`
-	Password       string    `form:"password" json:"password" gorm:"not null"`
-	Role           Role      `json:"role"`
-	WatchedMovies  []Movie   `gorm:"many2many:user_watched_movies;"`
-	WatchedEpisode []Episode `gorm:"many2many:user_watched_episodes;"`
-	Enabled        bool      `json:"enabled" gorm:"default:false"`
+	Username string `form:"username" json:"username" gorm:"not null"`
+	Password string `form:"password" json:"password" gorm:"not null"`
+	Role     Role   `json:"role"`
+	// WatchedMovies  []Movie   `gorm:"many2many:user_watched_movies;"`
+	// WatchedEpisode []Episode `gorm:"many2many:user_watched_episodes;"`
+	WatchedItems []Item `gorm:"many2many:user_watched_items;"`
+	Enabled      bool   `json:"enabled" gorm:"default:false"`
 }
 
 func (u *User) HashPassword() {

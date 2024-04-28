@@ -23,20 +23,7 @@ type Library struct {
 	Type  LibraryType `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
 	Name  string      `json:"name" form:"name" gorm:"not null"`
 	Paths []string    `json:"paths" form:"paths[]" gorm:"serializer:json"`
-}
-
-type LibraryHasMovie struct {
-	gorm.Model
-	LibraryID uint   `gorm:"index"`
-	MovieID   uint   `gorm:"index"`
-	Path      string `gorm:"not null"`
-}
-
-type LibraryHasEpisode struct {
-	gorm.Model
-	LibraryID uint   `gorm:"index"`
-	EpisodeID uint   `gorm:"index"`
-	Path      string `gorm:"not null"`
+	Items []Item      `json:"items" gorm:"foreignKey:LibraryID"`
 }
 
 func (library *Library) Equals(other Library) bool {
@@ -137,17 +124,30 @@ func (library *Library) ScanLibrary() error {
 
 	// converting metadata to movies
 	for _, metadata := range moviesMetadata {
-		releaseDate, _ := time.Parse("2024-04-24", metadata.ReleaseDate)
-		movie := Movie{
-			TmdbID:           uint(metadata.ID),
-			Title:            metadata.Title,
-			OriginalTitle:    metadata.OriginalTitle,
-			Description:      metadata.Overview,
-			ReleaseDate:      releaseDate,
-			PosterPath:       metadata.PosterPath,
-			FilePath:         "",
-			LastMetadataScan: time.Now(),
+		releaseDate, _ := time.Parse(`2006-01-02`, metadata.ReleaseDate)
+		// movie := Movie{
+		// 	TmdbID:           uint(metadata.ID),
+		// 	Title:            metadata.Title,
+		// 	OriginalTitle:    metadata.OriginalTitle,
+		// 	Description:      metadata.Overview,
+		// 	ReleaseDate:      releaseDate,
+		// 	PosterPath:       metadata.PosterPath,
+		// 	FilePath:         "",
+		// 	LastMetadataScan: time.Now(),
+		// }
+
+		movie := Item{
+			LibraryID:     library.ID,
+			ItemType:      "movie",
+			TmdbID:        uint(metadata.ID),
+			Title:         metadata.Title,
+			OriginalTitle: metadata.OriginalTitle,
+			Description:   metadata.Overview,
+			ReleaseDate:   releaseDate,
+			PosterPath:    metadata.PosterPath,
+			FilePath:      "",
 		}
+
 		err := movie.Save()
 		if err != nil {
 			log.Printf("Error saving movie: %s. Error: %s", movie.Title, err)
