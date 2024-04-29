@@ -19,8 +19,7 @@
     // *::-webkit-scrollbar {
     //     display: block;
     // }
-
-    @apply w-72 sm:sticky sm:top-0 sm:left-0;
+    z-index: 1;
 }
 
 .sidebar-container.closed {

@@ -1,13 +1,23 @@
 .home-container {
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    // transition: all 1s;
 }
 
 .masonry-container {
     display: block;
     padding: 0;
+    transition: height 0.3s;
 
     .masonry-item {
-        @apply w-1/2 md:w-1/4 lg:w-1/5 xl:w-1/6;
+        margin-bottom: 25px;
+        //margin: 25px;
+        // margin-inline: 12.5px;
+        // margin-inline: 1%;
+        // margin-inline: 12.5px;
+        outline: solid 1px #e5e5e5;
+
+
+        img {
+            aspect-ratio: 0.666;
+        }
     }
 }

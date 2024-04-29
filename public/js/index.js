@@ -6,10 +6,12 @@ $(document).ready(function () {
     $grid = $('.masonry-container').isotope({
         // options
         itemSelector: '.masonry-item',
-        percentPosition: true,
+        // percentPosition: true,
         masonry: {
             columnWidth: '.masonry-item',
-            horizontalOrder: true
+            horizontalOrder: true,
+            fitWidth: true,
+            gutter: 25
         }
     });
 
@@ -31,7 +33,9 @@ $(document).ready(function () {
 
 function RefreshGrid() {
     if ($grid == null) {
+        console.log("No grid found")
         return;
     }
+    console.log("refreshing grid")
     $grid.isotope('layout');
 }
