@@ -28,7 +28,7 @@ templ Page(title string) {
 			<script defer src={ router.Routes.Assets + "/js/isotope.min.js" }></script>
 			// ImagesLoaded
 			<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
-			<script defer src={ router.Routes.Assets + "/js/index.js" }></script>
+			<script type="module" src={ router.Routes.Assets + "/js/index.js" }></script>
 			<title>{ title }</title>
 		</head>
 		<body class="w-screen min-h-screen overflow-x-hidden">

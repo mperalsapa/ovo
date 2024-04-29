@@ -1,0 +1,111 @@
+// @import "../base/variables.scss";
+$scrollIndicatorHeight: 5px;
+$scrollIndicatorColor: #343434;
+$scrollProgressHeight: 3px;
+$scrollProgressColor: #44a9cc;
+$scrollProgressGlowColor: #63b4d0;
+
+.scrollIndicator {
+    position: absolute;
+    bottom: -$scrollIndicatorHeight;
+    left: 0;
+    border-top: solid 1px #1e1e1e;
+    border-bottom: solid 1px black;
+    background-color: $scrollIndicatorColor;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    width: 100vw;
+    height: $scrollIndicatorHeight;
+}
+
+.scrollProgress {
+    position: relative;
+    transition: all 300ms linear;
+    background-color: $scrollProgressColor;
+    width: 0%;
+    height: $scrollProgressHeight;
+    height: 100%;
+
+    // img {
+    //     position: absolute;
+    //     left: 0;
+    //     right: 0;
+    //     top: 0;
+    //     width: 100%;
+    //     height: 100%;
+    // }
+
+    &::before {
+        position: absolute;
+        top: 50%;
+        right: 0px;
+        left: 0px;
+        transform: translateY(-50%);
+        filter: blur(5px);
+
+        animation: barGlow 3s infinite;
+        transition: inherit;
+        background: linear-gradient(-90deg, $scrollProgressGlowColor, transparent);
+        height: $scrollProgressHeight + 2px;
+        content: "";
+    }
+
+    &::after {
+        -webkit-mask: linear-gradient(90deg, transparent, white);
+        position: absolute;
+        top: 50%;
+        right: 0px;
+        left: 0px;
+        transform: translateY(-50%);
+        mask: linear-gradient(90deg, transparent, white);
+        background-color: white;
+        height: 50%;
+        content: "";
+    }
+
+    .scrollProgressThumb {
+        display: none;
+        position: absolute;
+        top: 50%;
+        right: 0px;
+        transform: translate(50%, -50%);
+        z-index: +1;
+        filter: blur(1px);
+
+        animation: thumbGlow 1.5s infinite;
+        box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+        border-radius: 50%;
+        background-color: white;
+        width: $scrollProgressHeight;
+        height: $scrollProgressHeight;
+    }
+
+    @keyframes barGlow {
+        0% {
+            height: $scrollProgressHeight + 2px;
+        }
+
+        50% {
+            filter: blur(8px);
+            height: ($scrollProgressHeight + 2px) * 1.1;
+        }
+
+        100% {
+            height: $scrollProgressHeight + 2px;
+        }
+    }
+
+    @keyframes thumbGlow {
+        0% {
+            box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+        }
+
+        50% {
+            box-shadow: 0 0 7px 3px white, 0 0 11px 4px #63b4d0;
+        }
+
+        100% {
+            box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+        }
+    }
+}

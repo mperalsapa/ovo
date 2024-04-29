@@ -2,12 +2,14 @@
 // @import "labeled-button.scss";
 @use "../base/variables.scss" as vars;
 
+.marginTopHeader {
+    margin-top: vars.$header-height;
+}
+
 header {
     display: flex;
 
-    // position: fixed;
-    position: sticky;
-    top: 0;
+    position: fixed;
     justify-content: space-between;
     gap: vars.$header-gap;
     z-index: +2;

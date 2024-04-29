@@ -30,7 +30,7 @@ templ Library(pageData LibraryPageData) {
 		})
 		@component.PageContainer("overflow-hidden") {
 			@component.UserNavbar()
-			@component.Container("px-0") {
+			@component.Container("px-0 marginTopHeader") {
 				@component.Container("masonry-container w-11/12 mx-auto") {
 					@itemList(pageData.Library)
 				}
