@@ -47,7 +47,6 @@ var AdminBasePath = "/admin"
 
 func BuildRoute(path string) string {
 	route, err := url.JoinPath(BasePath, path)
-	log.Println("Building route: ", route, " with path: ", path, " and basepath: ", BasePath)
 	if err != nil {
 		log.Println(err)
 	}
@@ -88,7 +87,7 @@ func GenerateRouteWithCommand(route string, param string) string {
 	return strings.ReplaceAll(route, ":action", param)
 }
 
-func InitRoutes() bool {
+func Init() bool {
 	Routes.Assets = BuildRoute("/assets")
 	Routes.Api = BuildRoute("/api")
 	Routes.Login = BuildRoute("/login")

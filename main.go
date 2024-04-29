@@ -27,7 +27,7 @@ func init() {
 	// Session setup
 	session.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
 	// Router setup
-	router.InitRoutes()
+	router.Init()
 
 	// Initialize TMDB API
 	tmdb.Init()
@@ -36,6 +36,11 @@ func init() {
 func main() {
 	log.Println("Starting OVO Server...")
 	echoInstance := echo.New()
+
+	// Hide banner and port
+	echoInstance.HideBanner = true
+	echoInstance.HidePort = true
+
 	// Static files route setup
 	echoInstance.Static(router.Routes.Assets, "public")
 
@@ -88,5 +93,15 @@ func main() {
 	// for _, route := range echoInstance.Routes() {
 	// 	log.Println(route.Method, route.Path)
 	// }
+
+	// Display banner
+	banner := `
+  ____ _   ______ 
+ / __ \ | / / __ \
+/ /_/ / |/ / /_/ /
+\____/|___/\____/ 
+
+`
+	log.Println("Started on localhost:8080", banner, "Ready to serve requests.")
 	echoInstance.Start("localhost:8080")
 }
