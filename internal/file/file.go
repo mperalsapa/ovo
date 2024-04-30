@@ -18,11 +18,11 @@ type FileMetaInfo struct {
 	Year         int
 	MetaProvider string
 	MetaId       string
+	FilePath     string
 }
 
 // This function scans a dir and returns a slice of files
-func ScanPath(path string) []string {
-	// entries, err := ioutil.ReadDir(path)
+func ScanFiles(path string) []string {
 	entries, err := os.ReadDir(path)
 	files := []string{}
 	if err != nil {
@@ -39,6 +39,25 @@ func ScanPath(path string) []string {
 	return files
 }
 
+// This function scans the given path and returns a slice of Directories
+func ScanDirectories(path string) []string {
+	entries, err := os.ReadDir(path)
+	dirs := []string{}
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, file := range entries {
+		if !file.IsDir() {
+			continue
+		}
+
+		dirs = append(dirs, file.Name())
+	}
+
+	return dirs
+}
+
 // This function tries to get metadata from the given filename.
 // It expects names containing name, and optionally year in parentheses and meta provider inside brackets followed by its id.
 // followed by its provider (e.g. [tmdb-1234])
@@ -48,6 +67,8 @@ func ScanPath(path string) []string {
 // Example 3: "The Matrix 1999"
 func ParseFilename(filename string) FileMetaInfo {
 	fileInfo := FileMetaInfo{}
+	fileInfo.FilePath = filename
+
 	// removing file extension
 	filenameWithoutExtension := regexp.MustCompile(`(.+?)(\.[^.]*$|$)`).FindStringSubmatch(filename)[1]
 
@@ -77,4 +98,11 @@ func ParseFilename(filename string) FileMetaInfo {
 	// Replace underscores with spaces
 	fileInfo.Name = regexp.MustCompile(`_`).ReplaceAllString(fileInfo.Name, " ")
 	return fileInfo
+}
+
+func Exists(path string) bool {
+	log.Println("Checking if path exists: ", path)
+	_, err := os.Stat(path)
+
+	return err == nil
 }
