@@ -363,3 +363,15 @@ func (library *Library) ScanForNewEpisodes(season Item, itemsPaths map[string]bo
 		}
 	}
 }
+
+func (library *Library) GetLibraryMainItems() []Item {
+	mainItems := []Item{}
+
+	for _, item := range library.Items {
+		if item.ItemType == ItemTypeMovie || item.ItemType == ItemTypeShow {
+			mainItems = append(mainItems, item)
+		}
+	}
+
+	return mainItems
+}

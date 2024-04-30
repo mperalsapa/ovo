@@ -13,7 +13,7 @@ type LibraryPageData struct {
 }
 
 templ itemList(library model.Library) {
-	for _, item := range library.Items {
+	for _, item := range library.GetLibraryMainItems() {
 		@component.VerticalCardTitleSubtitle(component.VerticalCardTitleSubtitleData{
 			CardTitle:    item.Title,
 			CardSubtitle: strconv.Itoa(item.ReleaseDate.Year()),

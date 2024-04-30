@@ -29,7 +29,7 @@ func Library(context echo.Context) error {
 	}
 
 	// Getting items from database
-	library.GetItems()
+	library.LoadItems()
 
 	component := page.Library(page.LibraryPageData{
 		Library:     library,
