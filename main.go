@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"ovo-server/internal/config"
@@ -17,6 +18,15 @@ import (
 )
 
 func init() {
+	// Display banner
+
+	banner := `
+	  ____ _   ______ 
+	 / __ \ | / / __ \
+	/ /_/ / |/ / /_/ /
+	\____/|___/\____/ 
+	`
+	fmt.Println(banner)
 	log.Println("Initializing OVO Server... This build is for development purposes only.")
 	// Initializing configuration, reading .env file and setting up environment variables
 	config.Init()
@@ -94,14 +104,6 @@ func main() {
 	// 	log.Println(route.Method, route.Path)
 	// }
 
-	// Display banner
-	banner := `
-  ____ _   ______ 
- / __ \ | / / __ \
-/ /_/ / |/ / /_/ /
-\____/|___/\____/ 
-
-`
-	log.Println("Started on localhost:8080", banner, "Ready to serve requests.")
+	log.Println("Started on http://localhost:8080. Ready to serve requests.")
 	echoInstance.Start("localhost:8080")
 }
