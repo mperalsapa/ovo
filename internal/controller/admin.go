@@ -91,7 +91,7 @@ func AdminStoreLibrary(context echo.Context) error {
 	storedLibrary.Paths = libraryForm.Paths
 
 	// Trying to save the library
-	err = storedLibrary.SaveLibrary()
+	err = storedLibrary.Save()
 	// if there is an error, show the form again with the error message and the previous data
 	if err != nil {
 		pageData := page.AdminLibraryFormPageData{

@@ -22,7 +22,7 @@ func APIAddLibrary(echo echo.Context) error {
 		return echo.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid payload"})
 	}
 
-	err := library.SaveLibrary()
+	err := library.Save()
 	if err != nil {
 		return echo.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}

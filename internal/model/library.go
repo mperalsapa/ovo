@@ -27,12 +27,6 @@ type Library struct {
 	Items []Item   `json:"items"`
 }
 
-func (library *Library) Equals(other Library) bool {
-	return library.ID == other.ID &&
-		library.Type == other.Type &&
-		library.Name == other.Name
-}
-
 func (library *Library) Validate() error {
 	if library.Type == "" {
 		return errors.New("type is required")
@@ -110,7 +104,7 @@ func (library *Library) DeleteLibrary() {
 	db.GetDB().Delete(&library)
 }
 
-func (library *Library) SaveLibrary() error {
+func (library *Library) Save() error {
 	if err := library.Validate(); err != nil {
 		return err
 	}
@@ -123,13 +117,14 @@ func (library *Library) SaveLibrary() error {
 	return nil
 }
 
-// GetItems load all items from library into its Items field and also return them
+// GetItems return all items from library
 func (library *Library) GetItems() []Item {
 	var items []Item
 	db.GetDB().Where(Item{LibraryID: library.ID}).Find(&items)
 	return items
 }
 
+// Loads all items from the library into the Items field
 func (library *Library) LoadItems() {
 	library.Items = library.GetItems()
 }
