@@ -101,7 +101,6 @@ func ParseFilename(filename string) FileMetaInfo {
 }
 
 func Exists(path string) bool {
-	log.Println("Checking if path exists: ", path)
 	_, err := os.Stat(path)
 
 	return err == nil

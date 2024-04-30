@@ -7,11 +7,18 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	ItemTypeMovie   = "Movie"
+	ItemTypeShow    = "Show"
+	ItemTypeSeason  = "Season"
+	ItemTypeEpisode = "Episode"
+)
+
 type Item struct {
 	gorm.Model
 	LibraryID        uint      `json:"library" gorm:"not null"`
 	ItemType         string    `gorm:"enum:show,season,episode,movie"`
-	TmdbID           uint      `json:"tmdb_id"`
+	TmdbID           string    `json:"tmdb_id"`
 	Title            string    `json:"title" gorm:"not null"`
 	OriginalTitle    string    `json:"original_title" gorm:"not null"`
 	Description      string    `json:"description"`

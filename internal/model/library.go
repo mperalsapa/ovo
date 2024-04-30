@@ -5,7 +5,8 @@ import (
 	"log"
 	db "ovo-server/internal/database"
 	"ovo-server/internal/file"
-	"ovo-server/internal/tmdb"
+	"path"
+	"strconv"
 	"time"
 
 	"gorm.io/gorm"
@@ -14,16 +15,16 @@ import (
 type LibraryType string
 
 const (
-	LibraryTypeMovie LibraryType = "movie"
-	LibraryTypeShow  LibraryType = "show"
+	LibraryTypeMovie = "movie"
+	LibraryTypeShow  = "show"
 )
 
 type Library struct {
 	gorm.Model
-	Type  LibraryType `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
-	Name  string      `json:"name" form:"name" gorm:"not null"`
-	Paths []string    `json:"paths" form:"paths[]" gorm:"serializer:json"`
-	Items []Item      `json:"items"`
+	Type  string   `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
+	Name  string   `json:"name" form:"name" gorm:"not null"`
+	Paths []string `json:"paths" form:"paths[]" gorm:"serializer:json"`
+	Items []Item   `json:"items"`
 }
 
 func (library *Library) Equals(other Library) bool {
@@ -50,12 +51,31 @@ func (library *Library) Validate() error {
 
 func (library *Library) removeEmptyPaths() {
 	var paths []string
-	for _, path := range library.Paths {
-		if path != "" {
-			paths = append(paths, path)
+	for _, libPath := range library.Paths {
+		if libPath != "" {
+			paths = append(paths, libPath)
 		}
 	}
 	library.Paths = paths
+}
+
+// This function removes duplicated Items based on his path
+func (library *Library) DeDuplicateItems() {
+	UniqueFilePaths := make(map[string]bool)
+	for _, item := range library.Items {
+		// Verificar si el FilePath del item ya está en UniqueFilePaths
+		if UniqueFilePaths[item.FilePath] {
+			log.Println("Deleting duplicated item: ", item.Title)
+			item.Delete()
+
+		} else {
+			// Si no está en UniqueFilePaths, agregar el FilePath a UniqueFilePaths
+			UniqueFilePaths[item.FilePath] = true
+		}
+	}
+
+	library.Items = nil
+	library.GetItems()
 }
 
 func GetLibraries() []Library {
@@ -104,15 +124,14 @@ func (library *Library) SaveLibrary() error {
 }
 
 // GetItems load all items from library into its Items field and also return them
-func (library *Library) GetItems() ([]Item, error) {
-	// var items []Item
-	// err := db.GetDB().Where("library_id = ?", library.ID).Find(&items).Error
-	err := db.GetDB().Preload("Items").First(&library, library.ID).Error
-	if err != nil {
-		return nil, err
-	}
+func (library *Library) GetItems() []Item {
+	var items []Item
+	db.GetDB().Where(Item{LibraryID: library.ID}).Find(&items)
+	return items
+}
 
-	return library.Items, nil
+func (library *Library) LoadItems() {
+	library.Items = library.GetItems()
 }
 
 func (library *Library) ScanLibrary() error {
@@ -121,40 +140,226 @@ func (library *Library) ScanLibrary() error {
 		return errors.New("no paths to scan")
 	}
 
-	// var movies []Movie
-	var parsedFiles []file.FileMetaInfo
-	// running scan for each path
-	for _, path := range library.Paths {
-		files := file.ScanPath(path)
-		for _, f := range files {
-			parsedFiles = append(parsedFiles, file.ParseFilename(f))
-		}
-	}
+	// Getting current items from database
+	library.LoadItems()
 
-	// finding movies by file info
-	moviesMetadata := tmdb.FindMovieByFileInfoList(parsedFiles)
+	// Scanning for new items that are not in the database yet
+	library.ScanForNewItems()
 
-	// converting metadata to movies
-	for _, metadata := range moviesMetadata {
-		releaseDate, _ := time.Parse(`2006-01-02`, metadata.ReleaseDate)
+	// Deduplicate items
+	library.DeDuplicateItems()
 
-		movie := Item{
-			LibraryID:     library.ID,
-			ItemType:      "movie",
-			TmdbID:        uint(metadata.ID),
-			Title:         metadata.Title,
-			OriginalTitle: metadata.OriginalTitle,
-			Description:   metadata.Overview,
-			ReleaseDate:   releaseDate,
-			PosterPath:    metadata.PosterPath,
-			FilePath:      "",
-		}
-
-		err := movie.Save()
-		if err != nil {
-			log.Printf("Error saving movie: %s. Error: %s", movie.Title, err)
-		}
-	}
+	// Remove orphan items
+	library.RemoveOrphanItems()
 
 	return nil
+
+	// // getting metadata for each file and storing it in the database as an item
+	// for _, fileInfo := range parsedFiles {
+	// 	log.Printf("Parsed file: %s. Getting metadata.", fileInfo.FilePath)
+	// 	var item Item
+	// 	db.GetDB().Where(Item{FilePath: fileInfo.FilePath}).FirstOrCreate(&item)
+
+	// 	metadata := tmdb.FindMovieByFileInfo(fileInfo)
+	// 	if metadata == nil {
+	// 		log.Printf("No metadata found for file: %s", fileInfo.FilePath)
+	// 		continue
+	// 	}
+
+	// 	releaseDate, _ := time.Parse("2006-01-02", metadata.ReleaseDate)
+	// 	item.LibraryID = library.ID
+	// 	item.ItemType = "movie"
+	// 	item.TmdbID = uint(metadata.ID)
+	// 	item.Title = metadata.Title
+	// 	item.OriginalTitle = metadata.OriginalTitle
+	// 	item.Description = metadata.Overview
+	// 	item.ReleaseDate = releaseDate
+	// 	item.PosterPath = metadata.PosterPath
+	// 	item.FilePath = fileInfo.FilePath
+
+	// 	err := item.Save()
+	// 	if err != nil {
+	// 		log.Printf("Error saving item: %s. Error: %s", item.Title, err)
+	// 	}
+
+	// }
+
+	return nil
+}
+
+// ItemExistsOnDisk checks if the item exists on disk
+func (library *Library) ItemExistsOnDisk(item Item) bool {
+	for range library.Paths {
+		if item.FilePath != "" {
+			if file.Exists(item.FilePath) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (library *Library) GetItemByPath(path string) (item Item) {
+	db.GetDB().Where(&Item{FilePath: path, LibraryID: library.ID}).First(&item)
+	return item
+}
+
+// RemoveOrphanItems removes items that are not on disk anymore
+func (library *Library) RemoveOrphanItems() {
+	library.LoadItems()
+	for _, item := range library.Items {
+		if !library.ItemExistsOnDisk(item) {
+			item.Delete()
+		}
+	}
+}
+
+// ScanForNewItems scans the library paths for new items and adds them to the database as items without metadata
+// Depending on the library type, it will scan for movies or shows
+func (library *Library) ScanForNewItems() {
+	switch library.Type {
+	case LibraryTypeMovie:
+		library.ScanForNewMovies()
+	case LibraryTypeShow:
+		library.ScanForNewShows()
+	}
+}
+
+func (library *Library) GetPathsMap() map[string]bool {
+	paths := make(map[string]bool)
+	for _, item := range library.Items {
+		paths[item.FilePath] = true
+	}
+	return paths
+}
+
+// Scans the given library paths for new movies.
+// In case the movie is not in the database yet, it will be added
+// The current items paths are what determines if that movie is already in the database.
+// This will make that when a movie is renamed, it will be re-added as a new one, because it's path changed.
+// Maybe in a future we could add a hash to the items to check if the file is the same, although this could be a bit expensive.
+// TODO: Improve scanning funcionality using hashes or other methods to check if the file is the same
+func (library *Library) ScanForNewMovies() {
+	// Storing current paths in a map for faster lookup to check if files are already in the database
+	currentPaths := library.GetPathsMap()
+
+	for _, libPath := range library.Paths {
+		files := file.ScanFiles(libPath)
+		for _, movie := range files {
+			log.Println("Movie detected:", movie)
+			filePath := path.Join(libPath, movie)
+			if currentPaths[filePath] {
+				continue
+			}
+			fileInfo := file.ParseFilename(movie)
+			item := Item{
+				LibraryID:     library.ID,
+				TmdbID:        fileInfo.MetaId,
+				ItemType:      ItemTypeMovie,
+				Title:         fileInfo.Name,
+				OriginalTitle: fileInfo.Name,
+				ReleaseDate:   time.Now(),
+				FilePath:      filePath,
+			}
+			item.Save()
+			currentPaths[filePath] = true
+		}
+	}
+}
+
+func (library *Library) ScanForNewShows() {
+	// Storing current paths in a map for faster lookup to check if files are already in the database
+	currentPaths := library.GetPathsMap()
+	for _, libPath := range library.Paths {
+		shows := file.ScanDirectories(libPath)
+		for _, show := range shows {
+			log.Println("Show detected:", show)
+			showPath := path.Join(libPath, show)
+			var showItem Item
+			// We check if current show exists in database. In case it doesn't, we create a dummy item containing basic info
+			// about the show, and we store the item for later usage in seasons.
+			if !currentPaths[showPath] {
+				parsedShow := file.ParseFilename(show)
+				showItem = Item{
+					LibraryID:     library.ID,
+					TmdbID:        parsedShow.MetaId,
+					ItemType:      ItemTypeShow,
+					Title:         parsedShow.Name,
+					OriginalTitle: parsedShow.Name,
+					ReleaseDate:   time.Now(),
+					FilePath:      showPath,
+				}
+				showItem.Save()
+			}
+
+			// Because we dont know if the item is new or existing, we need to retrieve it from the database.
+			// This will be used to reference seasons to their show.
+			showItem = library.GetItemByPath(showPath)
+			library.ScanForNewSeasons(showItem, currentPaths)
+		}
+	}
+}
+
+func (library *Library) ScanForNewSeasons(show Item, itemsPaths map[string]bool) {
+
+	if itemsPaths == nil {
+		itemsPaths = library.GetPathsMap()
+	}
+
+	// Start season scan
+	seasons := file.ScanDirectories(show.FilePath)
+	for _, season := range seasons {
+		log.Println("Season detected:", season)
+		seasonPath := path.Join(show.FilePath, season)
+		var seasonItem Item
+		if !itemsPaths[seasonPath] {
+			parsedSeason, err := file.ParseSeasonDirname(season)
+			if err != nil {
+				log.Printf("Error parsing season %s: %s", seasonPath, err)
+				continue
+			}
+			seasonItem = Item{
+				LibraryID:     library.ID,
+				ItemType:      ItemTypeSeason,
+				Title:         strconv.Itoa(parsedSeason),
+				OriginalTitle: strconv.Itoa(parsedSeason),
+				ReleaseDate:   time.Now(),
+				FilePath:      seasonPath,
+				ParentItem:    show.ID,
+			}
+			seasonItem.Save()
+		}
+		seasonItem = library.GetItemByPath(seasonPath)
+		library.ScanForNewEpisodes(seasonItem, itemsPaths)
+	}
+}
+
+func (library *Library) ScanForNewEpisodes(season Item, itemsPaths map[string]bool) {
+	if itemsPaths == nil {
+		itemsPaths = library.GetPathsMap()
+	}
+
+	episodes := file.ScanFiles(season.FilePath)
+	for _, episode := range episodes {
+		log.Println("Episode detected:", episode)
+		episodePath := path.Join(season.FilePath, episode)
+		var episodeItem Item
+		if !itemsPaths[episodePath] {
+			parsedEpisode, err := file.ParseEpisodeFilename(episode)
+			if err != nil {
+				log.Printf("Error parsing episode %s: %s", episodePath, err)
+				continue
+			}
+			episodeItem = Item{
+				LibraryID:     library.ID,
+				ItemType:      ItemTypeEpisode,
+				Title:         strconv.Itoa(parsedEpisode),
+				OriginalTitle: strconv.Itoa(parsedEpisode),
+				ReleaseDate:   time.Now(),
+				FilePath:      episodePath,
+				ParentItem:    season.ID,
+			}
+			episodeItem.Save()
+		}
+	}
 }

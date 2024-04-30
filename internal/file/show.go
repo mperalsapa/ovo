@@ -2,7 +2,6 @@ package file
 
 import (
 	"errors"
-	"log"
 	"regexp"
 	"strconv"
 )
@@ -32,8 +31,6 @@ func ParseEpisodeFilename(filename string) (int, error) {
 	// first we remove the file extension
 	filenameWithoutExtension := regexp.MustCompile(`(.+?)(\.[^.]*$|$)`).FindStringSubmatch(filename)[1]
 
-	log.Println(filenameWithoutExtension)
-
 	// We search for numbers in the filename. This would be like the season, but an episode also contains its season number.
 	// So we expect the episode filename to be "Episode S1E1", that would be Episode 1 from Season 1.
 	episodeNumber := regexp.MustCompile(`\d+`).FindAllString(filenameWithoutExtension, -1)
@@ -41,8 +38,6 @@ func ParseEpisodeFilename(filename string) (int, error) {
 	if episodeNumber == nil {
 		return 0, errors.New("could not parse episode number")
 	}
-
-	log.Println(episodeNumber)
 
 	// We convert the found numbers to integers
 	episodeNumberInt, err := strconv.Atoi(episodeNumber[len(episodeNumber)-1])
