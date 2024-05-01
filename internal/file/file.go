@@ -78,11 +78,11 @@ func ParseFilename(filename string) FileMetaInfo {
 		fileInfo.MetaId = metaId[2]
 		return fileInfo
 	}
-	year := regexp.MustCompile(`\((\d{4})\)`).FindStringSubmatch(filenameWithoutExtension)
-	if len(year) > 0 {
-		yearInt, _ := strconv.Atoi(year[1])
 
-		fileInfo.Year = yearInt
+	year := ParseYearFromFilename(filename)
+	if year != 0 {
+
+		fileInfo.Year = year
 
 		name := regexp.MustCompile(`(.*)\(\d+\)`).FindStringSubmatch(filenameWithoutExtension)
 		if len(name) > 0 {
@@ -98,6 +98,19 @@ func ParseFilename(filename string) FileMetaInfo {
 	// Replace underscores with spaces
 	fileInfo.Name = regexp.MustCompile(`_`).ReplaceAllString(fileInfo.Name, " ")
 	return fileInfo
+}
+
+// This function tries to get the year from the filename
+// It expects the year to be in parentheses
+// Example: "The Matrix (1999)"
+func ParseYearFromFilename(filename string) int {
+	year := regexp.MustCompile(`\((\d{4})\)`).FindStringSubmatch(filename)
+	if len(year) > 0 {
+		yearInt, _ := strconv.Atoi(year[1])
+		return yearInt
+	}
+
+	return 0
 }
 
 func Exists(path string) bool {

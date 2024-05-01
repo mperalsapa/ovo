@@ -3,11 +3,25 @@ package tmdb
 import (
 	"log"
 	"ovo-server/internal/config"
-	"ovo-server/internal/file"
 	"strconv"
+	"time"
 
 	tmdbApi "github.com/ryanbradynd05/go-tmdb"
 )
+
+type TMDBMetadataItem struct {
+	TmdbID         string
+	Title          string
+	OriginalTitle  string
+	Description    string
+	ReleaseDate    time.Time
+	PosterPath     string
+	BackdropPath   string
+	SeasonNumber   int
+	EpisodeNumber  int
+	EpisodeTitle   string
+	EpisodeAirDate string
+}
 
 var api *tmdbApi.TMDb
 
@@ -22,67 +36,38 @@ func Init() {
 
 }
 
-func FindMovieByFileInfoList(fileInfoList []file.FileMetaInfo) []*tmdbApi.Movie {
-	movies := []*tmdbApi.Movie{}
-
-	for _, fileInfo := range fileInfoList {
-		movie := FindMovieByFileInfo(fileInfo)
-		if movie != nil {
-			movies = append(movies, movie)
-		}
-	}
-
-	return movies
-
-}
-
-func FindMovieByFileInfo(fileInfo file.FileMetaInfo) *tmdbApi.Movie {
-	if fileInfo.MetaProvider != "" && fileInfo.MetaId != "" {
-		intId, err := strconv.Atoi(fileInfo.MetaId)
-		if err != nil {
-			log.Printf("Error converting MetaId to int on %s: %s", fileInfo.MetaId, err)
-			return nil
-		}
-		return GetMovieDetails(intId)
-	}
-
-	if fileInfo.Name != "" && fileInfo.Year != 0 {
-		result := SearchMovieByNameAndYear(fileInfo.Name, fileInfo.Year)
-
-		if result != nil {
-			return GetMovieDetails(result.ID)
-		}
-
-		log.Printf("No movie found for '%s' with year '%d'", fileInfo.Name, fileInfo.Year)
-		return nil
-	}
-
-	if fileInfo.Name != "" {
-		result := SearchMovie(fileInfo.Name)
-
-		if result != nil {
-			return GetMovieDetails(result.ID)
-		}
-
-		log.Printf("No movie found for '%s'", fileInfo.Name)
-		return nil
-	}
-	return nil
-}
-
-func GetMovieDetails(id int) *tmdbApi.Movie {
+func GetMovieDetails(id int) *TMDBMetadataItem {
 	details, err := api.GetMovieInfo(id, nil)
 	if err != nil {
 		log.Printf("Error getting movie details for id '%d': %s", id, err)
 		return nil
 	}
 
-	return details
+	metadata := &TMDBMetadataItem{
+		TmdbID:        strconv.Itoa(details.ID),
+		Title:         details.Title,
+		OriginalTitle: details.OriginalTitle,
+		Description:   details.Overview,
+		PosterPath:    details.PosterPath,
+		BackdropPath:  details.BackdropPath,
+	}
+
+	releaseDate, err := time.Parse("2006-01-02", details.ReleaseDate)
+	if err != nil {
+		log.Printf("Error parsing release date for movie '%s': Received release date is: %s. \nError: %s. \nWon't get modified.", details.Title, details.ReleaseDate, err)
+		return metadata
+	}
+
+	metadata.ReleaseDate = releaseDate
+	return metadata
 }
 
-func SearchMovieByNameAndYear(name string, year int) *tmdbApi.MovieShort {
+func SearchMovieByNameAndYear(name string, year int) *TMDBMetadataItem {
 	options := make(map[string]string)
-	options["year"] = strconv.Itoa(year)
+	if year != 0 {
+		options["year"] = strconv.Itoa(year)
+	}
+
 	details, err := api.SearchMovie(name, options)
 	if err != nil {
 		log.Printf("Error searching movie '%s' with year '%d': %s", name, year, err)
@@ -95,21 +80,61 @@ func SearchMovieByNameAndYear(name string, year int) *tmdbApi.MovieShort {
 		return nil
 	}
 
-	return &details.Results[0]
+	return GetMovieDetails(details.Results[0].ID)
 }
 
-func SearchMovie(name string) *tmdbApi.MovieShort {
-	log.Println("Searching Movie by name only: ", name)
-	var options map[string]string
-	details, err := api.SearchMovie(name, options)
+func SearchMovie(name string) *TMDBMetadataItem {
+	return SearchMovieByNameAndYear(name, 0)
+}
+
+func GetShowDetails(id int) *TMDBMetadataItem {
+	details, err := api.GetTvInfo(id, nil)
 	if err != nil {
-		log.Printf("Error searching movie '%s': %s", name, err)
+		log.Printf("Error getting show details for id '%d': %s", id, err)
+		return nil
+	}
+
+	metadata := &TMDBMetadataItem{
+		TmdbID:        strconv.Itoa(details.ID),
+		Title:         details.Name,
+		OriginalTitle: details.OriginalName,
+		Description:   details.Overview,
+		PosterPath:    details.PosterPath,
+		BackdropPath:  details.BackdropPath,
+	}
+
+	firstAiredDate, err := time.Parse("2006-01-02", details.FirstAirDate)
+
+	if err != nil {
+		log.Printf("Error parsing first aired date for show '%s': Received first aired date is: %s. \nError: %s. \nWon't get modified.", details.Name, details.FirstAirDate, err)
+		return metadata
+	}
+
+	metadata.ReleaseDate = firstAiredDate
+	return metadata
+}
+
+func SearchShowByNameAndYear(name string, year int) *TMDBMetadataItem {
+	options := make(map[string]string)
+
+	if year != 0 {
+		options["year"] = strconv.Itoa(year)
+	}
+
+	details, err := api.SearchTv(name, options)
+	if err != nil {
+		log.Printf("Error searching show '%s': %s", name, err)
 		return nil
 	}
 
 	if len(details.Results) == 0 {
+		log.Println("No show found for ", name)
 		return nil
 	}
 
-	return &details.Results[0]
+	return GetShowDetails(details.Results[0].ID)
+}
+
+func SearchShow(name string) *TMDBMetadataItem {
+	return SearchShowByNameAndYear(name, 0)
 }

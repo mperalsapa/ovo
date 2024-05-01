@@ -147,37 +147,9 @@ func (library *Library) ScanLibrary() error {
 	// Remove orphan items
 	library.RemoveOrphanItems()
 
-	return nil
-
-	// // getting metadata for each file and storing it in the database as an item
-	// for _, fileInfo := range parsedFiles {
-	// 	log.Printf("Parsed file: %s. Getting metadata.", fileInfo.FilePath)
-	// 	var item Item
-	// 	db.GetDB().Where(Item{FilePath: fileInfo.FilePath}).FirstOrCreate(&item)
-
-	// 	metadata := tmdb.FindMovieByFileInfo(fileInfo)
-	// 	if metadata == nil {
-	// 		log.Printf("No metadata found for file: %s", fileInfo.FilePath)
-	// 		continue
-	// 	}
-
-	// 	releaseDate, _ := time.Parse("2006-01-02", metadata.ReleaseDate)
-	// 	item.LibraryID = library.ID
-	// 	item.ItemType = "movie"
-	// 	item.TmdbID = uint(metadata.ID)
-	// 	item.Title = metadata.Title
-	// 	item.OriginalTitle = metadata.OriginalTitle
-	// 	item.Description = metadata.Overview
-	// 	item.ReleaseDate = releaseDate
-	// 	item.PosterPath = metadata.PosterPath
-	// 	item.FilePath = fileInfo.FilePath
-
-	// 	err := item.Save()
-	// 	if err != nil {
-	// 		log.Printf("Error saving item: %s. Error: %s", item.Title, err)
-	// 	}
-
-	// }
+	for _, item := range library.GetItems() {
+		item.FetchMetadata()
+	}
 
 	return nil
 }
