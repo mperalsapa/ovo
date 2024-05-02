@@ -90,6 +90,7 @@ func (item *Item) FetchMetadata() {
 }
 
 func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
+	item.TmdbID = metadata.TmdbID
 	item.Title = metadata.Title
 	item.OriginalTitle = metadata.OriginalTitle
 	item.Description = metadata.Description
