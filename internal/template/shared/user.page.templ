@@ -1,0 +1,23 @@
+package shared
+
+import "ovo-server/internal/template/component"
+import "ovo-server/internal/session"
+
+type UserPageData struct {
+	Title       string
+	UserSession session.UserSession
+}
+
+templ UserPage(pageData UserPageData) {
+	@Page(pageData.Title) {
+		@component.UserSidebar(component.UserSidebarData{
+			UserSession: pageData.UserSession,
+		})
+		@component.PageContainer("h-fit") {
+			@component.UserNavbar()
+			@component.Container("px-0 marginTopHeader") {
+				{ children... }
+			}
+		}
+	}
+}

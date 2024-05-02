@@ -24,17 +24,12 @@ templ itemList(library model.Library) {
 }
 
 templ Library(pageData LibraryPageData) {
-	@shared.Page(pageData.Library.Name) {
-		@component.UserSidebar(component.UserSidebarData{
-			UserSession: pageData.UserSession,
-		})
-		@component.PageContainer("overflow-hidden") {
-			@component.UserNavbar()
-			@component.Container("px-0 marginTopHeader") {
-				@component.Container("masonry-container w-11/12 mx-auto") {
-					@itemList(pageData.Library)
-				}
-			}
+	@shared.UserPage(shared.UserPageData{
+		Title:       pageData.Library.Name,
+		UserSession: pageData.UserSession,
+	}) {
+		@component.Container("masonry-container w-11/12 mx-auto") {
+			@itemList(pageData.Library)
 		}
 	}
 }
