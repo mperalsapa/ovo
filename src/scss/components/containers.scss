@@ -21,3 +21,15 @@
         }
     }
 }
+
+@media screen and (min-width: 640px) {
+    .sidebar-container.closed+.content-container {
+        width: 100%;
+    }
+
+    .sidebar-container+.content-container {
+        transition-property: width;
+        transition-duration: 300ms;
+        width: calc(100% - 18rem);
+    }
+}

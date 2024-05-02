@@ -1,0 +1,19 @@
+package page
+
+import "ovo-server/internal/model"
+import "ovo-server/internal/template/shared"
+import "ovo-server/internal/session"
+
+type ItemDetailsPageData struct {
+	Item        model.Item
+	UserSession session.UserSession
+}
+
+templ ItemDetailsPage(pageData ItemDetailsPageData) {
+	@shared.UserPage(shared.UserPageData{
+		Title:       pageData.Item.Title,
+		UserSession: pageData.UserSession,
+	}) {
+		<div></div>
+	}
+}

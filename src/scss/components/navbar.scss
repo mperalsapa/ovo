@@ -19,7 +19,7 @@ header {
     background-color: #333;
     padding-right: 30px;
     padding-left: 30px;
-    width: 100%;
+    width: inherit;
     height: vars.$header-height;
 
     .headerSection {
