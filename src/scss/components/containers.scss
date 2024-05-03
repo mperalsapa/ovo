@@ -33,3 +33,34 @@
         width: calc(100% - 18rem);
     }
 }
+
+.item-container {
+    margin: 2.5rem;
+    margin-inline: 5rem;
+
+    h1 {
+        font-size: 1.75rem;
+        line-height: 1;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+        line-height: 1;
+    }
+
+    .item-image {
+        aspect-ratio: 0.666;
+        width: 350px;
+    }
+
+
+    * span {
+        display: inline-block;
+        line-height: 1;
+        font-size: 1.375rem;
+    }
+}
+
+.inline-icon {
+    vertical-align: text-bottom;
+}
