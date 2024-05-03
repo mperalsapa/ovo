@@ -60,6 +60,17 @@ func (item *Item) Delete() {
 	db.GetDB().Delete(&item)
 }
 
+func GetItemById(id uint) (Item, error) {
+	var item Item
+	result := db.GetDB().First(&item, id)
+
+	if result.Error != nil {
+		return item, result.Error
+	}
+
+	return item, nil
+}
+
 func (item *Item) FetchMetadata() {
 	var metadata *tmdb.TMDBMetadataItem
 
