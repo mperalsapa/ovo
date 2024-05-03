@@ -17,7 +17,7 @@ type FileMetaInfo struct {
 	Name         string
 	Year         int
 	MetaProvider string
-	MetaId       string
+	MetaID       string
 	FilePath     string
 }
 
@@ -72,10 +72,10 @@ func ParseFilename(filename string) FileMetaInfo {
 	// removing file extension
 	filenameWithoutExtension := regexp.MustCompile(`(.+?)(\.[^.]*$|$)`).FindStringSubmatch(filename)[1]
 
-	metaId := regexp.MustCompile(`\[(.+)-(.+)\]`).FindStringSubmatch(filename)
+	metaId := regexp.MustCompile(`\[(.+)id-(.+)\]`).FindStringSubmatch(filename)
 	if len(metaId) > 0 {
 		fileInfo.MetaProvider = metaId[1]
-		fileInfo.MetaId = metaId[2]
+		fileInfo.MetaID = metaId[2]
 		return fileInfo
 	}
 

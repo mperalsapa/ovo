@@ -12,17 +12,19 @@ import (
 )
 
 const (
-	ItemTypeMovie   = "Movie"
-	ItemTypeShow    = "Show"
-	ItemTypeSeason  = "Season"
-	ItemTypeEpisode = "Episode"
+	ItemTypeMovie    = "Movie"
+	ItemTypeShow     = "Show"
+	ItemTypeSeason   = "Season"
+	ItemTypeEpisode  = "Episode"
+	MetaProviderTMDB = "tmdb"
 )
 
 type Item struct {
 	gorm.Model
 	LibraryID        uint      `json:"library" gorm:"not null"`
 	ItemType         string    `gorm:"enum:show,season,episode,movie"`
-	TmdbID           string    `json:"tmdb_id"`
+	MetaProvider     string    `json:"meta_platform"`
+	MetaID           string    `json:"meta_id"`
 	Title            string    `json:"title" gorm:"not null"`
 	OriginalTitle    string    `json:"original_title" gorm:"not null"`
 	Description      string    `json:"description"`
@@ -63,18 +65,40 @@ func (item *Item) FetchMetadata() {
 
 	switch item.ItemType {
 	case ItemTypeMovie:
-		if item.TmdbID != "" {
-			tmdbID, _ := strconv.Atoi(item.TmdbID)
+		if item.MetaID != "" {
+			var tmdbID int
+			var err error
+			// If metadata is from external ID, we search for TMDB ID using external
+			if item.MetaProvider != MetaProviderTMDB {
+				log.Printf("Using external ID. Platform: %s, ID: %s", item.MetaProvider, item.MetaID)
+				tmdbID, err = tmdb.GetIDFromExternal(item.MetaProvider, item.MetaID)
+				if err != nil {
+					log.Printf("Error searching by external ID: %s", err)
+					return
+				}
+				log.Printf("ID result from %s in %s: %d", item.MetaID, item.MetaProvider, tmdbID)
+			} else {
+				tmdbID, err = strconv.Atoi(item.MetaID)
+				if err != nil {
+					log.Printf("Error converting ID to int: %s", item.MetaID)
+					return
+				}
+			}
+
 			metadata = tmdb.GetMovieDetails(tmdbID)
-		} else if year := file.ParseYearFromFilename(item.FilePath); year != 0 {
-			metadata = tmdb.SearchMovieByNameAndYear(item.Title, year)
-		} else {
-			metadata = tmdb.SearchMovie(item.Title)
+		}
+
+		if metadata == nil {
+			if year := file.ParseYearFromFilename(item.FilePath); year != 0 {
+				metadata = tmdb.SearchMovieByNameAndYear(item.Title, year)
+			} else {
+				metadata = tmdb.SearchMovie(item.Title)
+			}
 		}
 
 	case ItemTypeShow:
-		if item.TmdbID != "" {
-			tmdbID, _ := strconv.Atoi(item.TmdbID)
+		if item.MetaID != "" {
+			tmdbID, _ := strconv.Atoi(item.MetaID)
 			metadata = tmdb.GetShowDetails(tmdbID)
 		} else if year := file.ParseYearFromFilename(item.FilePath); year != 0 {
 			metadata = tmdb.SearchShowByNameAndYear(item.Title, year)
@@ -90,7 +114,8 @@ func (item *Item) FetchMetadata() {
 }
 
 func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
-	item.TmdbID = metadata.TmdbID
+	item.MetaProvider = MetaProviderTMDB
+	item.MetaID = metadata.TmdbID
 	item.Title = metadata.Title
 	item.OriginalTitle = metadata.OriginalTitle
 	item.Description = metadata.Description

@@ -83,6 +83,42 @@ func SearchMovieByNameAndYear(name string, year int) *TMDBMetadataItem {
 	return GetMovieDetails(details.Results[0].ID)
 }
 
+// Finds TMDB ID from external meta provider. Using a platform and a ID, returns a ID.
+// User is expected to use the returned ID on correct field (movie, show, season...)
+// Types are
+// - Movie
+// - Show
+// - Season
+// - Episode
+// - Person
+func GetIDFromExternal(MetaProvider string, MetaID string) (int, error) {
+	options := make(map[string]string)
+	response, err := api.GetFind(MetaID, MetaProvider+"_id", options)
+	var resultID int
+
+	if err != nil {
+		return 0, err
+	}
+
+	if len(response.MovieResults) > 0 {
+		resultID = response.MovieResults[0].ID
+	}
+	if len(response.TvResults) > 0 {
+		resultID = response.TvResults[0].ID
+	}
+	if len(response.TvSeasonResults) > 0 {
+		resultID = response.TvSeasonResults[0].ID
+	}
+	if len(response.TvEpisodeResults) > 0 {
+		resultID = response.TvEpisodeResults[0].ID
+	}
+	if len(response.PersonResults) > 0 {
+		resultID = response.PersonResults[0].ID
+	}
+
+	return resultID, nil
+}
+
 func SearchMovie(name string) *TMDBMetadataItem {
 	return SearchMovieByNameAndYear(name, 0)
 }
