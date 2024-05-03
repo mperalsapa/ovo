@@ -221,7 +221,8 @@ func (library *Library) ScanForNewMovies() {
 			fileInfo := file.ParseFilename(movie)
 			item := Item{
 				LibraryID:     library.ID,
-				TmdbID:        fileInfo.MetaId,
+				MetaProvider:  fileInfo.MetaProvider,
+				MetaID:        fileInfo.MetaID,
 				ItemType:      ItemTypeMovie,
 				Title:         fileInfo.Name,
 				OriginalTitle: fileInfo.Name,
@@ -249,7 +250,8 @@ func (library *Library) ScanForNewShows() {
 				parsedShow := file.ParseFilename(show)
 				showItem = Item{
 					LibraryID:     library.ID,
-					TmdbID:        parsedShow.MetaId,
+					MetaProvider:  parsedShow.MetaProvider,
+					MetaID:        parsedShow.MetaID,
 					ItemType:      ItemTypeShow,
 					Title:         parsedShow.Name,
 					OriginalTitle: parsedShow.Name,

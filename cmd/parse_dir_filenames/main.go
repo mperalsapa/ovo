@@ -19,14 +19,14 @@ func main() {
 		// log.Println(f)
 		parsed := file.ParseFilename(f)
 
-		log.Printf("Name: %s, Year: %d, MetaProvider: %s, MetaId: %s", parsed.Name, parsed.Year, parsed.MetaProvider, parsed.MetaId)
+		log.Printf("Name: %s, Year: %d, MetaProvider: %s, MetaId: %s", parsed.Name, parsed.Year, parsed.MetaProvider, parsed.MetaID)
 	}
 	fmt.Println("")
 	log.Println("Scanning shows...")
 	log.Printf("Found %d directories in %s", len(file.ScanDirectories(ShowsDir)), ShowsDir)
 	for _, d := range file.ScanDirectories(ShowsDir) {
 		parsed := file.ParseFilename(d)
-		log.Printf("\tName: %s, Year: %d, MetaProvider: %s, MetaId: %s", parsed.Name, parsed.Year, parsed.MetaProvider, parsed.MetaId)
+		log.Printf("\tName: %s, Year: %d, MetaProvider: %s, MetaId: %s", parsed.Name, parsed.Year, parsed.MetaProvider, parsed.MetaID)
 
 		showDir := ShowsDir + "/" + d
 		seasons := file.ScanDirectories(showDir)
