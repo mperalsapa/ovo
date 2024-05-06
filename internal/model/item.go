@@ -37,15 +37,6 @@ type Item struct {
 	Credits          []Credit  `json:"credits" gorm:"constraint:OnDelete:CASCADE"`
 }
 
-type ItemMetadata struct {
-	TmdbID        string    `json:"tmdb_id"`
-	Title         string    `json:"title"`
-	OriginalTitle string    `json:"original_title"`
-	Description   string    `json:"description"`
-	ReleaseDate   time.Time `json:"release_date"`
-	PosterPath    string    `json:"poster_path"`
-}
-
 func (item *Item) Save() error {
 
 	// Save movie to database
