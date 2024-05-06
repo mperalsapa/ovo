@@ -216,20 +216,27 @@ func (library *Library) ScanForNewMovies() {
 			log.Println("Movie detected:", movie)
 			filePath := path.Join(libPath, movie)
 			if currentPaths[filePath] {
+				log.Println("Movie already in database:", movie)
 				continue
 			}
 			fileInfo := file.ParseFilename(movie)
 			item := Item{
-				LibraryID:     library.ID,
-				MetaProvider:  fileInfo.MetaProvider,
-				MetaID:        fileInfo.MetaID,
-				ItemType:      ItemTypeMovie,
-				Title:         fileInfo.Name,
-				OriginalTitle: fileInfo.Name,
-				ReleaseDate:   time.Now(),
-				FilePath:      filePath,
+				LibraryID:        library.ID,
+				MetaProvider:     fileInfo.MetaProvider,
+				MetaID:           fileInfo.MetaID,
+				ItemType:         ItemTypeMovie,
+				Title:            fileInfo.Name,
+				OriginalTitle:    fileInfo.Name,
+				ReleaseDate:      time.Now(),
+				LastMetadataScan: time.Now(),
+				FilePath:         filePath,
 			}
-			item.Save()
+			log.Println("Adding movie to database:", movie)
+			err := item.Save()
+			if err != nil {
+				log.Println("Error saving movie:", err)
+				continue
+			}
 			currentPaths[filePath] = true
 		}
 	}
