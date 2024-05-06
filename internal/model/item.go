@@ -206,3 +206,29 @@ func (item *Item) FetchCredits() {
 	}
 
 }
+
+func (item *Item) GetDirectors() []Person {
+	var directors []Person
+	transaction := db.GetDB().Joins("JOIN credits ON people.id = credits.person_id").
+		Where("credits.item_id = ? AND credits.department = ?", item.ID, "Directing").
+		Find(&directors)
+	if transaction.Error != nil {
+		log.Println(transaction.Error)
+	}
+	log.Println("Query:", transaction.Statement.SQL.String())
+
+	return directors
+}
+
+func (item *Item) GetWriters() []Person {
+	var writers []Person
+	transaction := db.GetDB().Joins("JOIN credits ON people.id = credits.person_id").
+		Where("credits.item_id = ? AND credits.department = ?", item.ID, "Writing").
+		Find(&writers)
+	if transaction.Error != nil {
+		log.Println(transaction.Error)
+	}
+	log.Println("Query:", transaction.Statement.SQL.String())
+
+	return writers
+}

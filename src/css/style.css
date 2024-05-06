@@ -456,10 +456,14 @@ header::after {
   aspect-ratio: 0.666;
   width: 350px;
 }
-.item-container * span {
+.item-container .details span {
   display: inline-block;
   line-height: 1;
   font-size: 1.375rem;
+}
+.item-container .comma-separated + .comma-separated::before {
+  content: ",";
+  @apply me-1;
 }
 
 .inline-icon {

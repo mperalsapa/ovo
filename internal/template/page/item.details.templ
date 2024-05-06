@@ -20,8 +20,10 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 			<div class="flex flex-col gap-8">
 				<div class="flex flex-col gap-2">
 					<h1 class="">{ pageData.Item.Title }</h1>
-					<h2 class="">{ pageData.Item.Title }</h2>
-					<div class="flex gap-6">
+					if pageData.Item.Title != pageData.Item.OriginalTitle {
+						<h2 class="">{ pageData.Item.OriginalTitle }</h2>
+					}
+					<div class="flex gap-6 details">
 						<span>
 							{ strconv.Itoa(pageData.Item.ReleaseDate.Year()) }
 						</span>
@@ -41,11 +43,33 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 						</span>
 					</div>
 				</div>
-				<h2>Frase de pelicula</h2>
-				<div>
-					<p>
-						{ pageData.Item.Description }
-					</p>
+				if pageData.Item.TagLine != "" {
+					<h2>{ pageData.Item.TagLine }</h2>
+				}
+				<p>
+					{ pageData.Item.Description }
+				</p>
+				<div class="flex flex-col gap-4">
+					if directors := pageData.Item.GetDirectors(); len(directors) > 0 {
+						<div>
+							<h3 class="font-bold">Directors</h3>
+							<div class="flex">
+								for _, director := range directors {
+									<span class="comma-separated">{ director.Name }</span>
+								}
+							</div>
+						</div>
+					}
+					if writers := pageData.Item.GetWriters(); len(writers) > 0 {
+						<div>
+							<h3 class="font-bold">Writers</h3>
+							<div class="flex">
+								for _, writer := range writers {
+									<span class="comma-separated">{ writer.Name }</span>
+								}
+							</div>
+						</div>
+					}
 				</div>
 			</div>
 		</div>
