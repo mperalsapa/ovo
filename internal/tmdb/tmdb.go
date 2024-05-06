@@ -14,6 +14,7 @@ type TMDBMetadataItem struct {
 	Title          string
 	OriginalTitle  string
 	Description    string
+	Tagline        string
 	ReleaseDate    time.Time
 	PosterPath     string
 	BackdropPath   string
@@ -68,6 +69,7 @@ func GetMovieDetails(id int) *TMDBMetadataItem {
 		Description:   details.Overview,
 		PosterPath:    details.PosterPath,
 		BackdropPath:  details.BackdropPath,
+		Tagline:       details.Tagline,
 	}
 
 	releaseDate, err := time.Parse("2006-01-02", details.ReleaseDate)

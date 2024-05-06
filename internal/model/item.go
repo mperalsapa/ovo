@@ -130,6 +130,7 @@ func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
 	item.ReleaseDate = metadata.ReleaseDate
 	item.PosterPath = metadata.PosterPath
 	item.LastMetadataScan = time.Now()
+	item.TagLine = metadata.Tagline
 	item.Save()
 }
 
