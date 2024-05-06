@@ -25,14 +25,15 @@ type Item struct {
 	ItemType         string    `gorm:"enum:show,season,episode,movie"`
 	MetaProvider     string    `json:"meta_platform"`
 	MetaID           string    `json:"meta_id"`
-	Title            string    `json:"title" gorm:"not null"`
-	OriginalTitle    string    `json:"original_title" gorm:"not null"`
+	Title            string    `json:"title" gorm:"not null;index"`
+	OriginalTitle    string    `json:"original_title" gorm:"not null;index"`
 	Description      string    `json:"description"`
 	ReleaseDate      time.Time `json:"release_date"`
 	PosterPath       string    `json:"poster_path"`
 	FilePath         string    `json:"file_path" gorm:"not null"`
 	LastMetadataScan time.Time `json:"last_metadata_scan"`
 	ParentItem       uint      `json:"parent_item"` // Show or Season ID
+	Credits          []Credit  `json:"credits" gorm:"constraint:OnDelete:CASCADE"`
 }
 
 type ItemMetadata struct {
@@ -73,7 +74,7 @@ func GetItemById(id uint) (Item, error) {
 
 func (item *Item) FetchMetadata() {
 	var metadata *tmdb.TMDBMetadataItem
-
+	log.Println("Fetching metadata for", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID)
 	switch item.ItemType {
 	case ItemTypeMovie:
 		if item.MetaID != "" {
@@ -118,10 +119,14 @@ func (item *Item) FetchMetadata() {
 		}
 	}
 
-	if metadata != nil {
-		log.Println("Updating metadata for", item.Title, "with ID", item.ID, "and tmdb ID", metadata.TmdbID)
-		item.UpdateMovieMetadata(*metadata)
+	if metadata == nil {
+		return
 	}
+
+	log.Println("Updating metadata for", item.Title, "with ID", item.ID, "and tmdb ID", metadata.TmdbID)
+	item.UpdateMovieMetadata(*metadata)
+
+	item.FetchCredits()
 }
 
 func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
@@ -134,4 +139,77 @@ func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
 	item.PosterPath = metadata.PosterPath
 	item.LastMetadataScan = time.Now()
 	item.Save()
+}
+
+func (item *Item) FetchCredits() {
+	var credits []tmdb.TMDBCredit
+	var err error
+
+	// If item does not have meta id we can't know what to search for
+	if item.MetaID == "" {
+		return
+	}
+
+	itemID, err := strconv.Atoi(item.MetaID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	switch item.ItemType {
+	case ItemTypeMovie:
+		{
+			credits, err = tmdb.GetMovieCredits(itemID)
+		}
+	}
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	log.Println("Processing credits for", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID)
+	for _, credit := range credits {
+		// Check if person already exists in database
+		var person Person
+		db.GetDB().Where(&Person{MetaID: credit.PersonTmdbID}).First(&person)
+		if person.ID == 0 {
+			personMeta, _ := tmdb.GetPerson(credit.PersonTmdbID)
+			person = Person{
+				Name:         personMeta.Name,
+				MetaID:       credit.PersonTmdbID,
+				MetaPlatform: "tmdb",
+				ProfilePath:  personMeta.ProfilePath,
+				Biography:    personMeta.Biography,
+				PlaceOfBirth: personMeta.PlaceOfBirth,
+				Birthday:     personMeta.Birthday,
+				Deathday:     personMeta.Deathday,
+			}
+			err := person.Save()
+			if err != nil {
+				log.Printf("Error saving person %s: %s", person.Name, err)
+				log.Println("Birthday:", person.Birthday)
+
+				continue
+			}
+		}
+
+		// Check if credit already exists in database
+		var existingCredit Credit
+		db.GetDB().Where(&Credit{ItemID: item.ID, PersonID: person.ID}).First(&existingCredit)
+		if existingCredit.ID == 0 {
+			newCredit := Credit{
+				ItemID:     item.ID,
+				PersonID:   person.ID,
+				Department: credit.Department,
+				Role:       credit.Role,
+			}
+			err := newCredit.Save()
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+		}
+	}
+
 }

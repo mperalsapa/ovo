@@ -23,6 +23,24 @@ type TMDBMetadataItem struct {
 	EpisodeAirDate string
 }
 
+type TMDBCredit struct {
+	ItemTmdbID   string
+	ItemType     string
+	PersonTmdbID string
+	Department   string
+	Role         string
+}
+
+type TMDBPerson struct {
+	TmdbID       string
+	Name         string
+	Biography    string
+	Birthday     time.Time
+	Deathday     time.Time
+	PlaceOfBirth string
+	ProfilePath  string
+}
+
 var api *tmdbApi.TMDb
 
 func Init() {
@@ -173,4 +191,68 @@ func SearchShowByNameAndYear(name string, year int) *TMDBMetadataItem {
 
 func SearchShow(name string) *TMDBMetadataItem {
 	return SearchShowByNameAndYear(name, 0)
+}
+
+func GetMovieCredits(id int) ([]TMDBCredit, error) {
+	var credits []TMDBCredit
+	var options = make(map[string]string)
+	responseCredits, err := api.GetMovieCredits(id, options)
+	if err != nil {
+		log.Printf("Error getting movie credits for id '%d': %s", id, err)
+		return nil, err
+	}
+
+	for _, credit := range responseCredits.Cast {
+		credits = append(credits, TMDBCredit{
+			ItemTmdbID:   strconv.Itoa(id),
+			PersonTmdbID: strconv.Itoa(credit.ID),
+			Department:   "cast",
+			Role:         credit.Character,
+		})
+	}
+
+	for _, credit := range responseCredits.Crew {
+		credits = append(credits, TMDBCredit{
+			ItemTmdbID:   strconv.Itoa(id),
+			PersonTmdbID: strconv.Itoa(credit.ID),
+			Department:   credit.Department,
+			Role:         credit.Job,
+		})
+	}
+
+	return credits, nil
+}
+
+func GetPerson(id string) (*TMDBPerson, error) {
+	var options = make(map[string]string)
+	personID, err := strconv.Atoi(id)
+	if err != nil {
+		log.Printf("Error converting id to int: %s", id)
+		return nil, err
+	}
+	response, err := api.GetPersonInfo(personID, options)
+	if err != nil {
+		log.Printf("Error getting person info for id '%d': %s", personID, err)
+		return nil, err
+	}
+
+	person := &TMDBPerson{
+		TmdbID:       strconv.Itoa(response.ID),
+		Name:         response.Name,
+		Biography:    response.Biography,
+		PlaceOfBirth: response.PlaceOfBirth,
+		ProfilePath:  response.ProfilePath,
+	}
+
+	birthday, err := time.Parse("2006-01-02", response.Birthday)
+	if err == nil {
+		person.Birthday = birthday
+	}
+
+	deathday, err := time.Parse("2006-01-02", response.Deathday)
+	if err == nil {
+		person.Deathday = deathday
+	}
+
+	return person, nil
 }
