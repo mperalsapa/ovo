@@ -28,10 +28,11 @@ type Item struct {
 	Title            string    `json:"title" gorm:"not null;index"`
 	OriginalTitle    string    `json:"original_title" gorm:"not null;index"`
 	Description      string    `json:"description"`
+	TagLine          string    `json:"tag_line" gorm:"default:null"`
 	ReleaseDate      time.Time `json:"release_date"`
-	PosterPath       string    `json:"poster_path"`
+	PosterPath       string    `json:"poster_path" gorm:"default:null"`
 	FilePath         string    `json:"file_path" gorm:"not null"`
-	LastMetadataScan time.Time `json:"last_metadata_scan"`
+	LastMetadataScan time.Time `json:"last_metadata_scan" gorm:"default:null"`
 	ParentItem       uint      `json:"parent_item"` // Show or Season ID
 	Credits          []Credit  `json:"credits" gorm:"constraint:OnDelete:CASCADE"`
 }

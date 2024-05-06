@@ -221,15 +221,14 @@ func (library *Library) ScanForNewMovies() {
 			}
 			fileInfo := file.ParseFilename(movie)
 			item := Item{
-				LibraryID:        library.ID,
-				MetaProvider:     fileInfo.MetaProvider,
-				MetaID:           fileInfo.MetaID,
-				ItemType:         ItemTypeMovie,
-				Title:            fileInfo.Name,
-				OriginalTitle:    fileInfo.Name,
-				ReleaseDate:      time.Now(),
-				LastMetadataScan: time.Now(),
-				FilePath:         filePath,
+				LibraryID:     library.ID,
+				MetaProvider:  fileInfo.MetaProvider,
+				MetaID:        fileInfo.MetaID,
+				ItemType:      ItemTypeMovie,
+				Title:         fileInfo.Name,
+				OriginalTitle: fileInfo.Name,
+				ReleaseDate:   time.Now(),
+				FilePath:      filePath,
 			}
 			log.Println("Adding movie to database:", movie)
 			err := item.Save()
