@@ -225,6 +225,36 @@ func GetMovieCredits(id int) ([]TMDBCredit, error) {
 	return credits, nil
 }
 
+func GetShowCredits(id int) ([]TMDBCredit, error) {
+	var credits []TMDBCredit
+	var options = make(map[string]string)
+	responseCredits, err := api.GetTvCredits(id, options)
+	if err != nil {
+		log.Printf("Error getting show credits for id '%d': %s", id, err)
+		return nil, err
+	}
+
+	for _, credit := range responseCredits.Cast {
+		credits = append(credits, TMDBCredit{
+			ItemTmdbID:   strconv.Itoa(id),
+			PersonTmdbID: strconv.Itoa(credit.ID),
+			Department:   "cast",
+			Role:         credit.Character,
+		})
+	}
+
+	for _, credit := range responseCredits.Crew {
+		credits = append(credits, TMDBCredit{
+			ItemTmdbID:   strconv.Itoa(id),
+			PersonTmdbID: strconv.Itoa(credit.ID),
+			Department:   credit.Department,
+			Role:         credit.Job,
+		})
+	}
+
+	return credits, nil
+}
+
 func GetPerson(id string) (*TMDBPerson, error) {
 	var options = make(map[string]string)
 	personID, err := strconv.Atoi(id)

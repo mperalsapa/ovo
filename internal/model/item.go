@@ -154,6 +154,10 @@ func (item *Item) FetchCredits() {
 		{
 			credits, err = tmdb.GetMovieCredits(itemID)
 		}
+	case ItemTypeShow:
+		{
+			credits, err = tmdb.GetShowCredits(itemID)
+		}
 	}
 
 	if err != nil {
