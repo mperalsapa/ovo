@@ -1,0 +1,9 @@
+.horizontal-carrousel {
+    .overflow-x-scroll {
+        scrollbar-width: thin;
+    }
+
+    a {
+        flex-shrink: 0;
+    }
+}

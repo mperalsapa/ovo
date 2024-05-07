@@ -207,28 +207,20 @@ func (item *Item) FetchCredits() {
 
 }
 
-func (item *Item) GetDirectors() []Person {
-	var directors []Person
-	transaction := db.GetDB().Joins("JOIN credits ON people.id = credits.person_id").
-		Where("credits.item_id = ? AND credits.department = ?", item.ID, "Directing").
-		Find(&directors)
-	if transaction.Error != nil {
-		log.Println(transaction.Error)
-	}
-	log.Println("Query:", transaction.Statement.SQL.String())
-
-	return directors
+func (item *Item) GetDirectors() []Credit {
+	var credits []Credit
+	db.GetDB().Where("item_id = ? AND department = ?", item.ID, "Directing").Preload("Person").Find(&credits)
+	return credits
 }
 
-func (item *Item) GetWriters() []Person {
-	var writers []Person
-	transaction := db.GetDB().Joins("JOIN credits ON people.id = credits.person_id").
-		Where("credits.item_id = ? AND credits.department = ?", item.ID, "Writing").
-		Find(&writers)
-	if transaction.Error != nil {
-		log.Println(transaction.Error)
-	}
-	log.Println("Query:", transaction.Statement.SQL.String())
+func (item *Item) GetWriters() []Credit {
+	var credits []Credit
+	db.GetDB().Where("item_id = ? AND department = ?", item.ID, "Writing").Preload("Person").Find(&credits)
+	return credits
+}
 
-	return writers
+func (item *Item) GetCast() []Credit {
+	var credits []Credit
+	db.GetDB().Where("item_id = ? AND department = ?", item.ID, "cast").Preload("Person").Find(&credits)
+	return credits
 }

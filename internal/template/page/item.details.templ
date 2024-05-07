@@ -4,10 +4,22 @@ import "ovo-server/internal/model"
 import "ovo-server/internal/template/shared"
 import "ovo-server/internal/session"
 import "strconv"
+import "ovo-server/internal/template/component"
+import "fmt"
 
 type ItemDetailsPageData struct {
 	Item        model.Item
 	UserSession session.UserSession
+}
+
+templ castList(item model.Item) {
+	for _, credit := range item.GetCast() {
+		@component.VerticalCardTitleSubtitle(component.VerticalCardTitleSubtitleData{
+			CardTitle:    credit.Person.Name,
+			CardSubtitle: fmt.Sprintf("as %s", credit.Role),
+			ImagePath:    "https://image.tmdb.org/t/p/w500" + credit.Person.ProfilePath,
+		})
+	}
 }
 
 templ ItemDetailsPage(pageData ItemDetailsPageData) {
@@ -15,9 +27,9 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 		Title:       pageData.Item.Title,
 		UserSession: pageData.UserSession,
 	}) {
-		<div class="flex gap-8 item-container">
+		<div class="flex items-start gap-8 item-container">
 			<img class="item-image" src={ "https://image.tmdb.org/t/p/w500" + pageData.Item.PosterPath }/>
-			<div class="flex flex-col gap-8">
+			<div class="flex flex-col gap-8 overflow-x-hidden">
 				<div class="flex flex-col gap-2">
 					<h1 class="">{ pageData.Item.Title }</h1>
 					if pageData.Item.Title != pageData.Item.OriginalTitle {
@@ -55,7 +67,7 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 							<h3 class="font-bold">Directors</h3>
 							<div class="flex">
 								for _, director := range directors {
-									<span class="comma-separated">{ director.Name }</span>
+									<span class="comma-separated">{ director.Person.Name }</span>
 								}
 							</div>
 						</div>
@@ -65,12 +77,18 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 							<h3 class="font-bold">Writers</h3>
 							<div class="flex">
 								for _, writer := range writers {
-									<span class="comma-separated">{ writer.Name }</span>
+									<span class="comma-separated">{ writer.Person.Name }</span>
 								}
 							</div>
 						</div>
 					}
 				</div>
+				@component.HorizontalCarrousel() {
+					@castList(pageData.Item)
+					// <div>
+					// 	hola
+					// </div>
+				}
 			</div>
 		</div>
 	}

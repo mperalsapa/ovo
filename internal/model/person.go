@@ -12,7 +12,7 @@ type Person struct {
 	MetaID       string    `json:"meta_id" gorm:"not null"`
 	MetaPlatform string    `json:"meta_platform" gorm:"not null"`
 	Name         string    `json:"name" gorm:"not null;index"`
-	Biography    string    `json:"biography" gorm:"default:null"`
+	Biography    string    `json:"biography" gorm:"default:null; type:longtext"`
 	Birthday     time.Time `json:"birthday" gorm:"default:null"`
 	Deathday     time.Time `json:"deathday" gorm:"default:null"`
 	PlaceOfBirth string    `json:"place_of_birth" gorm:"default:null"`

@@ -555,6 +555,13 @@ header::after {
   }
 }
 
+.horizontal-carrousel .overflow-x-scroll {
+  scrollbar-width: thin;
+}
+.horizontal-carrousel a {
+  flex-shrink: 0;
+}
+
 html {
   background-color: var(--background-color);
   color: var(--primary-text-color);
