@@ -90,19 +90,19 @@ func (item *Item) FetchMetadata() {
 			}
 
 			metadata = tmdb.GetMovieDetails(tmdbID)
-		}
-
-		if metadata == nil {
-			if year := file.ParseYearFromFilename(item.FilePath); year != 0 {
-				metadata = tmdb.SearchMovieByNameAndYear(item.Title, year)
-			} else {
-				metadata = tmdb.SearchMovie(item.Title)
-			}
+		} else if year := file.ParseYearFromFilename(item.FilePath); year != 0 {
+			metadata = tmdb.SearchMovieByNameAndYear(item.Title, year)
+		} else {
+			metadata = tmdb.SearchMovie(item.Title)
 		}
 
 	case ItemTypeShow:
 		if item.MetaID != "" {
-			tmdbID, _ := strconv.Atoi(item.MetaID)
+			tmdbID, err := strconv.Atoi(item.MetaID)
+			if err != nil {
+				log.Printf("Error converting ID to int: %s", item.MetaID)
+				return
+			}
 			metadata = tmdb.GetShowDetails(tmdbID)
 		} else if year := file.ParseYearFromFilename(item.FilePath); year != 0 {
 			metadata = tmdb.SearchShowByNameAndYear(item.Title, year)
