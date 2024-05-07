@@ -166,7 +166,17 @@ func (item *Item) FetchCredits() {
 	}
 
 	log.Println("Processing credits for", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID)
+	maxCastPerson := 18
+	castCount := 0
 	for _, credit := range credits {
+
+		if credit.Department == "cast" {
+			if castCount >= maxCastPerson {
+				continue
+			}
+			castCount++
+		}
+
 		// Check if person already exists in database
 		var person Person
 		db.GetDB().Where(&Person{MetaID: credit.PersonTmdbID}).First(&person)

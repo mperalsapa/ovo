@@ -443,6 +443,7 @@ header::after {
 .item-container {
   margin: 2.5rem;
   margin-inline: 5rem;
+  gap: 2.5rem;
 }
 .item-container h1 {
   font-size: 1.75rem;
@@ -560,6 +561,7 @@ header::after {
 }
 .horizontal-carrousel a {
   flex-shrink: 0;
+  width: 7.6rem;
 }
 
 html {
