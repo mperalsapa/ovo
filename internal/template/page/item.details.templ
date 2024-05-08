@@ -6,6 +6,7 @@ import "ovo-server/internal/session"
 import "strconv"
 import "ovo-server/internal/template/component"
 import "fmt"
+import "ovo-server/internal/router"
 
 type ItemDetailsPageData struct {
 	Item        model.Item
@@ -19,6 +20,23 @@ templ castList(item model.Item) {
 			CardSubtitle: fmt.Sprintf("as %s", credit.Role),
 			ImagePath:    "https://image.tmdb.org/t/p/w500" + credit.Person.ProfilePath,
 		})
+	}
+}
+
+templ seasonList(item model.Item) {
+	for _, season := range item.GetSeasons() {
+		@component.VerticalCardTitle(component.VerticalCardTitleData{
+			CardTitle: season.Title,
+			ImagePath: "https://image.tmdb.org/t/p/w500" + season.PosterPath,
+			CardPath:  router.GenerateRouteWithId(router.Routes.Item, season.ID),
+		})
+	}
+}
+
+templ episodeList(item model.Item) {
+	for _, episode := range item.GetEpisodes() {
+		{ episode.Title }
+		<br/>
 	}
 }
 
@@ -83,11 +101,16 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 						</div>
 					}
 				</div>
+				if pageData.Item.ItemType == model.ItemTypeShow {
+					@component.HorizontalCarrousel() {
+						@seasonList(pageData.Item)
+					}
+				}
+				if pageData.Item.ItemType == model.ItemTypeSeason {
+					@episodeList(pageData.Item)
+				}
 				@component.HorizontalCarrousel() {
 					@castList(pageData.Item)
-					// <div>
-					// 	hola
-					// </div>
 				}
 			</div>
 		</div>

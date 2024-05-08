@@ -290,3 +290,17 @@ func (item *Item) GetCast() []Credit {
 	db.GetDB().Where("item_id = ? AND department = ?", item.ID, "cast").Preload("Person").Find(&credits)
 	return credits
 }
+
+func (item *Item) GetChildren(itemType string) []Item {
+	var children []Item
+	db.GetDB().Where("parent_item = ? AND item_type = ?", item.ID, itemType).Find(&children)
+	return children
+}
+
+func (item *Item) GetSeasons() []Item {
+	return item.GetChildren(ItemTypeSeason)
+}
+
+func (item *Item) GetEpisodes() []Item {
+	return item.GetChildren(ItemTypeEpisode)
+}
