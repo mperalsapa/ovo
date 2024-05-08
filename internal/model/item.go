@@ -70,26 +70,26 @@ func (item *Item) FetchMetadata() {
 	switch item.ItemType {
 	case ItemTypeMovie:
 		if item.MetaID != "" {
-			var tmdbID int
+			var metaID int
 			var err error
 			// If metadata is from external ID, we search for TMDB ID using external
 			if item.MetaProvider != MetaProviderTMDB {
 				log.Printf("Using external ID. Platform: %s, ID: %s", item.MetaProvider, item.MetaID)
-				tmdbID, err = tmdb.GetIDFromExternal(item.MetaProvider, item.MetaID)
+				metaID, err = tmdb.GetIDFromExternal(item.MetaProvider, item.MetaID)
 				if err != nil {
 					log.Printf("Error searching by external ID: %s", err)
 					return
 				}
-				log.Printf("ID result from %s in %s: %d", item.MetaID, item.MetaProvider, tmdbID)
+				log.Printf("ID result from %s in %s: %d", item.MetaID, item.MetaProvider, metaID)
 			} else {
-				tmdbID, err = strconv.Atoi(item.MetaID)
+				metaID, err = strconv.Atoi(item.MetaID)
 				if err != nil {
 					log.Printf("Error converting ID to int: %s", item.MetaID)
 					return
 				}
 			}
 
-			metadata = tmdb.GetMovieDetails(tmdbID)
+			metadata = tmdb.GetMovieDetails(metaID)
 		} else if year := file.ParseYearFromFilename(item.FilePath); year != 0 {
 			metadata = tmdb.SearchMovieByNameAndYear(item.Title, year)
 		} else {
@@ -98,12 +98,12 @@ func (item *Item) FetchMetadata() {
 
 	case ItemTypeShow:
 		if item.MetaID != "" {
-			tmdbID, err := strconv.Atoi(item.MetaID)
+			metaID, err := strconv.Atoi(item.MetaID)
 			if err != nil {
 				log.Printf("Error converting ID to int: %s", item.MetaID)
 				return
 			}
-			metadata = tmdb.GetShowDetails(tmdbID)
+			metadata = tmdb.GetShowDetails(metaID)
 		} else if year := file.ParseYearFromFilename(item.FilePath); year != 0 {
 			metadata = tmdb.SearchShowByNameAndYear(item.Title, year)
 		} else {
@@ -117,19 +117,50 @@ func (item *Item) FetchMetadata() {
 			return
 		}
 
-		tmdbID, err := strconv.Atoi(parentItem.MetaID)
+		showMetaID, err := strconv.Atoi(parentItem.MetaID)
 		if err != nil {
 			log.Printf("Error converting ID to int: %s", parentItem.MetaID)
 			return
 		}
 
-		seasonNumber, err := strconv.Atoi(item.Title)
+		seasonNumber, err := strconv.Atoi(item.MetaID)
 		if err != nil {
 			log.Printf("Error converting season number to int: %s", item.Title)
 			return
 		}
 
-		metadata = tmdb.GetSeasonDetails(tmdbID, seasonNumber)
+		metadata = tmdb.GetSeasonDetails(showMetaID, seasonNumber)
+	case ItemTypeEpisode:
+		var seasonItem Item
+		var showItem Item
+		db.GetDB().First(&seasonItem, item.ParentItem)
+		db.GetDB().First(&showItem, seasonItem.ParentItem)
+
+		if seasonItem.MetaID == "" || showItem.MetaID == "" {
+			log.Println("Parent item has no metadata. Skipping episode metadata fetch.")
+			return
+		}
+
+		showMetaID, err := strconv.Atoi(showItem.MetaID)
+		if err != nil {
+			log.Printf("Error converting ID to int: %s", showItem.MetaID)
+			return
+		}
+
+		seasonNumber, err := strconv.Atoi(seasonItem.MetaID)
+		if err != nil {
+			log.Printf("Error converting season number to int: %s", seasonItem.MetaID)
+			return
+		}
+
+		episodeNumber, err := strconv.Atoi(item.MetaID)
+		if err != nil {
+			log.Printf("Error converting episode number to int: %s", item.MetaID)
+			return
+		}
+
+		metadata = tmdb.GetEpisodeDetails(showMetaID, seasonNumber, episodeNumber)
+
 	}
 
 	if metadata == nil {

@@ -203,8 +203,8 @@ func GetSeasonDetails(showID int, seasonNumber int) *TMDBMetadataItem {
 	}
 
 	metadata := &TMDBMetadataItem{
-		TmdbID:      strconv.Itoa(details.ID),
-		Title:       strconv.Itoa(details.SeasonNumber),
+		TmdbID:      strconv.Itoa(details.SeasonNumber),
+		Title:       details.Name,
 		Description: details.Overview,
 		PosterPath:  details.PosterPath,
 	}
@@ -217,6 +217,32 @@ func GetSeasonDetails(showID int, seasonNumber int) *TMDBMetadataItem {
 	metadata.ReleaseDate = airDate
 
 	return metadata
+}
+
+func GetEpisodeDetails(showID int, seasonNumber int, episodeNumber int) *TMDBMetadataItem {
+	details, err := api.GetTvEpisodeInfo(showID, seasonNumber, episodeNumber, nil)
+	if err != nil {
+		log.Printf("Error getting episode details for show '%d', season '%d' and episode '%d': %s", showID, seasonNumber, episodeNumber, err)
+		return nil
+	}
+
+	metadata := &TMDBMetadataItem{
+		TmdbID:      strconv.Itoa(episodeNumber),
+		Title:       details.Name,
+		Description: details.Overview,
+		PosterPath:  details.StillPath,
+	}
+
+	airDate, err := time.Parse("2006-01-02", details.AirDate)
+	if err != nil {
+		log.Printf("Error parsing air date for episode '%d': Received air date is: %s. \nError: %s. \nWon't get modified.", episodeNumber, details.AirDate, err)
+		return metadata
+	}
+
+	metadata.ReleaseDate = airDate
+
+	return metadata
+
 }
 
 func GetMovieCredits(id int) ([]TMDBCredit, error) {

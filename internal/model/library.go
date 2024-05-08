@@ -294,13 +294,13 @@ func (library *Library) ScanForNewSeasons(show Item, itemsPaths map[string]bool)
 				continue
 			}
 			seasonItem = Item{
-				LibraryID:     library.ID,
-				ItemType:      ItemTypeSeason,
-				Title:         strconv.Itoa(parsedSeason),
-				OriginalTitle: strconv.Itoa(parsedSeason),
-				ReleaseDate:   time.Now(),
-				FilePath:      seasonPath,
-				ParentItem:    show.ID,
+				LibraryID:   library.ID,
+				ItemType:    ItemTypeSeason,
+				MetaID:      strconv.Itoa(parsedSeason),
+				Title:       strconv.Itoa(parsedSeason),
+				ReleaseDate: time.Now(),
+				FilePath:    seasonPath,
+				ParentItem:  show.ID,
 			}
 			seasonItem.Save()
 		}
@@ -326,13 +326,13 @@ func (library *Library) ScanForNewEpisodes(season Item, itemsPaths map[string]bo
 				continue
 			}
 			episodeItem = Item{
-				LibraryID:     library.ID,
-				ItemType:      ItemTypeEpisode,
-				Title:         strconv.Itoa(parsedEpisode),
-				OriginalTitle: strconv.Itoa(parsedEpisode),
-				ReleaseDate:   time.Now(),
-				FilePath:      episodePath,
-				ParentItem:    season.ID,
+				LibraryID:   library.ID,
+				ItemType:    ItemTypeEpisode,
+				MetaID:      strconv.Itoa(parsedEpisode),
+				Title:       strconv.Itoa(parsedEpisode),
+				ReleaseDate: time.Now(),
+				FilePath:    episodePath,
+				ParentItem:  season.ID,
 			}
 			episodeItem.Save()
 		}
