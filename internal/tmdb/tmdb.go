@@ -16,6 +16,7 @@ type TMDBMetadataItem struct {
 	Description    string
 	Tagline        string
 	ReleaseDate    time.Time
+	EndDate        time.Time
 	PosterPath     string
 	BackdropPath   string
 	SeasonNumber   int
@@ -167,6 +168,14 @@ func GetShowDetails(id int) *TMDBMetadataItem {
 	}
 
 	metadata.ReleaseDate = firstAiredDate
+	lastAirDate, err := time.Parse("2006-01-02", details.LastAirDate)
+
+	if err != nil {
+		log.Printf("Error parsing last aired date for show '%s': Received last aired date is: %s. \nError: %s. \nWon't get modified.", details.Name, details.LastAirDate, err)
+		return metadata
+	}
+
+	metadata.EndDate = lastAirDate
 	return metadata
 }
 

@@ -30,6 +30,7 @@ type Item struct {
 	Description      string    `json:"description"`
 	TagLine          string    `json:"tag_line" gorm:"default:null"`
 	ReleaseDate      time.Time `json:"release_date"`
+	EndDate          time.Time `json:"end_date" gorm:"default:null"`
 	PosterPath       string    `json:"poster_path" gorm:"default:null"`
 	FilePath         string    `json:"file_path" gorm:"not null"`
 	LastMetadataScan time.Time `json:"last_metadata_scan" gorm:"default:null"`
@@ -180,6 +181,7 @@ func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
 	item.OriginalTitle = metadata.OriginalTitle
 	item.Description = metadata.Description
 	item.ReleaseDate = metadata.ReleaseDate
+	item.EndDate = metadata.EndDate
 	item.PosterPath = metadata.PosterPath
 	item.LastMetadataScan = time.Now()
 	item.TagLine = metadata.Tagline
