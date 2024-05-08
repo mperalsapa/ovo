@@ -556,7 +556,7 @@ header::after {
   }
 }
 
-.horizontal-carrousel .overflow-x-scroll {
+.horizontal-carrousel .overflow-x-auto {
   scrollbar-width: thin;
 }
 .horizontal-carrousel a {
