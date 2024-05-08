@@ -275,7 +275,7 @@ func (item *Item) FetchCredits() {
 
 func (item *Item) GetDirectors() []Credit {
 	var credits []Credit
-	db.GetDB().Where("item_id = ? AND department = ?", item.ID, "Directing").Preload("Person").Find(&credits)
+	db.GetDB().Where("item_id = ? AND department = ? AND role = ?", item.ID, "Directing", "Director").Preload("Person").Find(&credits)
 	return credits
 }
 
