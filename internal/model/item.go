@@ -109,6 +109,27 @@ func (item *Item) FetchMetadata() {
 		} else {
 			metadata = tmdb.SearchShow(item.Title)
 		}
+	case ItemTypeSeason:
+		var parentItem Item
+		db.GetDB().First(&parentItem, item.ParentItem)
+		if parentItem.MetaID == "" {
+			log.Println("Parent item has no metadata. Skipping season metadata fetch.")
+			return
+		}
+
+		tmdbID, err := strconv.Atoi(parentItem.MetaID)
+		if err != nil {
+			log.Printf("Error converting ID to int: %s", parentItem.MetaID)
+			return
+		}
+
+		seasonNumber, err := strconv.Atoi(item.Title)
+		if err != nil {
+			log.Printf("Error converting season number to int: %s", item.Title)
+			return
+		}
+
+		metadata = tmdb.GetSeasonDetails(tmdbID, seasonNumber)
 	}
 
 	if metadata == nil {

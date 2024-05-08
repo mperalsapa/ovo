@@ -195,6 +195,30 @@ func SearchShow(name string) *TMDBMetadataItem {
 	return SearchShowByNameAndYear(name, 0)
 }
 
+func GetSeasonDetails(showID int, seasonNumber int) *TMDBMetadataItem {
+	details, err := api.GetTvSeasonInfo(showID, seasonNumber, nil)
+	if err != nil {
+		log.Printf("Error getting season details for show '%d' and season '%d': %s", showID, seasonNumber, err)
+		return nil
+	}
+
+	metadata := &TMDBMetadataItem{
+		TmdbID:      strconv.Itoa(details.ID),
+		Title:       strconv.Itoa(details.SeasonNumber),
+		Description: details.Overview,
+		PosterPath:  details.PosterPath,
+	}
+	airDate, err := time.Parse("2006-01-02", details.AirDate)
+	if err != nil {
+		log.Printf("Error parsing air date for season '%d': Received air date is: %s. \nError: %s. \nWon't get modified.", seasonNumber, details.AirDate, err)
+		return metadata
+	}
+
+	metadata.ReleaseDate = airDate
+
+	return metadata
+}
+
 func GetMovieCredits(id int) ([]TMDBCredit, error) {
 	var credits []TMDBCredit
 	var options = make(map[string]string)
