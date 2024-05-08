@@ -15,6 +15,7 @@ type TMDBMetadataItem struct {
 	OriginalTitle  string
 	Description    string
 	Tagline        string
+	Rating         float32
 	ReleaseDate    time.Time
 	EndDate        time.Time
 	PosterPath     string
@@ -68,6 +69,7 @@ func GetMovieDetails(id int) *TMDBMetadataItem {
 		Title:         details.Title,
 		OriginalTitle: details.OriginalTitle,
 		Description:   details.Overview,
+		Rating:        details.VoteAverage,
 		PosterPath:    details.PosterPath,
 		BackdropPath:  details.BackdropPath,
 		Tagline:       details.Tagline,
@@ -156,6 +158,7 @@ func GetShowDetails(id int) *TMDBMetadataItem {
 		Title:         details.Name,
 		OriginalTitle: details.OriginalName,
 		Description:   details.Overview,
+		Rating:        details.VoteAverage,
 		PosterPath:    details.PosterPath,
 		BackdropPath:  details.BackdropPath,
 	}
@@ -239,6 +242,7 @@ func GetEpisodeDetails(showID int, seasonNumber int, episodeNumber int) *TMDBMet
 		TmdbID:      strconv.Itoa(episodeNumber),
 		Title:       details.Name,
 		Description: details.Overview,
+		Rating:      details.VoteAverage,
 		PosterPath:  details.StillPath,
 	}
 
