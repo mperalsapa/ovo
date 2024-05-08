@@ -21,21 +21,22 @@ const (
 
 type Item struct {
 	gorm.Model
-	LibraryID        uint      `json:"library" gorm:"not null"`
-	ItemType         string    `gorm:"enum:show,season,episode,movie"`
-	MetaProvider     string    `json:"meta_platform"`
-	MetaID           string    `json:"meta_id"`
-	Title            string    `json:"title" gorm:"not null;index"`
-	OriginalTitle    string    `json:"original_title" gorm:"not null;index"`
-	Description      string    `json:"description"`
-	TagLine          string    `json:"tag_line" gorm:"default:null"`
-	ReleaseDate      time.Time `json:"release_date"`
-	EndDate          time.Time `json:"end_date" gorm:"default:null"`
-	PosterPath       string    `json:"poster_path" gorm:"default:null"`
-	FilePath         string    `json:"file_path" gorm:"not null"`
-	LastMetadataScan time.Time `json:"last_metadata_scan" gorm:"default:null"`
-	ParentItem       uint      `json:"parent_item"` // Show or Season ID
-	Credits          []Credit  `json:"credits" gorm:"constraint:OnDelete:CASCADE"`
+	LibraryID        uint       `json:"library" gorm:"not null"`
+	ItemType         string     `gorm:"enum:show,season,episode,movie"`
+	MetaProvider     string     `json:"meta_platform"`
+	MetaID           string     `json:"meta_id"`
+	MetaRating       float32    `json:"meta_rating"`
+	Title            string     `json:"title" gorm:"not null;index"`
+	OriginalTitle    string     `json:"original_title" gorm:"not null;index"`
+	Description      string     `json:"description"`
+	TagLine          string     `json:"tag_line" gorm:"default:null"`
+	ReleaseDate      time.Time  `json:"release_date"`
+	EndDate          *time.Time `json:"end_date"`
+	PosterPath       string     `json:"poster_path" gorm:"default:null"`
+	FilePath         string     `json:"file_path" gorm:"not null"`
+	LastMetadataScan *time.Time `json:"last_metadata_scan"`
+	ParentItem       uint       `json:"parent_item"` // Show or Season ID
+	Credits          []Credit   `json:"credits" gorm:"constraint:OnDelete:CASCADE"`
 }
 
 func (item *Item) Save() error {
@@ -177,15 +178,25 @@ func (item *Item) FetchMetadata() {
 func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
 	item.MetaProvider = MetaProviderTMDB
 	item.MetaID = metadata.TmdbID
+	item.MetaRating = metadata.Rating
 	item.Title = metadata.Title
 	item.OriginalTitle = metadata.OriginalTitle
 	item.Description = metadata.Description
 	item.ReleaseDate = metadata.ReleaseDate
-	item.EndDate = metadata.EndDate
 	item.PosterPath = metadata.PosterPath
-	item.LastMetadataScan = time.Now()
 	item.TagLine = metadata.Tagline
-	item.Save()
+
+	if metadata.EndDate != (time.Time{}) {
+		item.EndDate = &metadata.EndDate
+	}
+
+	now := time.Now()
+	item.LastMetadataScan = &now
+
+	err := item.Save()
+	if err != nil {
+		log.Println("Error saving item", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID, ":", err)
+	}
 }
 
 func (item *Item) FetchCredits() {
