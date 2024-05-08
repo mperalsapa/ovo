@@ -27,9 +27,9 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 		Title:       pageData.Item.Title,
 		UserSession: pageData.UserSession,
 	}) {
-		<div class="flex items-start gap-8 item-container">
-			<img class="item-image" src={ "https://image.tmdb.org/t/p/w500" + pageData.Item.PosterPath }/>
-			<div class="flex flex-col gap-8 overflow-x-hidden">
+		<div class="flex flex-col lg:flex-row items-start gap-8 item-container">
+			<img class="item-image mx-auto" src={ "https://image.tmdb.org/t/p/w500" + pageData.Item.PosterPath }/>
+			<div class="flex flex-col gap-8 overflow-x-hidden w-full">
 				<div class="flex flex-col gap-2">
 					<h1 class="">{ pageData.Item.Title }</h1>
 					if pageData.Item.Title != pageData.Item.OriginalTitle {
