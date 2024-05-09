@@ -64,12 +64,14 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 							1h 59m
 						</span>
 						<div>
-							<span>
-								7.6
-							</span>
-							<span class="material-symbols-outlined inline-icon">
-								star
-							</span>
+							if pageData.Item.MetaRating > 0 {
+								<span>
+									{ fmt.Sprintf("%.1f", pageData.Item.MetaRating) }
+								</span>
+								<span class="material-symbols-outlined inline-icon">
+									star
+								</span>
+							}
 						</div>
 						<span>
 							Ends at 21:00
