@@ -430,7 +430,7 @@ header::after {
   aspect-ratio: 0.666;
 }
 
-@media screen and (min-width: 640px) {
+@media screen and (min-width: 768px) {
   .sidebar-container.closed + .content-container {
     width: 100%;
   }

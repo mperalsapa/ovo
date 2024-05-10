@@ -17,7 +17,7 @@ templ libraryList() {
 }
 
 templ UserSidebar(pageData UserSidebarData) {
-	<div class="h-screen inline min-w-72 bg-stone-800 text-white overflow-x-hidden w-72 sm:sticky sm:top-0 sm:left-0 sidebar-container" id="sidebar">
+	<div class="h-screen inline min-w-72 bg-stone-800 text-white overflow-x-hidden w-72 md:sticky md:top-0 md:left-0 sidebar-container" id="sidebar">
 		<div class="lateral-navbar">
 			<div>
 				<a href={ templ.SafeURL(router.Routes.Home) } class="button button-secondary"><span>Home</span></a>
