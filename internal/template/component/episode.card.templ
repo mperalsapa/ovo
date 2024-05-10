@@ -1,0 +1,20 @@
+
+
+package component
+
+import "ovo-server/internal/model"
+
+type EpisodeCardData struct {
+	Episode  model.Item
+	CardPath string
+}
+
+templ EpisodeCard(componentData EpisodeCardData) {
+	<a class="episode-card flex flex-col sm:flex-row flex-wrap gap-8" href={ templ.SafeURL(componentData.CardPath) }>
+		<img class="episode-card-image h-min" src={ "https://media.themoviedb.org/t/p/w227_and_h127_bestv2/" + componentData.Episode.PosterPath }/>
+		<div class="episode-card-content basis-80 flex-grow">
+			<h3 class="text-xl">{ componentData.Episode.Title }</h3>
+			<p class="">{ componentData.Episode.Description }</p>
+		</div>
+	</a>
+}

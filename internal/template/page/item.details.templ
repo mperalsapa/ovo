@@ -36,8 +36,10 @@ templ seasonList(item model.Item) {
 
 templ episodeList(item model.Item) {
 	for _, episode := range item.GetEpisodes() {
-		{ episode.Title }
-		<br/>
+		@component.EpisodeCard(component.EpisodeCardData{
+			Episode:  episode,
+			CardPath: router.GenerateRouteWithId(router.Routes.Item, episode.ID),
+		})
 	}
 }
 
