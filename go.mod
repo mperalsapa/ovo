@@ -3,23 +3,27 @@ module ovo-server
 go 1.22.1
 
 require (
+	github.com/a-h/templ v0.2.663
 	github.com/glebarez/sqlite v1.11.0
+	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.11.4
+	github.com/ryanbradynd05/go-tmdb v0.0.0-20230108222638-2a68dc6ff40c
+	github.com/u2takey/ffmpeg-go v0.5.0
 	golang.org/x/crypto v0.21.0
 	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.9
 )
 
 require (
-	github.com/a-h/templ v0.2.663 // indirect
-	github.com/gorilla/context v1.1.2 // indirect
+	github.com/aws/aws-sdk-go v1.52.5 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/ryanbradynd05/go-tmdb v0.0.0-20230108222638-2a68dc6ff40c // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/kylelemons/go-gypsy v1.0.0 // indirect
+	github.com/stretchr/testify v1.9.0 // indirect
+	github.com/u2takey/go-utils v0.3.1 // indirect
 )
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/glebarez/go-sqlite v1.22.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
@@ -28,8 +32,6 @@ require (
 	github.com/gorilla/sessions v1.2.2
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/labstack/echo v3.3.10+incompatible // indirect
-	github.com/labstack/echo-contrib v0.16.0
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
