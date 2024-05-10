@@ -65,16 +65,19 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 								{ pageData.Item.GetFancyDuration() }
 							</span>
 						}
-						<div>
-							if pageData.Item.MetaRating > 0 {
+						if pageData.Item.MetaRating > 0 {
+							<div>
 								<span>
 									{ fmt.Sprintf("%.1f", pageData.Item.MetaRating) }
 								</span>
 								<span class="material-symbols-outlined inline-icon">
 									star
 								</span>
-							}
-						</div>
+								<span class="uppercase">
+									{ pageData.Item.MetaProvider }
+								</span>
+							</div>
+						}
 						<span>
 							Ends at 21:00
 						</span>
