@@ -60,9 +60,11 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 								- { strconv.Itoa(pageData.Item.EndDate.Year()) }
 							}
 						</span>
-						<span>
-							1h 59m
-						</span>
+						if pageData.Item.Duration > 0 {
+							<span>
+								{ pageData.Item.GetFancyDuration() }
+							</span>
+						}
 						<div>
 							if pageData.Item.MetaRating > 0 {
 								<span>

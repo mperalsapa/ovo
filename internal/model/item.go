@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"log"
 	db "ovo-server/internal/database"
 	"ovo-server/internal/file"
@@ -21,22 +22,23 @@ const (
 
 type Item struct {
 	gorm.Model
-	LibraryID        uint       `json:"library" gorm:"not null"`
-	ItemType         string     `gorm:"enum:show,season,episode,movie"`
-	MetaProvider     string     `json:"meta_platform"`
-	MetaID           string     `json:"meta_id"`
-	MetaRating       float32    `json:"meta_rating"`
-	Title            string     `json:"title" gorm:"not null;index"`
-	OriginalTitle    string     `json:"original_title" gorm:"not null;index"`
-	Description      string     `json:"description"`
-	TagLine          string     `json:"tag_line" gorm:"default:null"`
-	ReleaseDate      time.Time  `json:"release_date"`
-	EndDate          *time.Time `json:"end_date"`
-	PosterPath       string     `json:"poster_path" gorm:"default:null"`
-	FilePath         string     `json:"file_path" gorm:"not null"`
-	LastMetadataScan *time.Time `json:"last_metadata_scan"`
-	ParentItem       uint       `json:"parent_item"` // Show or Season ID
-	Credits          []Credit   `json:"credits" gorm:"constraint:OnDelete:CASCADE"`
+	LibraryID        uint          `json:"library" gorm:"not null"`
+	ItemType         string        `gorm:"enum:show,season,episode,movie"`
+	MetaProvider     string        `json:"meta_platform"`
+	MetaID           string        `json:"meta_id"`
+	MetaRating       float32       `json:"meta_rating"`
+	Title            string        `json:"title" gorm:"not null;index"`
+	OriginalTitle    string        `json:"original_title" gorm:"not null;index"`
+	Description      string        `json:"description"`
+	TagLine          string        `json:"tag_line" gorm:"default:null"`
+	ReleaseDate      time.Time     `json:"release_date"`
+	EndDate          *time.Time    `json:"end_date"`
+	PosterPath       string        `json:"poster_path" gorm:"default:null"`
+	FilePath         string        `json:"file_path" gorm:"not null"`
+	Duration         time.Duration `json:"duration"`
+	LastMetadataScan *time.Time    `json:"last_metadata_scan"`
+	ParentItem       uint          `json:"parent_item"` // Show or Season ID
+	Credits          []Credit      `json:"credits" gorm:"constraint:OnDelete:CASCADE"`
 }
 
 func (item *Item) Save() error {
@@ -68,7 +70,7 @@ func GetItemById(id uint) (Item, error) {
 
 func (item *Item) FetchMetadata() {
 	var metadata *tmdb.TMDBMetadataItem
-	log.Println("Fetching metadata for", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID)
+	// log.Println("Fetching metadata for", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID)
 	switch item.ItemType {
 	case ItemTypeMovie:
 		if item.MetaID != "" {
@@ -82,7 +84,6 @@ func (item *Item) FetchMetadata() {
 					log.Printf("Error searching by external ID: %s", err)
 					return
 				}
-				log.Printf("ID result from %s in %s: %d", item.MetaID, item.MetaProvider, metaID)
 			} else {
 				metaID, err = strconv.Atoi(item.MetaID)
 				if err != nil {
@@ -169,13 +170,14 @@ func (item *Item) FetchMetadata() {
 		return
 	}
 
-	log.Println("Updating metadata for", item.Title, "with ID", item.ID, "and tmdb ID", metadata.TmdbID)
+	// log.Println("Updating metadata for", item.Title, "with ID", item.ID, "and tmdb ID", metadata.TmdbID)
 	item.UpdateMovieMetadata(*metadata)
 
 	item.FetchCredits()
 }
 
 func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
+	// Metdata from external source
 	item.MetaProvider = MetaProviderTMDB
 	item.MetaID = metadata.TmdbID
 	item.MetaRating = metadata.Rating
@@ -197,6 +199,38 @@ func (item *Item) UpdateMovieMetadata(metadata tmdb.TMDBMetadataItem) {
 	if err != nil {
 		log.Println("Error saving item", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID, ":", err)
 	}
+}
+
+func (item *Item) UpdateRuntime() {
+	itemFileMetadata := file.GetFileMetadata(item.FilePath)
+	item.Duration = itemFileMetadata.Duration()
+	err := item.Save()
+	if err != nil {
+		log.Println("Error saving item", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID, ":", err)
+	}
+}
+
+func (item *Item) UpdateItemRuntime() {
+	if item.ItemType == ItemTypeMovie || item.ItemType == ItemTypeEpisode {
+		item.UpdateRuntime()
+		return
+	}
+
+	var children []Item
+	db.GetDB().Where("parent_item = ?", item.ID).Find(&children)
+	for _, child := range children {
+		child.UpdateItemRuntime()
+	}
+
+	var totalDuration time.Duration
+	db.GetDB().Model(&children).Select("SUM(duration)").Where(&Item{ParentItem: item.ID}).Row().Scan(&totalDuration)
+	item.Duration = totalDuration
+
+	err := item.Save()
+	if err != nil {
+		log.Println("Error saving item", item.Title, "with ID", item.ID, "and tmdb ID", item.MetaID, ":", err)
+	}
+
 }
 
 func (item *Item) FetchCredits() {
@@ -316,4 +350,20 @@ func (item *Item) GetSeasons() []Item {
 
 func (item *Item) GetEpisodes() []Item {
 	return item.GetChildren(ItemTypeEpisode)
+}
+
+func (item *Item) GetFancyDuration() string {
+	var durationString string
+
+	hours := int(item.Duration.Hours())
+	if hours > 0 {
+		durationString = fmt.Sprintf("%dh ", hours)
+	}
+
+	minutes := int(item.Duration.Minutes()) - hours*60
+	if minutes > 0 {
+		durationString = durationString + fmt.Sprintf("%dm", minutes)
+	}
+
+	return durationString
 }

@@ -147,8 +147,19 @@ func (library *Library) ScanLibrary() error {
 	// Remove orphan items
 	library.RemoveOrphanItems()
 
+	// Fetch metadata for all items
 	for _, item := range library.GetItems() {
 		item.FetchMetadata()
+	}
+
+	// Separately fetch runtime for files. This is done separately because when updating runtime
+	// we make queries to the database, and that data is not available back into the
+	// library items list without reloading them.
+	for _, item := range library.GetItems() {
+		// Fetch runtime from file
+		if item.ItemType == ItemTypeMovie || item.ItemType == ItemTypeShow {
+			item.UpdateItemRuntime()
+		}
 	}
 
 	return nil
