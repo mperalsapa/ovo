@@ -8,16 +8,17 @@ import (
 )
 
 type route struct {
-	Assets   string
-	Api      string
-	Login    string
-	Logout   string
-	Register string
-	Profile  string
-	Home     string
-	Library  string
-	Item     string
-	Player   string
+	Assets       string
+	Api          string
+	Login        string
+	Logout       string
+	Register     string
+	Profile      string
+	Home         string
+	Library      string
+	Item         string
+	Player       string
+	DownloadItem string
 }
 
 type adminRoute struct {
@@ -97,6 +98,10 @@ func GeneratePlayerRoute(itemID uint, groupID string) string {
 	return fmt.Sprintf("%s?item=%d", Routes.Player, itemID)
 }
 
+func GenerateDownloadItemRoute(itemID uint) string {
+	return fmt.Sprintf("%s?item=%d", Routes.DownloadItem, itemID)
+}
+
 func Init() bool {
 	Routes.Assets = BuildRoute("/assets")
 	Routes.Api = BuildRoute("/api")
@@ -108,7 +113,7 @@ func Init() bool {
 	Routes.Library = BuildRoute("/library/:id")
 	Routes.Item = BuildRoute("/item/:id")
 	Routes.Player = BuildRoute("/player")
-
+	Routes.DownloadItem = BuildRoute("/download")
 	// Admin routes
 	AdminRoutes.Dashboard = BuildAdminRoute("")
 	AdminRoutes.Libraries = BuildAdminRoute("/libraries")

@@ -20,4 +20,10 @@ $(document).ready(function () {
         }, 300);
     })
 
+    // Add listener for "back" button
+    $("#back-button").click(function () {
+        console.log("Going back...")
+        window.history.back();
+    })
+
 })

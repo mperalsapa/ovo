@@ -83,6 +83,8 @@ func main() {
 	auth.GET(router.Routes.Home, controller.Home)
 	auth.GET(router.Routes.Library, controller.Library)
 	auth.GET(router.Routes.Item, controller.Item)
+	auth.GET(router.Routes.Player, controller.Player)
+	auth.GET(router.Routes.DownloadItem, controller.Download)
 
 	// 			API routes
 	api := auth.Group("")
