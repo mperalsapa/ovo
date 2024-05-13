@@ -56,36 +56,51 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 					if pageData.Item.Title != pageData.Item.OriginalTitle {
 						<h2 class="">{ pageData.Item.OriginalTitle }</h2>
 					}
-					<div class="flex gap-6 details">
-						<span>
-							{ strconv.Itoa(pageData.Item.ReleaseDate.Year()) }
-							if pageData.Item.ItemType == model.ItemTypeShow {
-								- { strconv.Itoa(pageData.Item.EndDate.Year()) }
-							}
-						</span>
-						if pageData.Item.Duration > 0 {
+					<div class="flex justify-between">
+						<div class="flex gap-6 details">
 							<span>
-								{ pageData.Item.GetFancyDuration() }
+								{ strconv.Itoa(pageData.Item.ReleaseDate.Year()) }
+								if pageData.Item.ItemType == model.ItemTypeShow {
+									- { strconv.Itoa(pageData.Item.EndDate.Year()) }
+								}
 							</span>
-						}
-						if pageData.Item.MetaRating > 0 {
-							<div>
+							if pageData.Item.Duration > 0 {
 								<span>
-									{ fmt.Sprintf("%.1f", pageData.Item.MetaRating) }
+									{ pageData.Item.GetFancyDuration() }
 								</span>
+							}
+							if pageData.Item.MetaRating > 0 {
+								<div>
+									<span>
+										{ fmt.Sprintf("%.1f", pageData.Item.MetaRating) }
+									</span>
+									<span class="material-symbols-outlined inline-icon">
+										star
+									</span>
+									<span class="uppercase">
+										{ pageData.Item.MetaProvider }
+									</span>
+								</div>
+							}
+							if pageData.Item.Duration > 0 {
+								<span>
+									Ends at { time.Now().Add(pageData.Item.Duration).Format("15:04") }
+								</span>
+							}
+						</div>
+						<div class="flex gap-4">
+							<a href={ templ.SafeURL(router.GeneratePlayerRoute(pageData.Item.ID, pageData.UserSession.SyncPlayerID)) } type="button">
 								<span class="material-symbols-outlined inline-icon">
-									star
+									play_arrow
 								</span>
-								<span class="uppercase">
-									{ pageData.Item.MetaProvider }
-								</span>
-							</div>
-						}
-						if pageData.Item.Duration > 0 {
-							<span>
-								Ends at { time.Now().Add(pageData.Item.Duration).Format("15:04") }
-							</span>
-						}
+							</a>
+							// <span class="material-symbols-outlined inline-icon">
+							// 	check
+							// </span>
+							// <span class="material-symbols-outlined inline-icon">
+							// 	favorite
+							// </span>
+						</div>
 					</div>
 				</div>
 				if pageData.Item.TagLine != "" {

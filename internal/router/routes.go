@@ -17,6 +17,7 @@ type route struct {
 	Home     string
 	Library  string
 	Item     string
+	Player   string
 }
 
 type adminRoute struct {
@@ -87,6 +88,15 @@ func GenerateRouteWithCommand(route string, param string) string {
 	return strings.ReplaceAll(route, ":action", param)
 }
 
+// generate player route. This could contain a group id in case the user is within a synced group
+func GeneratePlayerRoute(itemID uint, groupID string) string {
+	if groupID != "" {
+		return fmt.Sprintf("%s?&item=%d&group=%s", Routes.Player, itemID, groupID)
+	}
+
+	return fmt.Sprintf("%s?item=%d", Routes.Player, itemID)
+}
+
 func Init() bool {
 	Routes.Assets = BuildRoute("/assets")
 	Routes.Api = BuildRoute("/api")
@@ -97,6 +107,7 @@ func Init() bool {
 	Routes.Home = BuildRoute("/")
 	Routes.Library = BuildRoute("/library/:id")
 	Routes.Item = BuildRoute("/item/:id")
+	Routes.Player = BuildRoute("/player")
 
 	// Admin routes
 	AdminRoutes.Dashboard = BuildAdminRoute("")

@@ -21,6 +21,7 @@ type sessionSettings struct {
 type UserSession struct {
 	Username      string
 	Authenticated bool
+	SyncPlayerID  string
 	Role          model.Role
 	ErrorMsg      string
 }
