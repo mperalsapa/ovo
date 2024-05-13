@@ -170,6 +170,8 @@ func (item *Item) FetchMetadata() {
 		return
 	}
 
+	log.Println("Updating metadata for", item.Title, "with ID", item.ID, "and tmdb ID", metadata.TmdbID)
+
 	// log.Println("Updating metadata for", item.Title, "with ID", item.ID, "and tmdb ID", metadata.TmdbID)
 	item.UpdateMovieMetadata(*metadata)
 
@@ -274,6 +276,16 @@ func (item *Item) FetchCredits() {
 				continue
 			}
 			castCount++
+		}
+
+		// Getting only credits within role of the next list
+		// - Director
+		// - Writer
+		// - cast
+		if !(credit.Department == "Directing" && credit.Role == "Director") &&
+			!(credit.Department == "Writing") &&
+			!(credit.Department == "cast") {
+			continue
 		}
 
 		// Check if person already exists in database
