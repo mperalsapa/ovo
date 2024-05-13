@@ -16,44 +16,42 @@ type PlayerData struct {
 templ Player(PageData PlayerData) {
 	@shared.Page("Player") {
 		<div class="w-screen h-screen relative">
-			<video class="w-screen h-screen" autoplay muted src={ router.GenerateDownloadItemRoute(PageData.Item.ID) }></video>
-			<div class="w-screen h-screen video-overlay-container absolute top-0 overflow-hidden">
-				<div class="w-full top-5 absolute px-10 flex justify-between">
-					<div class="flex gap-3">
-						<button id="back-button"><span class="material-symbols-outlined inline-icon">arrow_back</span></button>
-						<span>{ fmt.Sprintf("%s (%d)", PageData.Item.Title, PageData.Item.ReleaseDate.Year()) }</span>
-					</div>
-					<div class="flex gap-3">
-						<button><span class="material-symbols-outlined inline-icon">groups</span></button>
-						<button><span class="material-symbols-outlined inline-icon">cast</span></button>
-					</div>
+			<video class="w-screen h-screen" autoplay src={ router.GenerateDownloadItemRoute(PageData.Item.ID) }></video>
+			<div class="w-full top-5 absolute px-10 flex justify-between">
+				<div class="flex gap-3">
+					<button id="back-button"><span class="material-symbols-outlined inline-icon">arrow_back</span></button>
+					<span>{ fmt.Sprintf("%s (%d)", PageData.Item.Title, PageData.Item.ReleaseDate.Year()) }</span>
 				</div>
-				<div class="w-full bottom-5 absolute px-10 flex flex-col">
-					<div class="w-full flex mb-3">
-						<span>2:54:39</span>
-						<input type="range" name="" id="" class="flex-grow mx-5"/>
-						<span>2:59:42</span>
+				<div class="flex gap-3">
+					<button><span class="material-symbols-outlined inline-icon">groups</span></button>
+					<button><span class="material-symbols-outlined inline-icon">cast</span></button>
+				</div>
+			</div>
+			<div class="w-full bottom-5 absolute px-10 flex flex-col">
+				<div class="w-full flex mb-3">
+					<span id="current-time">2:54:39</span>
+					<input type="range" id="progress-control" class="flex-grow mx-5"/>
+					<span id="duration">2:59:42</span>
+				</div>
+				<div class="w-full flex justify-between">
+					<div class="flex gap-3">
+						<button><span class="material-symbols-outlined inline-icon">skip_previous</span></button>
+						<button><span class="material-symbols-outlined inline-icon">navigate_before</span></button>
+						<button id="rewind" class="hidden-48"><span class="material-symbols-outlined inline-icon">fast_rewind</span></button>
+						<button id="play"><span class="material-symbols-outlined inline-icon">play_arrow</span></button>
+						<button id="forward" class="hidden-48"><span class="material-symbols-outlined inline-icon">fast_forward</span></button>
+						<button><span class="material-symbols-outlined inline-icon">navigate_next</span></button>
+						<button><span class="material-symbols-outlined inline-icon">skip_next</span></button>
+						<span class="hidden-44">Ends at 11:30 PM</span>
 					</div>
-					<div class="w-full flex justify-between">
-						<div class="flex gap-3">
-							<button><span class="material-symbols-outlined inline-icon">skip_previous</span></button>
-							<button><span class="material-symbols-outlined inline-icon">navigate_before</span></button>
-							<button class="hidden-48"><span class="material-symbols-outlined inline-icon">fast_rewind</span></button>
-							<button><span class="material-symbols-outlined inline-icon">play_arrow</span></button>
-							<button class="hidden-48"><span class="material-symbols-outlined inline-icon">fast_forward</span></button>
-							<button><span class="material-symbols-outlined inline-icon">navigate_next</span></button>
-							<button><span class="material-symbols-outlined inline-icon">skip_next</span></button>
-							<span class="hidden-44">Ends at 11:30 PM</span>
+					<div class="flex gap-3">
+						<div class="flex hidden-34">
+							<button id="mute"><span class="material-symbols-outlined inline-icon" id="volume-icon">volume_up</span></button>
+							<input type="range" id="volume-control" min="0" max="1" step="0.01"/>
 						</div>
-						<div class="flex gap-3">
-							<div class="flex hidden-34">
-								<button><span class="material-symbols-outlined inline-icon">volume_up</span></button>
-								<input type="range" name="" id=""/>
-							</div>
-							<button><span class="material-symbols-outlined inline-icon">settings</span></button>
-							<button><span class="material-symbols-outlined inline-icon">picture_in_picture_alt</span></button>
-							<button><span class="material-symbols-outlined inline-icon">fullscreen</span></button>
-						</div>
+						<button><span class="material-symbols-outlined inline-icon">settings</span></button>
+						<button><span class="material-symbols-outlined inline-icon">picture_in_picture_alt</span></button>
+						<button><span class="material-symbols-outlined inline-icon">fullscreen</span></button>
 					</div>
 				</div>
 			</div>

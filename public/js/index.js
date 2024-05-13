@@ -1,5 +1,6 @@
 import { ScrollIndicator } from "./scroll-indicator.js";
 import { MasonryGrid } from "./masonry-grid.js";
+import { VideoPlayer } from "./video-player.js";
 let $grid = null;
 
 $(document).ready(function () {
@@ -9,6 +10,9 @@ $(document).ready(function () {
 
     // Initialize masonry grid
     let grid = new MasonryGrid();
+
+    // Initialize video player
+    let videoPlayer = new VideoPlayer();
 
     // Add listener for "menu" button click to toggle sidebar
     $("#sidebar-menu-button").click(function () {
