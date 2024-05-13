@@ -3,8 +3,18 @@ export class ScrollIndicator {
     content;
 
     constructor() {
-        this.scrollProgress = document.getElementsByClassName('scrollProgress')[0];
-        this.content = document.getElementsByClassName('content')[0];
+        let scrollProgress = document.getElementsByClassName('scrollProgress');
+        if (scrollProgress.length === 0) {
+            return;
+        }
+        this.scrollProgress = scrollProgress[0];
+
+        let content = document.getElementsByClassName('content');
+        if (content.length === 0) {
+            return;
+        }
+
+        this.content = content[0];
         if (this.scrollProgress.length === 0) {
             return;
         }
