@@ -16,7 +16,7 @@ type PlayerData struct {
 templ Player(PageData PlayerData) {
 	@shared.Page("Player") {
 		<div class="w-screen h-screen relative">
-			<video class="w-screen h-screen" autoplay src={ router.GenerateDownloadItemRoute(PageData.Item.ID) }></video>
+			<video class="w-screen h-screen bg-black" autoplay src={ router.GenerateDownloadItemRoute(PageData.Item.ID) }></video>
 			<div class="w-full top-5 absolute px-10 flex justify-between">
 				<div class="flex gap-3">
 					<button id="back-button"><span class="material-symbols-outlined inline-icon">arrow_back</span></button>
