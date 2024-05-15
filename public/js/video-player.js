@@ -86,6 +86,13 @@ export class VideoPlayer {
             case 'ArrowRight':
                 this.Forward();
                 break;
+            case 'Home':
+                this.player.currentTime = 0;
+                break;
+            case 'End':
+                this.player.currentTime = this.player.duration;
+                this.Play();
+                break;
             case 'ArrowUp':
                 this.VolumeUp();
                 break;
