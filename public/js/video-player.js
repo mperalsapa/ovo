@@ -69,6 +69,7 @@ export class VideoPlayer {
         let volumeControl = document.getElementById('volume-control');
         volumeControl.addEventListener('input', function (e) {
             this.player.volume = e.target.value;
+            this.SaveVolume();
             this.UpdateVolumeControl();
         }.bind(this));
 
@@ -134,7 +135,15 @@ export class VideoPlayer {
             case 'KeyF':
                 this.ToggleFullScreen();
                 break;
+            case 'Period':
+                this.player.currentTime = this.player.currentTime + this.GetFrameLength();
+                console.log("Frame Time: ", this.GetFrameLength())
+                break;
+            case 'Comma':
+                this.player.currentTime = this.player.currentTime - this.GetFrameLength();
+                break;
             default:
+                console.log(e.code + " not handled")
                 break;
         }
     }
@@ -203,11 +212,13 @@ export class VideoPlayer {
 
     VolumeUp() {
         this.player.volume = Math.min(this.player.volume + this.volumeIncrement, 1);
+        this.SaveVolume();
         this.UpdateVolumeControl();
     }
 
     VolumeDown() {
         this.player.volume = Math.max(this.player.volume - this.volumeIncrement, 0);
+        this.SaveVolume();
         this.UpdateVolumeControl();
     }
 
@@ -217,6 +228,9 @@ export class VideoPlayer {
     }
 
     UpdateVolumeControl() {
+        // Load volume from localstorage
+        this.player.volume = Math.min(Math.max(this.LoadVolume(), 0), 1);
+        console.log("Volume: ", this.player.volume)
         let volumeControl = document.getElementById('volume-control');
         volumeControl.value = this.player.volume;
 
@@ -228,6 +242,18 @@ export class VideoPlayer {
         } else {
             volumeIcon.innerHTML = "volume_up";
         }
+    }
+
+    SaveVolume() {
+        localStorage.setItem('volume', this.player.volume);
+    }
+
+    LoadVolume() {
+        let volume = localStorage.getItem('volume');
+        if (volume) {
+            return parseFloat(volume);
+        }
+        return 1;
     }
 
 
@@ -245,6 +271,11 @@ export class VideoPlayer {
 
     }
 
+    GetFrameLength() {
+        // we asume videos are 30fps. While is wide known that movies are filmed in 24fps, some
+        // are filmed in 30fps, and is better to get smaller frame time than bigger (30fps -> 33ms vs 24fps -> 41ms)
+        return 1 / 30;
+    }
 
 
 }
