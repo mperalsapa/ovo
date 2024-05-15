@@ -99,7 +99,6 @@ func SearchMovieByNameAndYear(name string, year int) *TMDBMetadataItem {
 
 	if len(details.Results) == 0 {
 		log.Println("No movie found for ", name, " with year ", year)
-		log.Println("Options: ", options)
 		return nil
 	}
 
