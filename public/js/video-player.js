@@ -16,6 +16,8 @@ export class VideoPlayer {
 
         this.#LoadButtons();
         this.#AddListeners();
+        this.#UpdateUI();
+
     }
 
     #LoadButtons() {
@@ -134,6 +136,13 @@ export class VideoPlayer {
         }
     }
 
+    #UpdateUI() {
+        this.UpdatePlayButton();
+        this.UpdateEndsAt();
+        this.UpdateCurrentProgress();
+        this.UpdateVolumeControl();
+    }
+
     Play() {
         this.player.paused ? this.player.play() : this.player.pause();
         this.UpdateEndsAt();
@@ -141,6 +150,7 @@ export class VideoPlayer {
 
     UpdatePlayButton(newButtonText) {
         let buttontext = this.buttons.play.children;
+        if (!newButtonText) newButtonText = this.player.paused ? "play_arrow" : "pause";
         if (buttontext.length > 0) {
             buttontext[0].innerHTML = newButtonText;
         } else {
@@ -177,14 +187,14 @@ export class VideoPlayer {
         duration.innerHTML = this.#FormatTime(this.player.duration);
     }
 
-    #FormatTime(seconds, includeSeconds = true) {
-        let hours = Math.floor(seconds / 3600);
-        let minutes = Math.floor(seconds % 3600 / 60);
+    #FormatTime(time, includeSeconds = true) {
+        let hours = Math.floor(time / 3600);
+        let minutes = Math.floor(time % 3600 / 60);
         if (!includeSeconds) {
             return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
         }
 
-        let seconds = Math.floor(seconds % 3600 % 60);
+        let seconds = Math.floor(time % 3600 % 60);
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
