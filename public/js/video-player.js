@@ -58,7 +58,8 @@ export class VideoPlayer {
         this.player.addEventListener('ended', function () {
             this.UpdatePlayButton("replay")
         }.bind(this));
-
+        //   - seeked
+        this.player.addEventListener('seeked', this.UpdateEndsAt.bind(this));
         //   - volume
         let volumeControl = document.getElementById('volume-control');
         volumeControl.addEventListener('input', function (e) {
@@ -91,7 +92,6 @@ export class VideoPlayer {
                 break;
             case 'End':
                 this.player.currentTime = this.player.duration;
-                this.Play();
                 break;
             case 'ArrowUp':
                 this.VolumeUp();
@@ -99,11 +99,44 @@ export class VideoPlayer {
             case 'ArrowDown':
                 this.VolumeDown();
                 break;
+            case 'Digit1':
+                this.player.currentTime = this.player.duration * 0.1;
+                break;
+            case 'Digit2':
+                this.player.currentTime = this.player.duration * 0.2;
+                break;
+            case 'Digit3':
+                this.player.currentTime = this.player.duration * 0.3;
+                break;
+            case 'Digit4':
+                this.player.currentTime = this.player.duration * 0.4;
+                break;
+            case 'Digit5':
+                this.player.currentTime = this.player.duration * 0.5;
+                break;
+            case 'Digit6':
+                this.player.currentTime = this.player.duration * 0.6;
+                break;
+            case 'Digit7':
+                this.player.currentTime = this.player.duration * 0.7;
+                break;
+            case 'Digit8':
+                this.player.currentTime = this.player.duration * 0.8;
+                break;
+            case 'Digit9':
+                this.player.currentTime = this.player.duration * 0.9;
+                break;
+            case 'KeyF':
+                this.ToggleFullScreen();
+                break;
+            default:
+                break;
         }
     }
 
     Play() {
         this.player.paused ? this.player.play() : this.player.pause();
+        this.UpdateEndsAt();
     }
 
     UpdatePlayButton(newButtonText) {
@@ -117,10 +150,21 @@ export class VideoPlayer {
 
     Rewind() {
         this.player.currentTime -= this.videoScrubIncrement;
+        this.UpdateEndsAt();
     }
 
     Forward() {
         this.player.currentTime += this.videoScrubIncrement;
+        this.UpdateEndsAt();
+    }
+
+
+    UpdateEndsAt() {
+        let endsAt = document.getElementById('ends-at');
+        let currentTime = Date.now();
+        currentTime += (this.player.duration - this.player.currentTime) * 1000;
+
+        endsAt.innerHTML = new Date(currentTime).toTimeString().split(' ')[0].slice(0, -3);
     }
 
     UpdateCurrentProgress() {
@@ -133,10 +177,14 @@ export class VideoPlayer {
         duration.innerHTML = this.#FormatTime(this.player.duration);
     }
 
-    #FormatTime(time) {
-        let hours = Math.floor(time / 3600);
-        let minutes = Math.floor(time % 3600 / 60);
-        let seconds = Math.floor(time % 3600 % 60);
+    #FormatTime(seconds, includeSeconds = true) {
+        let hours = Math.floor(seconds / 3600);
+        let minutes = Math.floor(seconds % 3600 / 60);
+        if (!includeSeconds) {
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        let seconds = Math.floor(seconds % 3600 % 60);
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
@@ -171,15 +219,17 @@ export class VideoPlayer {
 
 
     ToggleFullScreen() {
-        if (this.player.requestFullscreen) {
-            this.player.requestFullscreen();
-        } else if (this.player.webkitRequestFullscreen) {
-            this.player.webkitRequestFullscreen();
-        } else if (this.player.mozRequestFullScreen) {
-            this.player.mozRequestFullScreen();
-        } else if (this.player.msRequestFullscreen) {
-            this.player.msRequestFullscreen();
+        if (document.fullscreenElement) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+            return;
         }
+
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        }
+
     }
 
 
