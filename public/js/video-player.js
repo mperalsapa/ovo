@@ -25,12 +25,14 @@ export class VideoPlayer {
         let rewind = document.getElementById('rewind');
         let forward = document.getElementById('forward');
         let mute = document.getElementById('mute');
+        let fullScreen = document.getElementById('full-screen');
 
         this.buttons = {
             play: play,
             rewind: rewind,
             forward: forward,
-            mute: mute
+            mute: mute,
+            fullScreen: fullScreen,
         }
 
     }
@@ -42,6 +44,7 @@ export class VideoPlayer {
         this.buttons.rewind.addEventListener('click', this.Rewind.bind(this));
         this.buttons.forward.addEventListener('click', this.Forward.bind(this));
         this.buttons.mute.addEventListener('click', this.Mute.bind(this));
+        this.buttons.fullScreen.addEventListener('click', this.ToggleFullScreen.bind(this));
 
         // keyboard listeners
         document.addEventListener('keydown', this.#KeyboardListener.bind(this));
