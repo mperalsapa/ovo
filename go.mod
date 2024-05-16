@@ -19,6 +19,7 @@ require (
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kylelemons/go-gypsy v1.0.0 // indirect
+	github.com/mileusna/useragent v1.3.4 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
 )

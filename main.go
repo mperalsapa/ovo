@@ -78,7 +78,7 @@ func main() {
 	//   	Authenticated routes (Private routes)
 	// 			Visitor routes (unprivileged user)
 	auth := echoInstance.Group("")
-	auth.Use(customMiddleware.IsAuthenticated)
+	auth.Use(customMiddleware.IsAuthenticated, customMiddleware.UpdateDeviceActivity)
 	auth.GET(router.Routes.Logout, controller.Logout)
 	auth.GET(router.Routes.Home, controller.Home)
 	auth.GET(router.Routes.Library, controller.Library)
@@ -95,7 +95,7 @@ func main() {
 
 	// 			Admin routes (admin only)
 	admin := echoInstance.Group("")
-	admin.Use(customMiddleware.IsAdmin, customMiddleware.IsAuthenticated)
+	admin.Use(customMiddleware.IsAuthenticated, customMiddleware.IsAdmin, customMiddleware.UpdateDeviceActivity)
 	admin.GET(router.AdminRoutes.Dashboard, controller.AdminDashboard)
 	admin.GET(router.AdminRoutes.Libraries, controller.AdminLibraries)
 	admin.GET(router.AdminRoutes.Library, controller.AdminLibrary)

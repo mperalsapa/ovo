@@ -24,6 +24,7 @@ type UserSession struct {
 	SyncPlayerID  string
 	Role          model.Role
 	ErrorMsg      string
+	DeviceID      uint
 }
 
 func GenerateSessionHandler(key string, name string) {

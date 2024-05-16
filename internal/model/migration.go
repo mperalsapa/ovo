@@ -7,5 +7,5 @@ import (
 
 func Init() {
 	log.Println("Automigrating database schema...")
-	db.GetDB().AutoMigrate(&Library{}, &Item{}, &User{}, &Person{}, &Credit{})
+	db.GetDB().AutoMigrate(&Library{}, &Item{}, &User{}, &Person{}, &Credit{}, &Device{})
 }
