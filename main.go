@@ -63,7 +63,8 @@ func main() {
 
 	// 		Request log setup
 	echoInstance.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "${time_rfc3339} - STATUS: ${status} - Method: ${method} - URI: ${uri}\n",
+		Format:           "${time_custom} - IP: ${remote_ip} - STATUS: ${status} - Method: ${method} - URI: ${uri}\n",
+		CustomTimeFormat: "2006/01/02 15:04:05",
 	}))
 
 	// Route definition
