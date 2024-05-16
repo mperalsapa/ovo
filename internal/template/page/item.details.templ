@@ -48,7 +48,7 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 		Title:       pageData.Item.Title,
 		UserSession: pageData.UserSession,
 	}) {
-		<div class="flex flex-col lg:flex-row items-start gap-8 flex-wrap item-container">
+		<div class="flex flex-col lg:flex-row items-start gap-8 flex-wrap item-container content">
 			<img class="item-image mx-auto" src={ "https://image.tmdb.org/t/p/w500" + pageData.Item.PosterPath }/>
 			<div class="flex flex-col gap-8 overflow-x-hidden w-full basis-1/2 flex-grow">
 				<div class="flex flex-col gap-2">
