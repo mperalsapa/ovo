@@ -12,6 +12,7 @@ import (
 	"ovo-server/internal/router"
 	"ovo-server/internal/session"
 	"ovo-server/internal/tmdb"
+	"ovo-server/internal/websocket"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -38,6 +39,8 @@ func init() {
 	session.GenerateSessionHandler("TODO:TEMPORAL_COOKIE_SECRET_MUST_CHANGE", "ovo-session")
 	// Router setup
 	router.Init()
+	// Websocket setup
+	websocket.Init()
 
 	// Initialize TMDB API
 	tmdb.Init()
@@ -86,6 +89,7 @@ func main() {
 	auth.GET(router.Routes.Item, controller.Item)
 	auth.GET(router.Routes.Player, controller.Player)
 	auth.GET(router.Routes.DownloadItem, controller.Download)
+	auth.GET(router.Routes.Websocket, controller.WebsocketHandler)
 
 	// 			API routes
 	api := auth.Group("")
