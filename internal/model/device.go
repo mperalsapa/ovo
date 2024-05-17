@@ -17,7 +17,6 @@ type Device struct {
 	UserID    uint           `json:"user_id"`
 	User      User           `json:"user"`
 	Name      string         `json:"name"`
-	Activity  *time.Time     `json:"activity"`
 }
 
 func (d *Device) BeforeCreate(tx *gorm.DB) error {
@@ -35,8 +34,6 @@ func CreateDevice(userId uint, name string) Device {
 	device := Device{}
 	device.UserID = userId
 	device.Name = name
-	currentTime := time.Now()
-	device.Activity = &currentTime
 	device.Save()
 	return device
 }
@@ -64,5 +61,5 @@ func GetDevicesByUserId(userId uint) []Device {
 }
 
 func (d *Device) UpdateDeviceActivity() error {
-	return database.GetDB().Model(&d).Update("activity", time.Now()).Error
+	return database.GetDB().Model(&d).Update("updated_at", time.Now()).Error
 }
