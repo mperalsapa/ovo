@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"log"
+	"ovo-server/internal/controller"
 	"ovo-server/internal/model"
 	"ovo-server/internal/session"
 
 	"github.com/labstack/echo/v4"
-	"github.com/mileusna/useragent"
 )
 
 func UpdateDeviceActivity(next echo.HandlerFunc) echo.HandlerFunc {
@@ -17,17 +17,15 @@ func UpdateDeviceActivity(next echo.HandlerFunc) echo.HandlerFunc {
 		userSession := session.GetUserSession(c)
 		deviceID := userSession.DeviceID
 
-		if deviceID == 0 {
-			parsedUA := useragent.Parse(c.Request().UserAgent())
-
-			device = model.CreateDevice(model.GetUserByUsername(userSession.Username).ID, parsedUA.Name)
-			userSession.DeviceID = device.ID
-			userSession.SaveUserSession(c)
-		} else {
+		if deviceID != 0 {
 			device, err = model.GetDeviceById(deviceID)
 			if err != nil {
-				log.Println("Error getting device: ", err)
-				return next(c)
+				log.Printf("User %s tried to acces using invalid deviceID %d. Loggin out.", userSession.Username, deviceID)
+				// As we could not find the device, we will log out the user
+				// In a future we could add the session into the database, instead
+				// of using cookies. This way we could invalidate the session directly
+				controller.Logout(c)
+				return nil
 			}
 		}
 

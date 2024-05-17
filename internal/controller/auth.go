@@ -10,6 +10,7 @@ import (
 	"ovo-server/internal/template/page"
 
 	"github.com/labstack/echo/v4"
+	"github.com/mileusna/useragent"
 )
 
 func Login(context echo.Context) error {
@@ -52,6 +53,10 @@ func LoginRequest(context echo.Context) error {
 		userSession.SaveUserSession(context)
 		return context.Redirect(http.StatusFound, router.Routes.Login)
 	}
+
+	parsedUA := useragent.Parse(context.Request().UserAgent())
+	device := model.CreateDevice(model.GetUserByUsername(userSession.Username).ID, parsedUA.Name)
+	userSession.DeviceID = device.ID
 
 	userSession.Authenticated = true
 	userSession.ErrorMsg = ""
@@ -119,7 +124,7 @@ func Logout(context echo.Context) error {
 	session := session.GetUserSession(context)
 	session.Authenticated = false
 	session.SaveUserSession(context)
-	fmt.Println("User logged out: " + session.Username)
+	log.Println("User logged out: " + session.Username)
 
 	return context.Redirect(http.StatusFound, router.Routes.Login)
 }

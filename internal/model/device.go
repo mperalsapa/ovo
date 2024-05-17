@@ -1,8 +1,11 @@
 package model
 
 import (
+	"log"
 	"ovo-server/internal/database"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Device struct {
@@ -11,10 +14,20 @@ type Device struct {
 	User     User       `json:"user"`
 	Name     string     `json:"name"`
 	Activity *time.Time `json:"activity"`
+	ApiKey   string     `json:"api_key"`
 }
 
 func CreateDevice(userId uint, name string) Device {
 	device := Device{}
+
+	deviceUUID, err := uuid.NewV7()
+	if err != nil {
+		log.Printf("Error generating UUID: %s. Adding v1 instead.", err)
+		device.ApiKey = ""
+	} else {
+		device.ApiKey = deviceUUID.String()
+	}
+
 	device.UserID = userId
 	device.Name = name
 	currentTime := time.Now()
