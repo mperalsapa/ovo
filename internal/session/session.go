@@ -6,6 +6,7 @@ import (
 	"log"
 	"ovo-server/internal/model"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
@@ -24,7 +25,7 @@ type UserSession struct {
 	SyncPlayerID  string
 	Role          model.Role
 	ErrorMsg      string
-	DeviceID      uint
+	DeviceID      uuid.UUID
 }
 
 func GenerateSessionHandler(key string, name string) {
@@ -64,15 +65,12 @@ func GetSession(c echo.Context) (*sessions.Session, error) {
 }
 
 func (u *UserSession) SaveUserSession(c echo.Context) {
+
 	session, err := GetSession(c)
 	if err != nil {
-		log.Println("Error getting session when storing: ", err)
-		return
-	}
-
-	// if session is equal, we do not save it again
-	if *u == GetUserSession(c) {
-		return
+		log.Printf("Error getting session when storing: %s, overwriting session with a new one.", err)
+		// if we could not get the session, we overwrite the cookie
+		session = sessions.NewSession(SessionSettings.Store, SessionSettings.Name)
 	}
 
 	log.Printf("Storing user %s with role %d is authenticated: %t", u.Username, u.Role, u.Authenticated)

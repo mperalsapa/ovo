@@ -6,28 +6,33 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Device struct {
-	ID       uint       `json:"id"`
-	UserID   uint       `json:"user_id"`
-	User     User       `json:"user"`
-	Name     string     `json:"name"`
-	Activity *time.Time `json:"activity"`
-	ApiKey   string     `json:"api_key"`
+	ID        uuid.UUID `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
+	UserID    uint           `json:"user_id"`
+	User      User           `json:"user"`
+	Name      string         `json:"name"`
+	Activity  *time.Time     `json:"activity"`
+}
+
+func (d *Device) BeforeCreate(tx *gorm.DB) error {
+	newUuid, err := uuid.NewV7()
+	if err != nil {
+		log.Printf("Error generating UUID: %s", err)
+		return err
+	}
+	log.Println("Generated UUID: ", newUuid)
+	d.ID = newUuid
+	return nil
 }
 
 func CreateDevice(userId uint, name string) Device {
 	device := Device{}
-
-	deviceUUID, err := uuid.NewV7()
-	if err != nil {
-		log.Printf("Error generating UUID: %s. Adding v1 instead.", err)
-		device.ApiKey = ""
-	} else {
-		device.ApiKey = deviceUUID.String()
-	}
-
 	device.UserID = userId
 	device.Name = name
 	currentTime := time.Now()
@@ -46,9 +51,9 @@ func GetDevices() []Device {
 	return devices
 }
 
-func GetDeviceById(id uint) (Device, error) {
+func GetDevice(id uuid.UUID) (Device, error) {
 	device := Device{}
-	err := database.GetDB().First(&device, id).Error
+	err := database.GetDB().Where("id = ?", id).First(&device).Error
 	return device, err
 }
 
