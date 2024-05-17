@@ -7,3 +7,4 @@ node_modules
 public/css/*
 src/css/*
 testing_media_dir/*
+public/routes.json
