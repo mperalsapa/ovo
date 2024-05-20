@@ -1,6 +1,8 @@
 import { ScrollIndicator } from "./scroll-indicator.js";
 import { MasonryGrid } from "./masonry-grid.js";
 import { VideoPlayer } from "./video-player.js";
+import { SyncMenu } from "./syncMenu.js";
+
 let $grid = null;
 
 $(document).ready(function () {
@@ -13,6 +15,9 @@ $(document).ready(function () {
 
     // Initialize video player
     let videoPlayer = new VideoPlayer();
+
+    // Initialize Sync menu
+    let syncplayMenu = new SyncMenu();
 
     // Add listener for "menu" button click to toggle sidebar
     $("#sidebar-menu-button").click(function () {

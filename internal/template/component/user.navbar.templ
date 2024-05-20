@@ -1,5 +1,7 @@
 package component
 
+import "ovo-server/internal/router"
+
 templ UserNavbar() {
 	<header>
 		<div class="headerSection start">
@@ -10,17 +12,15 @@ templ UserNavbar() {
 			@AnimatedImago()
 		</div>
 		<div class="headerSection center">
-			<button class="labeledButton">
-				<div class="buttonIcon"></div>
+			<a class="content-center" href={ templ.SafeURL(router.Routes.Home) }>
 				<span class="buttonLabel material-symbols-outlined">HOME</span>
-			</button>
-			<button class="labeledButton">
-				<div class="buttonIcon"></div>
+			</a>
+			<a class="content-center" href={ templ.SafeURL(router.Routes.Home) }>
 				<span class="buttonLabel material-symbols-outlined">FAVORITE</span>
-			</button>
+			</a>
 		</div>
 		<div class="headerSection end">
-			<button class="labeledButton">
+			<button id="nav-sync-button" class="labeledButton">
 				<div class="buttonIcon"></div>
 				<span class="buttonLabel material-symbols-outlined">SYNC</span>
 			</button>

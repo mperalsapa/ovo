@@ -22,7 +22,7 @@ type sessionSettings struct {
 type UserSession struct {
 	Username      string
 	Authenticated bool
-	SyncPlayerID  string
+	SyncPlayGroup string
 	Role          model.Role
 	ErrorMsg      string
 	DeviceID      uuid.UUID

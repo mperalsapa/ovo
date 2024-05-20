@@ -6,11 +6,13 @@ import (
 
 	"ovo-server/internal/config"
 	"ovo-server/internal/controller"
+	apiController "ovo-server/internal/controller/api"
 	"ovo-server/internal/database"
 	customMiddleware "ovo-server/internal/middleware"
 	"ovo-server/internal/model"
 	"ovo-server/internal/router"
 	"ovo-server/internal/session"
+	"ovo-server/internal/syncplay"
 	"ovo-server/internal/tmdb"
 	"ovo-server/internal/websocket"
 
@@ -41,6 +43,8 @@ func init() {
 	router.Init()
 	// Websocket setup
 	websocket.Init()
+	// Syncplay setup
+	syncplay.Init()
 
 	// Initialize TMDB API
 	tmdb.Init()
@@ -97,6 +101,10 @@ func main() {
 	api.GET(router.ApiRoutes.Library, controller.APIGetLibrary)
 	api.POST(router.ApiRoutes.Library, controller.APIAddLibrary)
 	api.DELETE(router.ApiRoutes.Library, controller.APIDeleteLibrary)
+	api.POST(router.ApiRoutes.SyncplayGroups, apiController.CreateSyncGroup)
+	api.GET(router.ApiRoutes.SyncplayGroups, apiController.GetSyncGroups)
+	api.DELETE(router.ApiRoutes.SyncplayGroups, apiController.LeaveSyncGroup)
+	api.PUT(router.ApiRoutes.SyncplayGroups, apiController.JoinSyncGroup)
 
 	// 			Admin routes (admin only)
 	admin := echoInstance.Group("")

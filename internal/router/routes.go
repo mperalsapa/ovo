@@ -35,8 +35,9 @@ type adminRoute struct {
 }
 
 type apiRoutes struct {
-	Library   string
-	Libraries string
+	Library        string
+	Libraries      string
+	SyncplayGroups string // CRUD = POST, GET, DELETE, PUT
 }
 
 var Routes route
@@ -146,6 +147,7 @@ func Init() bool {
 	// Api routes
 	ApiRoutes.Library = BuildApiRoute("/library/:id")
 	ApiRoutes.Libraries = BuildApiRoute("/libraries")
+	ApiRoutes.SyncplayGroups = BuildApiRoute("/syncplay/groups")
 
 	SaveRoutesJSON()
 
