@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-  --main-color: white;
+  --text-color: textColor;
   --primary-color: #44a9cc;
   --secondary-color: #3f7587;
   --background-color: #1d1d1b;
@@ -28,7 +28,7 @@
 }
 
 :root body.winter {
-  --main-color: #008cff;
+  --text-color: #008cff;
   --secondary-color: #63b4d0;
 }
 
@@ -562,6 +562,22 @@ header::after {
 .horizontal-carrousel a {
   flex-shrink: 0;
   width: 7.6rem;
+}
+
+.dialog .inner-container {
+  right: 10px;
+  top: 10px;
+}
+
+::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.swal2-popup,
+.swal2-modal {
+  background-color: #373734;
+  color: white;
+  width: fit-content;
 }
 
 html {

@@ -21,6 +21,7 @@ $layout_grid-gap: 2rem;
 // $scrollProgressColor: #44a9cc;
 // $scrollProgressGlowColor: #63b4d0;
 
+$textColor: white;
 $backgroundColor: #1d1d1b;
 
 $mainThemePrimaryColor: #44a9cc;
@@ -32,7 +33,7 @@ $lightColorPercentage: 10%;
 $darkColorPercentage: -20%;
 
 :root {
-    --main-color: white;
+    --text-color: #{textColor};
     --primary-color: #{$mainThemePrimaryColor};
     --secondary-color: #{$mainThemeSecondaryColor};
     --background-color: #{$backgroundColor};
@@ -62,6 +63,6 @@ $darkColorPercentage: -20%;
 }
 
 :root body.winter {
-    --main-color: #008cff;
+    --text-color: #008cff;
     --secondary-color: #63b4d0;
 }

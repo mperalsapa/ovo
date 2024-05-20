@@ -1,0 +1,9 @@
+@use '../base/variables.scss' as vars;
+@use './button.scss' as button;
+
+.swal2-popup,
+.swal2-modal {
+    background-color: adjust-color(vars.$backgroundColor, $lightness: 10%);
+    color: vars.$textColor;
+    width: fit-content;
+}

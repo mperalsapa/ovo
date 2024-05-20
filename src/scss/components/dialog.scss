@@ -1,0 +1,11 @@
+.dialog {
+    .inner-container {
+        right: 10px;
+        top: 10px;
+    }
+
+}
+
+::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}

@@ -12,6 +12,8 @@
 @use "components/containers.scss";
 @use "components/scroll_indicator.scss";
 @use "components/card-carrousel.scss";
+@use "components/dialog.scss";
+@use "components/sweetalert.scss";
 
 html {
     background-color: var(--background-color);
