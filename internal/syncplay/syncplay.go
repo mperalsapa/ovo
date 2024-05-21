@@ -12,7 +12,7 @@ import (
 var Groups SyncGroups
 
 type Sync struct {
-	CurrentItem model.Item
+	CurrentItem *model.Item
 	CurrentTime int
 	StartedFrom int
 	IsPlaying   bool
@@ -130,4 +130,13 @@ func (sg *SyncGroups) RemoveConnectionFromGroup(id string, conn *websocket.Conn)
 	}
 
 	group.Connections = append(group.Connections[:connIndex], group.Connections[connIndex+1])
+}
+
+func (s *Sync) SetNewItem(item *model.Item) {
+	if s.CurrentItem != item {
+		s.CurrentItem = item
+		s.CurrentTime = 0
+		s.StartedFrom = 0
+		s.IsPlaying = false
+	}
 }

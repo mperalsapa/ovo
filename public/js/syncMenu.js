@@ -23,11 +23,13 @@ export class SyncMenu {
         if (syncPlayGroupList.currentGroup) {
             groupListElement += `<ul>` + syncPlayGroupList.groups.filter((group) => group.id == syncPlayGroupList.currentGroup).map((group) => {
                 return `<li>${group.name}</li>` + group.users.map((user) => `<li>${user}</li>`).join("")
-            }).join("") + `</ul>` + `<button class="leave-syncplay">Leave Group</button>`
+            }).join("") + `</ul>`
+                + `<a href="${Routes.Routes.Player}" class="button button-primary">Go to Player</a>`
+                + `<button class="leave-syncplay button button-danger">Leave Group</button>`
         } else {
             groupListElement += syncPlayGroupList.groups.map((group) => {
                 return `<button class="join-syncplay button button-primary" data-group-id="${group.id}">${group.name}</button>`
-            }).join("") + `<button class="create-syncplay">Create Group</button>`
+            }).join("") + `<button class="create-syncplay button button-primary">Create Group</button>`
         }
 
         groupListElement += `</div>`;

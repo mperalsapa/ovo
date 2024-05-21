@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"ovo-server/internal/model"
 	"ovo-server/internal/session"
+	"ovo-server/internal/syncplay"
 	"ovo-server/internal/template/page"
 	"path/filepath"
 	"strconv"
@@ -12,17 +13,35 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type PlayerData struct {
+	ItemID uint `query:"item"`
+}
+
 func Player(c echo.Context) error {
-	itemID, err := strconv.Atoi(c.QueryParam("item"))
-	if err != nil {
-		return c.String(http.StatusBadRequest, "Invalid item ID")
-	}
-	item, err := model.GetItemById(uint(itemID))
-	if err != nil {
-		return c.String(http.StatusBadRequest, "Item not found")
+	var playerData PlayerData
+	var item model.Item
+
+	userSession := session.GetUserSession(c)
+	c.Bind(&playerData)
+	itemID := playerData.ItemID
+
+	// If item id is provided in the query, we load the item from database
+	if itemID != 0 {
+		item, _ = model.GetItemById(itemID)
 	}
 
-	// groupID := c.QueryParam("group")
+	// After checking for new item, we check if user is in a sync group
+	if userSession.SyncPlayGroup != "" {
+		group := syncplay.Groups.GetGroup(userSession.SyncPlayGroup)
+
+		// If user in group wants to play a new item, we sync the item
+		if item.ID != 0 {
+			group.Sync.SetNewItem(&item)
+		} else if group.Sync.CurrentItem != nil {
+			item = *group.Sync.CurrentItem
+		}
+
+	}
 
 	componentData := page.PlayerData{
 		UserSession: session.GetUserSession(c),

@@ -89,7 +89,7 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 							}
 						</div>
 						<div class="flex gap-4">
-							<a href={ templ.SafeURL(router.GeneratePlayerRoute(pageData.Item.ID, pageData.UserSession.SyncPlayGroup)) } type="button">
+							<a href={ templ.SafeURL(router.GeneratePlayerRoute(pageData.Item.ID)) } type="button">
 								<span class="material-symbols-outlined inline-icon">
 									play_arrow
 								</span>

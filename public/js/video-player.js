@@ -14,10 +14,16 @@ export class VideoPlayer {
         }
         this.player = player[0];
 
+        if (this.player.readyState < 3) {
+            this.player.addEventListener('loadedmetadata', this.#Init.bind(this));
+        }
+
         this.#LoadButtons();
         this.#AddListeners();
-        this.#UpdateUI();
+    }
 
+    #Init() {
+        this.#UpdateUI();
     }
 
     #LoadButtons() {
@@ -40,6 +46,7 @@ export class VideoPlayer {
     #AddListeners() {
         // buton listeners
         this.player.addEventListener('click', this.Play.bind(this));
+        this.player.addEventListener('dblclick', this.ToggleFullScreen.bind(this));
         this.buttons.play.addEventListener('click', this.Play.bind(this));
         this.buttons.rewind.addEventListener('click', this.Rewind.bind(this));
         this.buttons.forward.addEventListener('click', this.Forward.bind(this));
@@ -54,6 +61,7 @@ export class VideoPlayer {
         this.player.addEventListener('play', function () {
             this.UpdatePlayButton("pause")
             document.getElementById('progress-control').max = this.player.duration;
+            this.UpdateEndsAt();
         }.bind(this));
 
         this.player.addEventListener('pause', function () {
@@ -157,7 +165,6 @@ export class VideoPlayer {
 
     Play() {
         this.player.paused ? this.player.play() : this.player.pause();
-        this.UpdateEndsAt();
     }
 
     UpdatePlayButton(newButtonText) {

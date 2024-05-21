@@ -37,7 +37,7 @@
   color: var(--primary-text-color);
   min-width: 2.5rem;
   @apply rounded p-2;
-  @apply outline hover:outline-dashed outline-2;
+  @apply border-2 hover:border-dashed;
   outline-color: var(--secondary-color);
 }
 .button:hover {

@@ -13,6 +13,49 @@ type PlayerData struct {
 	Item        model.Item
 }
 
+// var MissingItemModal = template.Must(template.New("missingItemModal").Parse("
+// <div>
+// 	Swal.fire({
+// 			icon: 'error',
+// 			title: 'There is no current item playing!',
+// 			text: 'Go to a library and find something to watch. 🍿😊',
+// 			showConfirmButton: false,
+// 			buttonsStyling: false,
+// 			scrollbarPadding: false,
+// 		}).then(() => {
+// 			window.location.href = {{ . }}
+// 		})
+// </div>
+// "))
+
+type MissingItemModalData struct {
+	Title             string
+	Message           string
+	ConfirmButtonText string
+	RedirectRoute     string
+}
+
+script MissingItemModal(ModalData MissingItemModalData) {
+	Swal.fire({
+		icon: 'error',
+		title: 'There is no current item playing!',
+		text: ModalData.Message,
+		// showConfirmButton: false,
+		confirmButtonText: ModalData.ConfirmButtonText,
+		buttonsStyling: false,
+		scrollbarPadding: false,
+		customClass: {
+    	confirmButton: "button button-primary"
+  }
+	}).then(() => {
+		window.location.href = ModalData.RedirectRoute
+	})
+}
+
+script TestScript(message string) {
+	console.log(message)
+}
+
 templ Player(PageData PlayerData) {
 	@shared.Page("Player") {
 		<div class="w-screen h-screen relative">
@@ -56,5 +99,23 @@ templ Player(PageData PlayerData) {
 				</div>
 			</div>
 		</div>
+		if PageData.Item.ID == 0 {
+			@TestScript("Hello")
+			if PageData.UserSession.SyncPlayGroup != "" {
+				@MissingItemModal(MissingItemModalData{
+					Title:             "There is no current item playing!",
+					Message:           "Go to a library and find something to watch. 🍿😊",
+					ConfirmButtonText: "Go Home",
+					RedirectRoute:     router.Routes.Home,
+				})
+			} else {
+				@MissingItemModal(MissingItemModalData{
+					Title:             "Item not found!",
+					Message:           "Requested item was not found or has been removed.",
+					ConfirmButtonText: "Go Home",
+					RedirectRoute:     router.Routes.Home,
+				})
+			}
+		}
 	}
 }

@@ -86,7 +86,7 @@ func main() {
 	//   	Authenticated routes (Private routes)
 	// 			Visitor routes (unprivileged user)
 	auth := echoInstance.Group("")
-	auth.Use(customMiddleware.IsAuthenticated, customMiddleware.UpdateDeviceActivity)
+	auth.Use(customMiddleware.IsAuthenticated, customMiddleware.UpdateDeviceActivity, customMiddleware.ValidateCurrentSyncplayGroup)
 	auth.GET(router.Routes.Logout, controller.Logout)
 	auth.GET(router.Routes.Home, controller.Home)
 	auth.GET(router.Routes.Library, controller.Library)
@@ -97,10 +97,7 @@ func main() {
 
 	// 			API routes
 	api := auth.Group("")
-	api.GET(router.ApiRoutes.Libraries, controller.APIGetLibraries)
-	api.GET(router.ApiRoutes.Library, controller.APIGetLibrary)
-	api.POST(router.ApiRoutes.Library, controller.APIAddLibrary)
-	api.DELETE(router.ApiRoutes.Library, controller.APIDeleteLibrary)
+	api.Use(customMiddleware.IsAuthenticated, customMiddleware.UpdateDeviceActivity, customMiddleware.ValidateCurrentSyncplayGroup)
 	api.POST(router.ApiRoutes.SyncplayGroups, apiController.CreateSyncGroup)
 	api.GET(router.ApiRoutes.SyncplayGroups, apiController.GetSyncGroups)
 	api.DELETE(router.ApiRoutes.SyncplayGroups, apiController.LeaveSyncGroup)
