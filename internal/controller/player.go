@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"ovo-server/internal/model"
 	"ovo-server/internal/session"
 	"ovo-server/internal/syncplay"
 	"ovo-server/internal/template/page"
+	"ovo-server/internal/websocket"
 	"path/filepath"
 	"strconv"
 
@@ -37,6 +39,12 @@ func Player(c echo.Context) error {
 		// If user in group wants to play a new item, we sync the item
 		if item.ID != 0 {
 			group.Sync.SetNewItem(&item)
+			message := websocket.Message{
+				Event: "newItem",
+				Item:  &item,
+			}
+			messageData, _ := json.Marshal(message)
+			websocket.BroadcastToList(group.Connections, messageData, nil)
 		}
 
 		if group.Sync.CurrentItem != nil {

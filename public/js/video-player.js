@@ -77,6 +77,7 @@ export class VideoPlayer {
     }
 
     #SendWebsocketMessage(message) {
+        console.log("Sending to server: ", message)
         this.syncConnection.send(JSON.stringify(message));
     }
 
@@ -96,6 +97,11 @@ export class VideoPlayer {
             case "seek":
                 console.log("Seek to new starting point: ", data.StartedFrom)
                 this.player.currentTime = this.GetCurrentTime(data.StartedFrom, data.StartedAt);
+                break;
+            case "newItem":
+                console.log("New item: ", data.Item.Title, "(ID: ", data.Item.ID, ")");
+                // load current iframe into new url containing ID
+                window.location.href = Routes.Routes.Player;
                 break;
             default:
                 console.log("Event not handled: ", data.event);

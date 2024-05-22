@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"ovo-server/internal/model"
 	"ovo-server/internal/syncplay"
 	"sync"
 
@@ -58,9 +59,10 @@ func (s *WsServer) Upgrade(w http.ResponseWriter, r *http.Request) (*websocket.C
 }
 
 type Message struct {
-	Event       string  `json:"event"`
-	StartedFrom float32 `json:"StartedFrom"`
-	StartedAt   int64   `json:"StartedAt"`
+	Event       string      `json:"event"`
+	StartedFrom float32     `json:"StartedFrom"`
+	StartedAt   int64       `json:"StartedAt,omitempty"`
+	Item        *model.Item `json:"Item,omitempty"`
 }
 
 func (s *WsServer) ReadLoop(ws *websocket.Conn, group *syncplay.SyncGroup) {
