@@ -4,6 +4,7 @@ import (
 	"log"
 	"ovo-server/internal/model"
 	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -12,13 +13,15 @@ import (
 var Groups SyncGroups
 
 type Sync struct {
+	sync.RWMutex
 	CurrentItem *model.Item
-	CurrentTime int
-	StartedFrom int
-	IsPlaying   bool
+	StartedFrom float32 // Time in seconds from the start of the video. If the video started at half way and its complete duration is 100s, would be 50s.
+	StartedAt   int64   // Unix (miliseconds) timestamp when the video started playing. Adding startedFrom to this would give the current time.
+	IsPlaying   bool    `default:"true"`
 }
 
 type SyncGroup struct {
+	sync.RWMutex
 	ID          uuid.UUID `json:"id"`
 	Name        string
 	Connections []*websocket.Conn
@@ -68,6 +71,7 @@ func (sg *SyncGroups) CreateGroup(user model.User) *SyncGroup {
 func (sg *SyncGroups) GetGroup(id string) *SyncGroup {
 	sg.RLock()
 	defer sg.RUnlock()
+
 	return sg.Groups[id]
 }
 
@@ -103,22 +107,26 @@ func (g *SyncGroup) RemoveUser(user string) {
 	}
 }
 
-func (sg *SyncGroups) AddConnectionToGroup(id string, conn *websocket.Conn) {
-	sg.Lock()
-	defer sg.Unlock()
+func (g *SyncGroup) AddConnection(conn *websocket.Conn) {
+	g.Lock()
+	defer g.Unlock()
+	g.Sync.Lock()
+	defer g.Sync.Unlock()
 
-	group := sg.GetGroup(id)
-	group.Connections = append(group.Connections, conn)
+	if len(g.Connections) == 0 && g.Sync.CurrentItem != nil {
+		g.Sync.StartedAt = time.Now().UnixMilli()
+		g.Sync.StartedFrom = 0
+	}
+
+	g.Connections = append(g.Connections, conn)
 }
 
-func (sg *SyncGroups) RemoveConnectionFromGroup(id string, conn *websocket.Conn) {
-	sg.Lock()
-	defer sg.Unlock()
+func (g *SyncGroup) RemoveConnection(conn *websocket.Conn) {
+	g.Lock()
+	defer g.Unlock()
 
-	group := sg.GetGroup(id)
 	connIndex := -1
-
-	for i, c := range group.Connections {
+	for i, c := range g.Connections {
 		if c == conn {
 			connIndex = i
 			break
@@ -128,15 +136,50 @@ func (sg *SyncGroups) RemoveConnectionFromGroup(id string, conn *websocket.Conn)
 	if connIndex == -1 {
 		return
 	}
-
-	group.Connections = append(group.Connections[:connIndex], group.Connections[connIndex+1])
+	if len(g.Connections) == 1 {
+		g.Connections = make([]*websocket.Conn, 0)
+		return
+	}
+	g.Connections[connIndex] = g.Connections[len(g.Connections)-1]
+	g.Connections = g.Connections[:len(g.Connections)-1]
 }
 
 func (s *Sync) SetNewItem(item *model.Item) {
+	s.Lock()
+	defer s.Unlock()
+
 	if s.CurrentItem != item {
 		s.CurrentItem = item
-		s.CurrentTime = 0
+		s.StartedAt = 0
 		s.StartedFrom = 0
-		s.IsPlaying = false
+		s.IsPlaying = true
+	}
+}
+
+func (s *Sync) PlayFrom(runtime float32) {
+	s.Lock()
+	defer s.Unlock()
+
+	s.IsPlaying = true
+	s.StartedFrom = runtime
+	s.StartedAt = time.Now().UnixMilli()
+}
+
+func (s *Sync) PauseAt(runtime float32) {
+	s.Lock()
+	defer s.Unlock()
+
+	s.IsPlaying = false
+	s.StartedFrom = runtime
+}
+
+func (s *Sync) GetStartedAt() int64 {
+	s.RLock()
+	defer s.RUnlock()
+
+	if s.IsPlaying {
+		return s.StartedAt
+	} else {
+		return time.Now().UnixMilli()
 	}
 }

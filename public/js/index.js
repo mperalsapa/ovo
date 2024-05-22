@@ -2,6 +2,7 @@ import { ScrollIndicator } from "./scroll-indicator.js";
 import { MasonryGrid } from "./masonry-grid.js";
 import { VideoPlayer } from "./video-player.js";
 import { SyncMenu } from "./syncMenu.js";
+import { PlayerIframe } from "./player-iframe.js";
 
 let $grid = null;
 
@@ -21,7 +22,6 @@ $(document).ready(function () {
 
     // Add listener for "menu" button click to toggle sidebar
     $("#sidebar-menu-button").click(function () {
-        console.log("clicked");
         $("#sidebar").toggleClass("closed");
         setTimeout(function () {
             grid.RefreshGrid();
@@ -30,9 +30,21 @@ $(document).ready(function () {
     })
 
     // Add listener for "back" button
-    $("#back-button").click(function () {
+    $(".back-button").click(function () {
         console.log("Going back...")
         window.history.back();
     })
+
+    // Add listener for "play" to open iframe
+    $(".iframe-browser-button").click((e) => {
+        // get data from button
+        let itemID = e.currentTarget.dataset.itemid;
+        if (!itemID) {
+            itemID = 0;
+        }
+
+        let playerIframe = new PlayerIframe();
+        playerIframe.AddIframe(itemID);
+    });
 
 })

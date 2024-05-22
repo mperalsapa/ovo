@@ -1,5 +1,5 @@
 import { Routes } from "./routes.js";
-
+import { PlayerIframe } from "./player-iframe.js";
 
 export class SyncMenu {
     button;
@@ -16,15 +16,14 @@ export class SyncMenu {
 
     async OpenSweetAlert() {
         let syncPlayGroupList = await this.GetSyncplayList();
-        console.log(syncPlayGroupList)
         // Generate list of groups
-        let groupListElement = `<div class="flex flex-col gap-2">`;
+        let groupListElement = `<div class="flex flex-col gap-2 sync-modal-container">`;
 
         if (syncPlayGroupList.currentGroup) {
             groupListElement += `<ul>` + syncPlayGroupList.groups.filter((group) => group.id == syncPlayGroupList.currentGroup).map((group) => {
                 return `<li>${group.name}</li>` + group.users.map((user) => `<li>${user}</li>`).join("")
             }).join("") + `</ul>`
-                + `<a href="${Routes.Routes.Player}" class="button button-primary">Go to Player</a>`
+                + `<button class="iframe-browser-button button button-primary" class="button button-primary">Go to Player</button>`
                 + `<button class="leave-syncplay button button-danger">Leave Group</button>`
         } else {
             groupListElement += syncPlayGroupList.groups.map((group) => {
@@ -54,6 +53,11 @@ export class SyncMenu {
         })
         $(".leave-syncplay").click((e) => {
             this.LeaveSyncplayGroup(Swal.close);
+        })
+        $(".sync-modal-container").on("click", ".iframe-browser-button", () => {
+            let playerIframe = new PlayerIframe();
+            playerIframe.AddIframe();
+            Swal.close();
         })
     }
 
@@ -104,7 +108,6 @@ export class SyncMenu {
 
     async GetSyncplayList() {
         const response = await fetch(Routes.ApiRoutes.SyncplayGroups).then((res) => res.json()).catch((err) => { console.error(err) });
-        console.log(response)
         let groups = {
             currentGroup: response.currentGroup,
             groups: Object.keys(response.groups).map((key) => {

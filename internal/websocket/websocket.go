@@ -1,10 +1,12 @@
 package websocket
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
 	"os"
+	"ovo-server/internal/syncplay"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -55,32 +57,21 @@ func (s *WsServer) Upgrade(w http.ResponseWriter, r *http.Request) (*websocket.C
 	return conn, nil
 }
 
-func (s *WsServer) AddClient(conn *websocket.Conn) {
-	s.Lock()
-	s.clients[conn] = true
-	s.Unlock()
-	log.Println("Added new client. Total clients: ", len(s.clients))
+type Message struct {
+	Event       string  `json:"event"`
+	StartedFrom float32 `json:"StartedFrom"`
+	StartedAt   int64   `json:"StartedAt"`
 }
 
-func (s *WsServer) RemoveClient(conn *websocket.Conn) {
-	s.Lock()
-	if _, ok := s.clients[conn]; ok {
-		delete(s.clients, conn)
-		conn.Close()
-	}
-	s.Unlock()
-	log.Println("Removed client. Total clients: ", len(s.clients))
-}
-
-func (s *WsServer) ReadLoop(ws *websocket.Conn) {
+func (s *WsServer) ReadLoop(ws *websocket.Conn, group *syncplay.SyncGroup) {
 	for {
 		_, message, err := ws.ReadMessage()
 		if err != nil {
 
 			err := ws.WriteMessage(websocket.PingMessage, []byte("ping"))
 			if err != nil {
-				// La conexión está cerrada
-				log.Println("La conexión WebSocket está cerrada.")
+				// Websocket connection is closed
+				log.Println("Websocket connection closed.")
 				break
 			}
 
@@ -88,30 +79,66 @@ func (s *WsServer) ReadLoop(ws *websocket.Conn) {
 			continue
 		}
 
-		log.Println("Received message: ", string(message))
-		response := []byte("Received message: " + string(message))
-		ws.WriteMessage(websocket.TextMessage, response)
-	}
-}
-
-func (s *WsServer) Broadcast(message []byte) {
-	for conn := range s.clients {
-		log.Printf("Broadcasting message to %s.\n", conn.RemoteAddr().String())
-		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
-			log.Println("Error broadcasting message: ", err)
-			conn.Close()
-			delete(s.clients, conn)
-		}
-	}
-}
-
-func BroadcastToGroup(sender *websocket.Conn, group []*websocket.Conn, message []byte) {
-	for _, conn := range group {
-		if conn == sender {
+		var parsedMessage Message
+		err = json.Unmarshal(message, &parsedMessage)
+		if err != nil {
+			log.Println("Error unmarshalling message: ", err)
 			continue
 		}
 
-		log.Printf("Broadcasting message to %s.\n", conn.RemoteAddr().String())
+		switch parsedMessage.Event {
+		case "requestPlay":
+			var action string
+			if group.Sync.IsPlaying {
+				action = "play"
+			} else {
+				action = "pause"
+			}
+			SendMessage(ws, Message{Event: action, StartedFrom: group.Sync.StartedFrom, StartedAt: group.Sync.StartedAt})
+			continue
+		case "play":
+			group.Sync.PlayFrom(parsedMessage.StartedFrom)
+			parsedMessage.StartedFrom = group.Sync.StartedFrom
+			parsedMessage.StartedAt = group.Sync.StartedAt
+		case "pause":
+			group.Sync.PauseAt(parsedMessage.StartedFrom)
+			parsedMessage.StartedFrom = group.Sync.StartedFrom
+			parsedMessage.StartedAt = group.Sync.StartedAt
+		case "seek":
+			group.Sync.PlayFrom(parsedMessage.StartedFrom)
+			parsedMessage.StartedFrom = group.Sync.StartedFrom
+			parsedMessage.StartedAt = group.Sync.StartedAt
+		}
+
+		stringifiedMessage, err := json.Marshal(parsedMessage)
+		if err != nil {
+			log.Println("Error marshalling message: ", err)
+			continue
+		}
+
+		BroadcastToList(group.Connections, stringifiedMessage, nil)
+	}
+}
+
+func SendMessage(ws *websocket.Conn, message Message) {
+	msg, err := json.Marshal(message)
+	if err != nil {
+		log.Println("Error marshalling message: ", err)
+		return
+	}
+
+	if err := ws.WriteMessage(websocket.TextMessage, msg); err != nil {
+		log.Println("Error sending message: ", err)
+		ws.Close()
+	}
+}
+
+func BroadcastToList(connections []*websocket.Conn, message []byte, sender *websocket.Conn) {
+	for _, conn := range connections {
+		if sender != nil && conn == sender {
+			continue
+		}
+
 		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 			log.Println("Error broadcasting message: ", err)
 			conn.Close()

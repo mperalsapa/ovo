@@ -1,6 +1,10 @@
+import { PlayerIframe } from "./player-iframe.js";
+import { Routes } from "./routes.js";
+
 export class VideoPlayer {
     volumeIncrement = 0.05;     // 5%
     videoScrubIncrement = 5;    // seconds
+    syncConnection;
 
     player;
 
@@ -14,17 +18,91 @@ export class VideoPlayer {
         }
         this.player = player[0];
 
-        if (this.player.readyState < 3) {
-            this.player.addEventListener('loadedmetadata', this.#Init.bind(this));
-        }
 
         this.#LoadButtons();
         this.#AddListeners();
+
+
+        console.log("Video Player loaded")
+        this.#Init()
+
     }
 
     #Init() {
+        // Check if this video is hooked to a syncplay group
+        if (this.player.dataset.enabledsyncplay == "true" && this.syncConnection === undefined) {
+            this.#InitSyncplay();
+            return
+        }
+
         this.#UpdateUI();
+
+        if (this.player.readyState < 3) {
+            this.player.addEventListener('canplay', () => {
+                console.log("Metadata Loadeded")
+                this.#Init()
+            });
+        }
+
+        this.RequestCanPlay();
     }
+
+    async #InitSyncplay() {
+        this.syncConnection = new WebSocket(Routes.Routes.Websocket);
+        // Hook to syncplay events
+        this.syncConnection.onmessage = this.#SyncPlayListener.bind(this);
+        await this.#AwaitSyncplayConnection(this.syncConnection);
+        console.log("Connected to syncplay", this.syncConnection.readyState)
+
+        this.#Init()
+    }
+
+    #AwaitSyncplayConnection(websocket) {
+        return new Promise((resolve, reject) => {
+            const maxNumberOfAttempts = 10;
+            const intervalTime = 2000; //ms
+
+            let currentAttempt = 0;
+            let interval = setInterval(() => {
+                currentAttempt++;
+                if (currentAttempt > maxNumberOfAttempts) {
+                    clearInterval(interval);
+                    reject(new Error("Max number of attempts reached"));
+                } else if (websocket.readyState === websocket.OPEN) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, intervalTime);
+        });
+    }
+
+    #SendWebsocketMessage(message) {
+        this.syncConnection.send(JSON.stringify(message));
+    }
+
+    #SyncPlayListener(event) {
+        let data = JSON.parse(event.data);
+        console.log("Received from server: " + event.data);
+        switch (data.event) {
+            case "play":
+                console.log("Playing from: ", data.StartedFrom)
+                this.player.currentTime = this.GetCurrentTime(data.StartedFrom, data.StartedAt);
+                this.player.play();
+                break;
+            case "pause":
+                console.log("Paused")
+                this.player.pause();
+                break;
+            case "seek":
+                console.log("Seek to new starting point: ", data.StartedFrom)
+                this.player.currentTime = this.GetCurrentTime(data.StartedFrom, data.StartedAt);
+                break;
+            default:
+                console.log("Event not handled: ", data.event);
+                break;
+        }
+    }
+
 
     #LoadButtons() {
         let play = document.getElementById('play');
@@ -45,11 +123,11 @@ export class VideoPlayer {
 
     #AddListeners() {
         // buton listeners
-        this.player.addEventListener('click', this.Play.bind(this));
+        this.player.addEventListener('click', this.RequestPlay.bind(this));
         this.player.addEventListener('dblclick', this.ToggleFullScreen.bind(this));
-        this.buttons.play.addEventListener('click', this.Play.bind(this));
-        this.buttons.rewind.addEventListener('click', this.Rewind.bind(this));
-        this.buttons.forward.addEventListener('click', this.Forward.bind(this));
+        this.buttons.play.addEventListener('click', this.RequestPlay.bind(this));
+        this.buttons.rewind.addEventListener('click', this.RequestRewind.bind(this));
+        this.buttons.forward.addEventListener('click', this.RequestForward.bind(this));
         this.buttons.mute.addEventListener('click', this.Mute.bind(this));
         this.buttons.fullScreen.addEventListener('click', this.ToggleFullScreen.bind(this));
 
@@ -60,7 +138,6 @@ export class VideoPlayer {
         //   - play
         this.player.addEventListener('play', function () {
             this.UpdatePlayButton("pause")
-            document.getElementById('progress-control').max = this.player.duration;
             this.UpdateEndsAt();
         }.bind(this));
 
@@ -73,6 +150,7 @@ export class VideoPlayer {
         }.bind(this));
         //   - seeked
         this.player.addEventListener('seeked', this.UpdateEndsAt.bind(this));
+
         //   - volume
         let volumeControl = document.getElementById('volume-control');
         volumeControl.addEventListener('input', function (e) {
@@ -84,28 +162,29 @@ export class VideoPlayer {
         //   - progress
         this.player.addEventListener('timeupdate', this.UpdateCurrentProgress.bind(this));
         let progressControl = document.getElementById('progress-control');
-        progressControl.max = this.player.duration;
+
         progressControl.addEventListener('input', function (e) {
-            this.player.currentTime = e.target.value;
+            let seekedTime = e.target.value / progressControl.max * this.player.duration;
+            this.RequestSeek(seekedTime);
         }.bind(this));
     }
 
     #KeyboardListener(e) {
         switch (e.code) {
             case 'Space':
-                this.Play();
+                this.RequestPlay();
                 break;
             case 'ArrowLeft':
-                this.Rewind();
+                this.RequestRewind();
                 break;
             case 'ArrowRight':
-                this.Forward();
+                this.RequestForward();
                 break;
             case 'Home':
-                this.player.currentTime = 0;
+                this.RequestSeek(0);
                 break;
             case 'End':
-                this.player.currentTime = this.player.duration;
+                this.RequestSeek(this.player.duration);
                 break;
             case 'ArrowUp':
                 this.VolumeUp();
@@ -114,41 +193,43 @@ export class VideoPlayer {
                 this.VolumeDown();
                 break;
             case 'Digit1':
-                this.player.currentTime = this.player.duration * 0.1;
+                this.RequestSeek(this.player.duration * 0.1);
                 break;
             case 'Digit2':
-                this.player.currentTime = this.player.duration * 0.2;
+                this.RequestSeek(this.player.duration * 0.2);
                 break;
             case 'Digit3':
-                this.player.currentTime = this.player.duration * 0.3;
+                this.RequestSeek(this.player.duration * 0.3);
                 break;
             case 'Digit4':
-                this.player.currentTime = this.player.duration * 0.4;
+                this.RequestSeek(this.player.duration * 0.4);
                 break;
             case 'Digit5':
-                this.player.currentTime = this.player.duration * 0.5;
+                this.RequestSeek(this.player.duration * 0.5);
                 break;
             case 'Digit6':
-                this.player.currentTime = this.player.duration * 0.6;
+                this.RequestSeek(this.player.duration * 0.6);
                 break;
             case 'Digit7':
-                this.player.currentTime = this.player.duration * 0.7;
+                this.RequestSeek(this.player.duration * 0.7);
                 break;
             case 'Digit8':
-                this.player.currentTime = this.player.duration * 0.8;
+                this.RequestSeek(this.player.duration * 0.8);
                 break;
             case 'Digit9':
-                this.player.currentTime = this.player.duration * 0.9;
+                this.RequestSeek(this.player.duration * 0.9);
                 break;
             case 'KeyF':
                 this.ToggleFullScreen();
                 break;
             case 'Period':
-                this.player.currentTime = this.player.currentTime + this.GetFrameLength();
+                this.RequestPause();
+                this.RequestSeek(this.player.currentTime + this.GetFrameLength());
                 console.log("Frame Time: ", this.GetFrameLength())
                 break;
             case 'Comma':
-                this.player.currentTime = this.player.currentTime - this.GetFrameLength();
+                this.RequestPause();
+                this.RequestSeek(this.player.currentTime - this.GetFrameLength());
                 break;
             default:
                 console.log(e.code + " not handled")
@@ -163,7 +244,45 @@ export class VideoPlayer {
         this.UpdateVolumeControl();
     }
 
-    Play() {
+    // This function requires an number (startedFrom) and a Unix millisecond timestamp (startedAt)
+    // Returns the elapsed time + the offset of the startedFrom to the current time
+    GetCurrentTime(StartedFrom, StartedAt) {
+        return StartedFrom + (Date.now() - StartedAt) / 1000;
+    }
+
+    RequestCanPlay() {
+        if (this.syncConnection) {
+            this.#SendWebsocketMessage({
+                event: "requestPlay",
+            });
+        } else {
+            this.#Play();
+        }
+    }
+
+    RequestPlay() {
+        if (this.syncConnection) {
+            let newAction = this.player.paused ? "play" : "pause";
+            this.#SendWebsocketMessage({
+                event: newAction,
+                StartedFrom: this.player.currentTime
+            });
+        } else {
+            this.#Play();
+        }
+    }
+
+    RequestPause() {
+        if (this.syncConnection) {
+            this.#SendWebsocketMessage({
+                event: "pause",
+            });
+        } else {
+            this.#Play();
+        }
+    }
+
+    #Play() {
         this.player.paused ? this.player.play() : this.player.pause();
     }
 
@@ -177,14 +296,45 @@ export class VideoPlayer {
         }
     }
 
-    Rewind() {
-        this.player.currentTime -= this.videoScrubIncrement;
-        this.UpdateEndsAt();
+    RequestSeek(runtime) {
+        if (this.syncConnection) {
+            this.#SendWebsocketMessage({
+                event: "seek",
+                StartedFrom: runtime
+            });
+        } else {
+            this.#Seek(runtime);
+        }
     }
 
-    Forward() {
-        this.player.currentTime += this.videoScrubIncrement;
-        this.UpdateEndsAt();
+    #Seek(runtime) {
+        console.log("Seeking to: ", runtime)
+        this.player.currentTime = runtime;
+    }
+
+    RequestRewind() {
+        if (this.syncConnection) {
+            this.RequestSeek(this.player.currentTime - this.videoScrubIncrement);
+        } else {
+            this.#Rewind();
+        }
+    }
+
+    #Rewind() {
+        this.#Seek(this.player.currentTime - this.videoScrubIncrement);
+    }
+
+    RequestForward() {
+        if (this.syncConnection) {
+            this.RequestSeek(this.player.currentTime + this.videoScrubIncrement);
+        } else {
+            this.#Forward();
+        }
+    }
+
+
+    #Forward() {
+        this.#Seek(this.player.currentTime + this.videoScrubIncrement);
     }
 
 
@@ -198,7 +348,7 @@ export class VideoPlayer {
 
     UpdateCurrentProgress() {
         let progress = document.getElementById('progress-control');
-        progress.value = this.player.currentTime;
+        progress.value = (this.player.currentTime / this.player.duration) * progress.max;
 
         let currentTime = document.getElementById('current-time');
         let duration = document.getElementById('duration');

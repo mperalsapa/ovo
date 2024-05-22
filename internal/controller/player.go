@@ -37,7 +37,9 @@ func Player(c echo.Context) error {
 		// If user in group wants to play a new item, we sync the item
 		if item.ID != 0 {
 			group.Sync.SetNewItem(&item)
-		} else if group.Sync.CurrentItem != nil {
+		}
+
+		if group.Sync.CurrentItem != nil {
 			item = *group.Sync.CurrentItem
 		}
 
@@ -55,7 +57,6 @@ func Player(c echo.Context) error {
 }
 
 func Download(c echo.Context) error {
-	log.Println("Download request")
 	itemID, err := strconv.Atoi(c.QueryParam("item"))
 	if err != nil {
 		return c.String(http.StatusBadRequest, "Invalid item ID")
@@ -71,9 +72,6 @@ func Download(c echo.Context) error {
 	}
 
 	log.Println("Download request for item: ", itemAbsolutePath)
-	// r := bytes.NewReader([]byte(item.FilePath))
-	// return c.Stream(http.StatusOK, "application/octet-stream", r)
 	return c.File(itemAbsolutePath)
-	// groupID := c.QueryParam("group")
 
 }

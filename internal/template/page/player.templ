@@ -6,27 +6,13 @@ import (
 	"ovo-server/internal/template/shared"
 	"ovo-server/internal/router"
 	"fmt"
+	"strconv"
 )
 
 type PlayerData struct {
 	UserSession session.UserSession
 	Item        model.Item
 }
-
-// var MissingItemModal = template.Must(template.New("missingItemModal").Parse("
-// <div>
-// 	Swal.fire({
-// 			icon: 'error',
-// 			title: 'There is no current item playing!',
-// 			text: 'Go to a library and find something to watch. 🍿😊',
-// 			showConfirmButton: false,
-// 			buttonsStyling: false,
-// 			scrollbarPadding: false,
-// 		}).then(() => {
-// 			window.location.href = {{ . }}
-// 		})
-// </div>
-// "))
 
 type MissingItemModalData struct {
 	Title             string
@@ -59,10 +45,10 @@ script TestScript(message string) {
 templ Player(PageData PlayerData) {
 	@shared.Page("Player") {
 		<div class="w-screen h-screen relative">
-			<video class="w-screen h-screen bg-black" autoplay src={ router.GenerateDownloadItemRoute(PageData.Item.ID) }></video>
+			<video class="w-screen h-screen bg-black" data-enabledSyncplay={ strconv.FormatBool(PageData.UserSession.SyncPlayGroup != "") } src={ router.GenerateDownloadItemRoute(PageData.Item.ID) }></video>
 			<div class="w-full top-0 absolute px-10 pt-5 flex justify-between">
 				<div class="flex gap-3">
-					<button id="back-button"><span class="material-symbols-outlined inline-icon">arrow_back</span></button>
+					<button class="close-video-iframe"><span class="material-symbols-outlined inline-icon">arrow_back</span></button>
 					<span>{ fmt.Sprintf("%s (%d)", PageData.Item.Title, PageData.Item.ReleaseDate.Year()) }</span>
 				</div>
 				<div class="flex gap-3">
@@ -73,7 +59,7 @@ templ Player(PageData PlayerData) {
 			<div class="w-full bottom-0 absolute px-10 pb-5 flex flex-col">
 				<div class="w-full flex mb-3">
 					<span id="current-time">2:54:39</span>
-					<input type="range" id="progress-control" class="flex-grow mx-5"/>
+					<input type="range" id="progress-control" class="flex-grow mx-5" max="1000"/>
 					<span id="duration">2:59:42</span>
 				</div>
 				<div class="w-full flex justify-between">

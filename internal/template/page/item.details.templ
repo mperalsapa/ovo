@@ -89,11 +89,11 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 							}
 						</div>
 						<div class="flex gap-4">
-							<a href={ templ.SafeURL(router.GeneratePlayerRoute(pageData.Item.ID)) } type="button">
+							<button class="iframe-browser-button" data-itemID={ strconv.FormatUint(uint64(pageData.Item.ID), 10) }>
 								<span class="material-symbols-outlined inline-icon">
 									play_arrow
 								</span>
-							</a>
+							</button>
 							// <span class="material-symbols-outlined inline-icon">
 							// 	check
 							// </span>
