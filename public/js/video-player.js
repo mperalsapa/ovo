@@ -88,7 +88,7 @@ export class VideoPlayer {
             case "play":
                 console.log("Playing from: ", data.StartedFrom)
                 this.player.currentTime = this.GetCurrentTime(data.StartedFrom, data.StartedAt);
-                this.player.play();
+                this.#Play();
                 break;
             case "pause":
                 console.log("Paused")
@@ -263,7 +263,7 @@ export class VideoPlayer {
                 event: "requestPlay",
             });
         } else {
-            this.#Play();
+            this.#TogglePlayPause();
         }
     }
 
@@ -275,7 +275,7 @@ export class VideoPlayer {
                 StartedFrom: this.player.currentTime
             });
         } else {
-            this.#Play();
+            this.#TogglePlayPause();
         }
     }
 
@@ -285,12 +285,23 @@ export class VideoPlayer {
                 event: "pause",
             });
         } else {
-            this.#Play();
+            this.#TogglePlayPause();
         }
     }
 
+    #TogglePlayPause() {
+        this.player.paused ? this.#Play() : this.player.pause();
+    }
+
     #Play() {
-        this.player.paused ? this.player.play() : this.player.pause();
+        console.log("Duration: ", this.player.duration, "Current Time: ", this.player.currentTime)
+        if (this.player.currentTime === this.player.duration) {
+            // This is required because some browsers (firefox) wont start from the beginning if the video is already ended
+            this.RequestSeek(0);
+            return
+        }
+
+        this.player.play();
     }
 
     UpdatePlayButton(newButtonText) {
