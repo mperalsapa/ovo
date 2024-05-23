@@ -1,3 +1,5 @@
+import { Routes } from "./routes.js";
+
 export class PlayerIframe {
     frame;
 
@@ -13,9 +15,9 @@ export class PlayerIframe {
 
         // if (ItemID) {
         if (newItemID != 0) {
-            ifrm.setAttribute("src", "http://localhost:8080/ovo/player?item=" + newItemID);
+            ifrm.setAttribute("src", Routes.Routes.Player + "?item=" + newItemID);
         } else {
-            ifrm.setAttribute("src", "http://localhost:8080/ovo/player");
+            ifrm.setAttribute("src", Routes.Routes.Player + "");
         }
 
         ifrm.style.width = "100vw";

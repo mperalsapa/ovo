@@ -54,7 +54,7 @@ func Player(c echo.Context) error {
 	}
 
 	componentData := page.PlayerData{
-		UserSession: session.GetUserSession(c),
+		UserSession: userSession,
 		Item:        item,
 	}
 
