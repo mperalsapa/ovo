@@ -105,7 +105,6 @@ func (s *WsServer) ReadLoop(ws *websocket.Conn, group *syncplay.SyncGroup) {
 		case "pause":
 			group.Sync.PauseAt(parsedMessage.StartedFrom)
 			parsedMessage.StartedFrom = group.Sync.StartedFrom
-			parsedMessage.StartedAt = group.Sync.StartedAt
 		case "seek":
 			group.Sync.PlayFrom(parsedMessage.StartedFrom)
 			parsedMessage.StartedFrom = group.Sync.StartedFrom

@@ -92,6 +92,7 @@ export class VideoPlayer {
                 break;
             case "pause":
                 console.log("Paused")
+                this.player.currentTime = data.StartedFrom;
                 this.player.pause();
                 break;
             case "seek":
