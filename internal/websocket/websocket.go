@@ -87,11 +87,15 @@ func (s *WsServer) ReadLoop(ws *websocket.Conn, group *syncplay.SyncGroup) {
 			log.Println("Error unmarshalling message: ", err)
 			continue
 		}
-
+		log.Println("Received message: ", parsedMessage.Event)
+		log.Printf("Waiting connections: %d", group.GetWaitingCount())
 		switch parsedMessage.Event {
+		case "ping":
+			SendMessage(ws, Message{Event: "pong"})
+			continue
 		case "requestPlay":
 			var action string
-			if group.Sync.IsPlaying {
+			if group.Sync.IsPlaying && group.CanPlay() {
 				action = "play"
 			} else {
 				action = "pause"
@@ -99,16 +103,35 @@ func (s *WsServer) ReadLoop(ws *websocket.Conn, group *syncplay.SyncGroup) {
 			SendMessage(ws, Message{Event: action, StartedFrom: group.Sync.StartedFrom, StartedAt: group.Sync.StartedAt})
 			continue
 		case "play":
-			group.Sync.PlayFrom(parsedMessage.StartedFrom)
+			group.SetState(true, parsedMessage.StartedFrom)
+			group.SetPlayingBeforeBuffer(true)
 			parsedMessage.StartedFrom = group.Sync.StartedFrom
 			parsedMessage.StartedAt = group.Sync.StartedAt
 		case "pause":
-			group.Sync.PauseAt(parsedMessage.StartedFrom)
+			group.SetState(false, parsedMessage.StartedFrom)
+			group.SetPlayingBeforeBuffer(false)
 			parsedMessage.StartedFrom = group.Sync.StartedFrom
 		case "seek":
-			group.Sync.PlayFrom(parsedMessage.StartedFrom)
+			group.SetState(true, parsedMessage.StartedFrom)
 			parsedMessage.StartedFrom = group.Sync.StartedFrom
 			parsedMessage.StartedAt = group.Sync.StartedAt
+		case "buffering":
+			group.SetState(false, parsedMessage.StartedFrom)
+			group.SetWaitingClient(ws)
+			parsedMessage.StartedFrom = group.Sync.StartedFrom
+		case "canplay":
+			group.SetReadyClient(ws)
+			if !group.CanPlay() {
+				continue
+			}
+
+			log.Println("Group can play")
+			group.SetState(true, group.Sync.StartedFrom)
+			parsedMessage.StartedFrom = group.Sync.StartedFrom
+			parsedMessage.StartedAt = group.Sync.StartedAt
+			if group.Sync.IsPlayingBeforeBuffer {
+				parsedMessage.Event = "play"
+			}
 		}
 
 		stringifiedMessage, err := json.Marshal(parsedMessage)
@@ -117,7 +140,7 @@ func (s *WsServer) ReadLoop(ws *websocket.Conn, group *syncplay.SyncGroup) {
 			continue
 		}
 
-		BroadcastToList(group.Connections, stringifiedMessage, nil)
+		BroadcastToList(group.GetConnectionList(), stringifiedMessage, nil)
 	}
 }
 

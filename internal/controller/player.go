@@ -44,7 +44,7 @@ func Player(c echo.Context) error {
 				Item:  &item,
 			}
 			messageData, _ := json.Marshal(message)
-			websocket.BroadcastToList(group.Connections, messageData, nil)
+			websocket.BroadcastToList(group.GetConnectionList(), messageData, nil)
 		}
 
 		if group.Sync.CurrentItem != nil {

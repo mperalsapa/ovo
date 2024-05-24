@@ -4,12 +4,18 @@ import { Routes } from "./routes.js";
 export class VideoPlayer {
     volumeIncrement = 0.05;     // 5%
     videoScrubIncrement = 5;    // seconds
+
     syncConnection;
 
+    syncLatency;
+    syncLatencySended;
+    syncLatencyInterval;
+    syncMessageDebouncerTimer; // seconds
+
+    lastBufferState = Date.now();
+    isBuffering = false;
     player;
-
     buttons;
-
 
     constructor() {
         let player = document.getElementsByTagName('video');
@@ -24,8 +30,15 @@ export class VideoPlayer {
 
 
         console.log("Video Player loaded")
-        this.#Init()
 
+        if (this.player.readyState < 3) {
+            this.player.addEventListener('loadedmetadata', () => {
+                console.log("Metadata Loadeded")
+                this.#Init()
+            });
+        } else {
+            this.#Init()
+        }
     }
 
     #Init() {
@@ -37,14 +50,28 @@ export class VideoPlayer {
 
         this.#UpdateUI();
 
-        if (this.player.readyState < 3) {
-            this.player.addEventListener('canplay', () => {
-                console.log("Metadata Loadeded")
-                this.#Init()
-            });
-        }
-
         this.RequestCanPlay();
+
+        // this.lastBufferingTime = Date.now();
+        this.StartBufferCheckerInterval();
+    }
+
+    StartBufferCheckerInterval() {
+        console.log("Starting buffer checker")
+        this.bufferCheckerInterval = setInterval(() => {
+
+            let availBuffer = this.GetAvailableBuffer();
+            if (availBuffer < 1 && !this.isBuffering) {
+                this.lastBufferState = Date.now();
+                this.Buffering();
+            }
+
+            if (availBuffer > 1 && this.isBuffering && Date.now() - this.lastBufferState > 1000) {
+                this.lastBufferState = Date.now();
+                this.Canplay();
+            }
+
+        }, 100);
     }
 
     async #InitSyncplay() {
@@ -53,7 +80,7 @@ export class VideoPlayer {
         this.syncConnection.onmessage = this.#SyncPlayListener.bind(this);
         await this.#AwaitSyncplayConnection(this.syncConnection);
         console.log("Connected to syncplay", this.syncConnection.readyState)
-
+        this.#StartLatencyMeasurement();
         this.#Init()
     }
 
@@ -76,7 +103,19 @@ export class VideoPlayer {
         });
     }
 
+    #StartLatencyMeasurement() {
+        // this.syncLatencyInterval = setInterval(() => {
+        //     this.syncLatencySended = Date.now();
+        //     this.#SendWebsocketMessage({
+        //         event: "ping",
+        //     });
+        // }, 5000);
+    }
+
     #SendWebsocketMessage(message) {
+        // clearTimeout(this.syncMessageDebouncerTimer);
+        // this.syncMessageDebouncerTimer = setTimeout(() => {
+        // }, 500);
         console.log("Sending to server: ", message)
         this.syncConnection.send(JSON.stringify(message));
     }
@@ -85,6 +124,10 @@ export class VideoPlayer {
         let data = JSON.parse(event.data);
         console.log("Received from server: " + event.data);
         switch (data.event) {
+            case "pong":
+                this.syncLatency = Date.now() - this.syncLatencySended;
+                console.log("Latency: ", this.syncLatency)
+                break;
             case "play":
                 console.log("Playing from: ", data.StartedFrom)
                 this.player.currentTime = this.GetCurrentTime(data.StartedFrom, data.StartedAt);
@@ -103,6 +146,15 @@ export class VideoPlayer {
                 console.log("New item: ", data.Item.Title, "(ID: ", data.Item.ID, ")");
                 // load current iframe into new url containing ID
                 window.location.href = Routes.Routes.Player;
+                break;
+            case "buffering":
+                console.log("Other player is buffering, waiting there: ", data.StartedFrom)
+                this.player.pause();
+                this.player.currentTime = data.StartedFrom;
+                break;
+            case "canplay":
+                console.log("Other player can play, waiting there: ", data.StartedFrom)
+                this.player.currentTime = this.GetCurrentTime(data.StartedFrom, data.StartedAt);
                 break;
             default:
                 console.log("Event not handled: ", data.event);
@@ -174,6 +226,10 @@ export class VideoPlayer {
             let seekedTime = e.target.value / progressControl.max * this.player.duration;
             this.RequestSeek(seekedTime);
         }.bind(this));
+
+        //  - Waiting & CanPlay
+        // this.player.addEventListener('waiting', this.Buffering.bind(this));
+        // this.player.addEventListener('canplay', this.Canplay.bind(this));
     }
 
     #KeyboardListener(e) {
@@ -249,6 +305,43 @@ export class VideoPlayer {
         this.UpdateEndsAt();
         this.UpdateCurrentProgress();
         this.UpdateVolumeControl();
+    }
+
+    Buffering() {
+        let actualDate = new Date();
+        this.isBuffering = true;
+        console.log("Available buffer: ", this.GetAvailableBuffer(), " seconds")
+        console.log("Buffering... " + actualDate.getHours() + ":" + actualDate.getMinutes() + ":" + actualDate.getSeconds() + "." + actualDate.getMilliseconds())
+        this.#SendWebsocketMessage({
+            event: "buffering",
+            StartedFrom: this.player.currentTime
+        })
+    }
+
+    GetAvailableBuffer() {
+        let currentTime = this.player.currentTime;
+        let buffered = this.player.buffered;
+        let bufferEnd = currentTime;
+        for (let i = 0; i < buffered.length; i++) {
+            if (buffered.start(i) <= currentTime && buffered.end(i) >= currentTime) {
+                // console.log("Buffered: ", buffered.start(i), buffered.end(i))
+                if (buffered.end(i) > bufferEnd) {
+                    bufferEnd = buffered.end(i);
+                }
+                break;
+            }
+        }
+        return bufferEnd - currentTime;
+    }
+
+    Canplay() {
+        this.isBuffering = false;
+        let actualDate = new Date();
+        console.log("Can play :D " + actualDate.getHours() + ":" + actualDate.getMinutes() + ":" + actualDate.getSeconds() + "." + actualDate.getMilliseconds())
+        this.#SendWebsocketMessage({
+            event: "canplay",
+            StartedFrom: this.player.currentTime
+        })
     }
 
     // This function requires an number (startedFrom) and a Unix millisecond timestamp (startedAt)

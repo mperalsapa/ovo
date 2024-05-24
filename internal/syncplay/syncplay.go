@@ -14,17 +14,18 @@ var Groups SyncGroups
 
 type Sync struct {
 	sync.RWMutex
-	CurrentItem *model.Item
-	StartedFrom float32 // Time in seconds from the start of the video. If the video started at half way and its complete duration is 100s, would be 50s.
-	StartedAt   int64   // Unix (miliseconds) timestamp when the video started playing. Adding startedFrom to this would give the current time.
-	IsPlaying   bool    `default:"true"`
+	CurrentItem           *model.Item
+	StartedFrom           float32 // Time in seconds from the start of the video. If the video started at half way and its complete duration is 100s, would be 50s.
+	StartedAt             int64   // Unix (miliseconds) timestamp when the video started playing. Adding startedFrom to this would give the current time.
+	IsPlaying             bool    `default:"true"`
+	IsPlayingBeforeBuffer bool    `default:"true"`
 }
 
 type SyncGroup struct {
 	sync.RWMutex
 	ID          uuid.UUID `json:"id"`
 	Name        string
-	Connections []*websocket.Conn
+	Connections map[*websocket.Conn]bool `json:"-"` // Map of connections in the group, and their ready status (Ready to play, or not).
 	Users       []string
 	Sync        Sync
 }
@@ -58,7 +59,7 @@ func (sg *SyncGroups) CreateGroup(user model.User) *SyncGroup {
 	group := &SyncGroup{
 		ID:          newID,
 		Name:        user.Username + "'s group",
-		Connections: make([]*websocket.Conn, 0),
+		Connections: make(map[*websocket.Conn]bool, 0),
 		Users:       []string{user.Username},
 		Sync:        Sync{},
 	}
@@ -73,6 +74,13 @@ func (sg *SyncGroups) GetGroup(id string) *SyncGroup {
 	defer sg.RUnlock()
 
 	return sg.Groups[id]
+}
+
+func (sg *SyncGroups) GetGroups() map[string]*SyncGroup {
+	sg.RLock()
+	defer sg.RUnlock()
+
+	return sg.Groups
 }
 
 func (sg *SyncGroups) DeleteGroup(id string) {
@@ -118,30 +126,80 @@ func (g *SyncGroup) AddConnection(conn *websocket.Conn) {
 		g.Sync.StartedFrom = 0
 	}
 
-	g.Connections = append(g.Connections, conn)
+	g.Connections[conn] = true
 }
 
 func (g *SyncGroup) RemoveConnection(conn *websocket.Conn) {
 	g.Lock()
 	defer g.Unlock()
 
-	connIndex := -1
-	for i, c := range g.Connections {
-		if c == conn {
-			connIndex = i
-			break
+	delete(g.Connections, conn)
+}
+
+func (g *SyncGroup) GetConnectionList() []*websocket.Conn {
+	var connections []*websocket.Conn
+	for k := range g.Connections {
+		connections = append(connections, k)
+	}
+	return connections
+}
+
+func (g *SyncGroup) SetWaitingClient(conn *websocket.Conn) {
+	g.Lock()
+	defer g.Unlock()
+
+	g.Connections[conn] = false
+}
+
+func (g *SyncGroup) SetReadyClient(conn *websocket.Conn) {
+	g.Lock()
+	defer g.Unlock()
+
+	g.Connections[conn] = true
+}
+
+func (g *SyncGroup) GetWaitingCount() int {
+	g.RLock()
+	defer g.RUnlock()
+
+	count := 0
+	for _, ready := range g.Connections {
+		if !ready {
+			count++
 		}
 	}
 
-	if connIndex == -1 {
-		return
+	return count
+
+}
+
+func (g *SyncGroup) CanPlay() bool {
+	return g.GetWaitingCount() == 0
+}
+
+func (g *SyncGroup) SetState(playing bool, runtime float32) {
+	canplay := g.CanPlay()
+	g.Lock()
+	defer g.Unlock()
+
+	if canplay {
+		g.Sync.Lock()
+		defer g.Sync.Unlock()
+
+		g.Sync.IsPlaying = true
+		g.Sync.StartedFrom = runtime
+		g.Sync.StartedAt = time.Now().UnixMilli()
 	}
-	if len(g.Connections) == 1 {
-		g.Connections = make([]*websocket.Conn, 0)
-		return
-	}
-	g.Connections[connIndex] = g.Connections[len(g.Connections)-1]
-	g.Connections = g.Connections[:len(g.Connections)-1]
+}
+
+func (g *SyncGroup) SetPlayingBeforeBuffer(playingBeforeBuffer bool) {
+	g.Lock()
+	defer g.Unlock()
+
+	g.Sync.Lock()
+	defer g.Sync.Unlock()
+
+	g.Sync.IsPlayingBeforeBuffer = playingBeforeBuffer
 }
 
 func (s *Sync) SetNewItem(item *model.Item) {
@@ -154,23 +212,6 @@ func (s *Sync) SetNewItem(item *model.Item) {
 		s.StartedFrom = 0
 		s.IsPlaying = true
 	}
-}
-
-func (s *Sync) PlayFrom(runtime float32) {
-	s.Lock()
-	defer s.Unlock()
-
-	s.IsPlaying = true
-	s.StartedFrom = runtime
-	s.StartedAt = time.Now().UnixMilli()
-}
-
-func (s *Sync) PauseAt(runtime float32) {
-	s.Lock()
-	defer s.Unlock()
-
-	s.IsPlaying = false
-	s.StartedFrom = runtime
 }
 
 func (s *Sync) GetStartedAt() int64 {

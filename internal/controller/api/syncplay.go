@@ -1,6 +1,7 @@
 package apiController
 
 import (
+	"encoding/json"
 	"log"
 	"ovo-server/internal/model"
 	"ovo-server/internal/session"
@@ -16,8 +17,12 @@ type GetSyncGroupsResponse struct {
 
 func GetSyncGroups(context echo.Context) error {
 	response := GetSyncGroupsResponse{}
-	response.Groups = syncplay.Groups.Groups
-
+	response.Groups = syncplay.Groups.GetGroups()
+	json, err := json.Marshal(response)
+	if err != nil {
+		return context.JSON(500, map[string]string{"error": "Internal server error:" + err.Error()})
+	}
+	log.Println(string(json))
 	userSession := session.GetUserSession(context)
 	if userSession.SyncPlayGroup != "" && syncplay.Groups.GetGroup(userSession.SyncPlayGroup) != nil {
 		response.CurrentGroup = userSession.SyncPlayGroup
