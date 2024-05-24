@@ -3,6 +3,7 @@ import { MasonryGrid } from "./masonry-grid.js";
 import { VideoPlayer } from "./video-player.js";
 import { SyncMenu } from "./syncMenu.js";
 import { PlayerIframe } from "./player-iframe.js";
+import { Routes } from "./routes.js";
 
 let $grid = null;
 
@@ -45,6 +46,32 @@ $(document).ready(function () {
 
         let playerIframe = new PlayerIframe();
         playerIframe.AddIframe(itemID);
+    });
+
+    // Add listener for "favorite" item
+    $(".favorite-button").click((e) => {
+        // get data from button
+        let itemID = e.currentTarget.dataset.itemid;
+        console.log(itemID);
+        if (!itemID) {
+            itemID = 0;
+        }
+        console.log(Routes)
+        console.log(Routes.ApiRoutes.ToggleFavoriteItem)
+        fetch(Routes.ApiRoutes.ToggleFavoriteItem, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "itemID": parseInt(itemID) }),
+        }).then((response) => {
+            response.json().then((data) => {
+                if (data.message == "success") {
+                    e.target.classList.toggle("active");
+                }
+            })
+        })
     });
 
 })

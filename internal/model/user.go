@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"log"
 	db "ovo-server/internal/database"
 
 	"golang.org/x/crypto/bcrypt"
@@ -23,8 +24,9 @@ type User struct {
 	Role     Role   `json:"role"`
 	// WatchedMovies  []Movie   `gorm:"many2many:user_watched_movies;"`
 	// WatchedEpisode []Episode `gorm:"many2many:user_watched_episodes;"`
-	WatchedItems []Item `gorm:"many2many:user_watched_items;"`
-	Enabled      bool   `json:"enabled" gorm:"default:false"`
+	WatchedItems  []Item `gorm:"many2many:user_watched_items;"`
+	FavoriteItems []Item `gorm:"many2many:user_favorite_items;"`
+	Enabled       bool   `json:"enabled" gorm:"default:false"`
 }
 
 func (u *User) HashPassword() {
@@ -78,4 +80,39 @@ func GetUserByUsername(username string) User {
 func GetUserExists(username string) bool {
 	user := GetUserByUsername(username)
 	return user.Username != ""
+}
+
+func (u *User) ToggleFavoriteItem(itemID uint) bool {
+	item, err := GetItemById(itemID)
+	if item.ID == 0 || err != nil {
+		return false
+	}
+
+	u.FetchFavoriteItems()
+	for _, favoriteItem := range u.FavoriteItems {
+		if favoriteItem.ID == item.ID {
+			db.GetDB().Model(&u).Association("FavoriteItems").Delete(item)
+			u.Save()
+			return false
+		}
+	}
+
+	u.FavoriteItems = append(u.FavoriteItems, item)
+	u.Save()
+	return true
+}
+
+func (u *User) FetchFavoriteItems() {
+	db.GetDB().Model(&u).Association("FavoriteItems").Find(&u.FavoriteItems)
+}
+
+func (u *User) ItemIsFavorite(itemID uint) bool {
+	var favoriteID uint
+	db.GetDB().Model(&u).Where("item_id = ?", itemID).Association("FavoriteItems").Find(&u.FavoriteItems)
+	if len(u.FavoriteItems) > 0 {
+		favoriteID = u.FavoriteItems[0].ID
+	}
+	log.Println(favoriteID)
+	log.Println(len(u.FavoriteItems))
+	return favoriteID != 0
 }

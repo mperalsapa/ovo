@@ -35,9 +35,10 @@ type adminRoute struct {
 }
 
 type apiRoutes struct {
-	Library        string
-	Libraries      string
-	SyncplayGroups string // CRUD = POST, GET, DELETE, PUT
+	Library            string
+	Libraries          string
+	SyncplayGroups     string // CRUD = POST, GET, DELETE, PUT
+	ToggleFavoriteItem string // POST
 }
 
 var Routes route
@@ -140,9 +141,10 @@ func Init() bool {
 	AdminRoutes.Command = BuildAdminRoute("/command/:action")
 
 	// Api routes
-	ApiRoutes.Library = BuildApiRoute("/library/:id")
-	ApiRoutes.Libraries = BuildApiRoute("/libraries")
+	// ApiRoutes.Library = BuildApiRoute("/library/:id")
+	// ApiRoutes.Libraries = BuildApiRoute("/libraries")
 	ApiRoutes.SyncplayGroups = BuildApiRoute("/syncplay/groups")
+	ApiRoutes.ToggleFavoriteItem = BuildApiRoute("/toggle-favorite-item")
 
 	SaveRoutesJSON()
 

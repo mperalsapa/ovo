@@ -25,9 +25,13 @@ func Item(context echo.Context) error {
 		return context.Redirect(http.StatusFound, router.Routes.Home)
 	}
 
+	user := model.GetUserByUsername(session.GetUserSession(context).Username)
+
+	user.FetchFavoriteItems()
 	pageData := page.ItemDetailsPageData{
 		Item:        item,
 		UserSession: session.GetUserSession(context),
+		User:        user,
 	}
 
 	component := page.ItemDetailsPage(pageData)

@@ -611,7 +611,7 @@ header::after {
   vertical-align: text-bottom;
 }
 
-.icon-red .active {
+.icon-red.active {
   color: red;
 }
 

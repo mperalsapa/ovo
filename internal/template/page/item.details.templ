@@ -12,6 +12,7 @@ import "time"
 type ItemDetailsPageData struct {
 	Item        model.Item
 	UserSession session.UserSession
+	User        model.User
 }
 
 templ castList(item model.Item) {
@@ -97,9 +98,11 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 							// <span class="material-symbols-outlined inline-icon">
 							// 	check
 							// </span>
-							// <span class="material-symbols-outlined inline-icon">
-							// 	favorite
-							// </span>
+							<button class="favorite-button" data-itemID={ strconv.FormatUint(uint64(pageData.Item.ID), 10) }>
+								<span class={ "material-symbols-outlined inline-icon icon-red",templ.KV("active", pageData.User.ItemIsFavorite(pageData.Item.ID)) }>
+									favorite
+								</span>
+							</button>
 						</div>
 					</div>
 				</div>
