@@ -1,0 +1,30 @@
+.border-primary {
+    border-color: var(--primary-color);
+}
+
+.border-secondary {
+    border-color: var(--secondary-color);
+}
+
+.outline-primary {
+    outline-color: var(--primary-color);
+}
+
+.outline-secondary {
+    outline-color: var(--secondary-color);
+}
+
+.bg-secondary {
+    background-color: var(--secondary-color);
+}
+
+.form {
+    @apply gap-3 flex flex-col;
+}
+
+.episode-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

@@ -1,5 +1,6 @@
 @use "base/tailwind.scss";
 @use "base/variables.scss";
+@use "base/standalone.scss";
 @use "components/button.scss";
 @use "components/input-fields.scss";
 @use "components/alert.scss";
@@ -14,6 +15,7 @@
 @use "components/card-carrousel.scss";
 @use "components/dialog.scss";
 @use "components/sweetalert.scss";
+@use "components/icons.scss";
 
 html {
     background-color: var(--background-color);
@@ -42,28 +44,4 @@ html {
 body {
     background-color: var(--background-color);
     @apply flex w-screen min-h-screen h-fit;
-}
-
-.border-primary {
-    border-color: var(--primary-color);
-}
-
-.border-secondary {
-    border-color: var(--secondary-color);
-}
-
-.outline-primary {
-    outline-color: var(--primary-color);
-}
-
-.outline-secondary {
-    outline-color: var(--secondary-color);
-}
-
-.bg-secondary {
-    background-color: var(--secondary-color);
-}
-
-.form {
-    @apply gap-3 flex flex-col;
 }
