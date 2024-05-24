@@ -314,7 +314,7 @@ func (item *Item) FetchCredits() {
 
 		// Check if credit already exists in database
 		var existingCredit Credit
-		db.GetDB().Where(&Credit{ItemID: item.ID, PersonID: person.ID}).First(&existingCredit)
+		db.GetDB().Where(&Credit{ItemID: item.ID, PersonID: person.ID, Department: credit.Department}).First(&existingCredit)
 		if existingCredit.ID == 0 {
 			newCredit := Credit{
 				ItemID:     item.ID,
