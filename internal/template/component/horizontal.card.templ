@@ -1,9 +1,15 @@
 package component
 
-templ HorizontalCard(content string, href string) {
-	<a href={ templ.SafeURL(href) } class="horizontal-card flex justify-center items-center">
-		<span>
-			{ content }
-		</span>
+type HorizontalCardData struct {
+	CardTitle string
+	ImagePath string
+	CardPath  string
+	Classes   string
+}
+
+templ HorizontalCard(componentData HorizontalCardData) {
+	<a href={ templ.SafeURL(componentData.CardPath) } class={ "horizontal-card flex justify-center items-center " + componentData.Classes }>
+		<img src={ componentData.ImagePath }/>
+		<span>{ componentData.CardTitle }</span>
 	</a>
 }

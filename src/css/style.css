@@ -440,8 +440,25 @@ header::after {
 }
 
 .horizontal-card {
-  border: solid 1px red;
   aspect-ratio: 1.789;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  min-width: 350px;
+}
+
+.library-card {
+  position: relative;
+}
+.library-card img {
+  filter: brightness(0.4);
+}
+.library-card span {
+  position: absolute;
+  font-size: 5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-shadow: 8px 8px 16px black;
 }
 
 .masonry-item {
@@ -664,6 +681,7 @@ html {
   scrollbar-width: none;
   /* For Webkit-based browsers (Chrome, Safari and Opera) */
   scrollbar-color: var(--secondary-color) var(--background-color);
+  font-family: "Zen Kurenaido", sans-serif;
 }
 html *::-webkit-scrollbar {
   display: none;
@@ -675,6 +693,13 @@ html *::-webkit-scrollbar-track {
 body {
   background-color: var(--background-color);
   @apply flex w-screen min-h-screen h-fit;
+}
+
+@font-face {
+  font-family: "Zen Kurenaido", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  src: url("../fonts/ZenKurenaido-Regular.ttf") format("truetype");
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -350,3 +350,23 @@ func GetPerson(id string) (*TMDBPerson, error) {
 
 	return person, nil
 }
+
+func GetMovieBackdrop(id uint) string {
+	movie, err := api.GetMovieInfo(int(id), nil)
+	if err != nil {
+		log.Printf("Error getting movie details for id '%d': %s", id, err)
+		return ""
+	}
+
+	return movie.BackdropPath
+}
+
+func GetShowBackdrop(id uint) string {
+	show, err := api.GetTvInfo(int(id), nil)
+	if err != nil {
+		log.Printf("Error getting show details for id '%d': %s", id, err)
+		return ""
+	}
+
+	return show.BackdropPath
+}

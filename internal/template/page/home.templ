@@ -14,20 +14,22 @@ type HomePageData struct {
 
 templ homeLibraries() {
 	for _, lib := range model.GetLibraries() {
-		@component.HorizontalCard(lib.Name, router.GenerateRouteWithId(router.Routes.Library, lib.ID))
+		@component.HorizontalCard(component.HorizontalCardData{CardTitle: lib.Name,
+			CardPath:  router.GenerateRouteWithId(router.Routes.Library, lib.ID),
+			ImagePath: "https://image.tmdb.org/t/p/w500" + lib.ImagePath,
+			Classes:   "library-card",
+		})
 	}
 }
 
 templ HomePage(pageData HomePageData) {
-	@shared.Page("Home") {
-		@component.UserSidebar(component.UserSidebarData{
-			UserSession: pageData.UserSession,
-		})
-		@component.PageContainer("") {
-			@component.UserNavbar()
-			@component.Container("grid gap-4 home-container") {
-				@homeLibraries()
-			}
+	@shared.UserPage(shared.UserPageData{
+		Title:       "Home",
+		UserSession: pageData.UserSession,
+		Classes:     "px-10",
+	}) {
+		@component.HorizontalCarrousel() {
+			@homeLibraries()
 		}
 	}
 }

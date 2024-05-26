@@ -3,8 +3,10 @@ package model
 import (
 	"errors"
 	"log"
+	"math/rand"
 	db "ovo-server/internal/database"
 	"ovo-server/internal/file"
+	"ovo-server/internal/tmdb"
 	"path"
 	"strconv"
 	"strings"
@@ -22,10 +24,11 @@ const (
 
 type Library struct {
 	gorm.Model
-	Type  string   `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
-	Name  string   `json:"name" form:"name" gorm:"not null"`
-	Paths []string `json:"paths" form:"paths[]" gorm:"serializer:json"`
-	Items []Item   `json:"items"`
+	Type      string   `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
+	Name      string   `json:"name" form:"name" gorm:"not null"`
+	ImagePath string   `json:"image_path" form:"image_path"`
+	Paths     []string `json:"paths" form:"paths[]" gorm:"serializer:json"`
+	Items     []Item   `json:"items"`
 }
 
 func (library *Library) Validate() error {
@@ -205,6 +208,32 @@ func (library *Library) ScanLibrary() error {
 			item.UpdateItemRuntime()
 		}
 	}
+
+	// Finally, we get a random item from the library to set it as the library image
+	// We do 10 tries to get a random item with an image, if we don't get one, we don't set the image
+	for i := 0; i < min(10, len(library.Items)); i++ {
+		imageItem := library.Items[rand.Intn(len(library.Items))]
+		itemID, err := strconv.Atoi(imageItem.MetaID)
+		if err != nil {
+			continue
+		}
+
+		if imageItem.ItemType == ItemTypeMovie {
+			imagePath := tmdb.GetMovieBackdrop(uint(itemID))
+			library.ImagePath = imagePath
+		} else if imageItem.ItemType == ItemTypeShow {
+			imagePath := tmdb.GetShowBackdrop(uint(itemID))
+			library.ImagePath = imagePath
+		}
+
+		// If we got an image, we break the loop
+		if library.ImagePath != "" {
+			break
+		}
+
+	}
+
+	library.Save()
 
 	return nil
 }
