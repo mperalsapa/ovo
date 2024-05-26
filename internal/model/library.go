@@ -7,6 +7,7 @@ import (
 	"ovo-server/internal/file"
 	"path"
 	"strconv"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -69,7 +70,7 @@ func (library *Library) DeDuplicateItems() {
 	}
 
 	library.Items = nil
-	library.GetItems()
+	library.GetItems("")
 }
 
 func GetLibraries() []Library {
@@ -117,16 +118,59 @@ func (library *Library) Save() error {
 	return nil
 }
 
+func SanitizeOrderBy(order string) string {
+	var newOrder string
+	fields := strings.Split(order, " ")
+
+	if len(fields) == 0 {
+		return ""
+	}
+
+	switch fields[0] {
+	case "title":
+		newOrder = "title"
+	case "release_date":
+		newOrder = "release_date"
+	case "created_at":
+		newOrder = "created_at"
+	case "duration":
+		newOrder = "duration"
+	case "meta_rating":
+		newOrder = "meta_rating"
+	default:
+		newOrder = ""
+	}
+
+	if len(fields) < 2 {
+		return newOrder
+	}
+
+	switch fields[1] {
+	case "asc":
+		newOrder += " asc"
+	case "desc":
+		newOrder += " desc"
+	}
+
+	return newOrder
+}
+
 // GetItems return all items from library
-func (library *Library) GetItems() []Item {
+func (library *Library) GetItems(order string) []Item {
 	var items []Item
-	db.GetDB().Where(Item{LibraryID: library.ID}).Find(&items)
+
+	order = SanitizeOrderBy(order)
+	if order == "" {
+		db.GetDB().Where(Item{LibraryID: library.ID}).Find(&items)
+	} else {
+		db.GetDB().Order(order).Where(Item{LibraryID: library.ID}).Find(&items)
+	}
 	return items
 }
 
 // Loads all items from the library into the Items field
-func (library *Library) LoadItems() {
-	library.Items = library.GetItems()
+func (library *Library) LoadItems(orderBy string) {
+	library.Items = library.GetItems(orderBy)
 }
 
 func (library *Library) ScanLibrary() error {
@@ -136,7 +180,7 @@ func (library *Library) ScanLibrary() error {
 	}
 
 	// Getting current items from database
-	library.LoadItems()
+	library.LoadItems("")
 
 	// Scanning for new items that are not in the database yet
 	library.ScanForNewItems()
@@ -148,14 +192,14 @@ func (library *Library) ScanLibrary() error {
 	library.RemoveOrphanItems()
 
 	// Fetch metadata for all items
-	for _, item := range library.GetItems() {
+	for _, item := range library.GetItems("") {
 		item.FetchMetadata()
 	}
 
 	// Separately fetch runtime for files. This is done separately because when updating runtime
 	// we make queries to the database, and that data is not available back into the
 	// library items list without reloading them.
-	for _, item := range library.GetItems() {
+	for _, item := range library.GetItems("") {
 		// Fetch runtime from file
 		if item.ItemType == ItemTypeMovie || item.ItemType == ItemTypeShow {
 			item.UpdateItemRuntime()
@@ -184,7 +228,7 @@ func (library *Library) GetItemByPath(path string) (item Item) {
 
 // RemoveOrphanItems removes items that are not on disk anymore
 func (library *Library) RemoveOrphanItems() {
-	library.LoadItems()
+	library.LoadItems("")
 	for _, item := range library.Items {
 		if !library.ItemExistsOnDisk(item) {
 			item.Delete()

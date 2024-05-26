@@ -2,3 +2,25 @@
     border: solid 1px red;
     aspect-ratio: 1.789;
 }
+
+.masonry-item {
+    margin-bottom: 25px;
+
+    img {
+        aspect-ratio: 0.666;
+    }
+
+    h3,
+    h4 {
+        color: var(--primary-text-color);
+    }
+}
+
+.shadow-card {
+    box-shadow: 0 0 20px;
+    color: black;
+
+    &:hover {
+        color: var(--primary-color-dark);
+    }
+}

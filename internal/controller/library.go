@@ -15,6 +15,16 @@ import (
 func Library(context echo.Context) error {
 	id := context.Param("id")
 
+	order_by := context.QueryParam("order_by")
+	order := context.QueryParam("order")
+	var sort string
+	if order_by != "" {
+		sort = order_by
+		if order != "" {
+			sort = sort + " " + order
+		}
+	}
+
 	// Getting INT from url param
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
@@ -29,7 +39,7 @@ func Library(context echo.Context) error {
 	}
 
 	// Getting items from database
-	library.LoadItems()
+	library.LoadItems(sort)
 
 	component := page.Library(page.LibraryPageData{
 		Library:     library,

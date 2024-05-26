@@ -27,7 +27,20 @@ templ Library(pageData LibraryPageData) {
 	@shared.UserPage(shared.UserPageData{
 		Title:       pageData.Library.Name,
 		UserSession: pageData.UserSession,
+		Classes:     "flex flex-col items-center gap-8 page-content",
 	}) {
+		<div class="flex gap-4">
+			<button id="sort-button">
+				<span class="material-symbols-outlined inline-icon">
+					sort_by_alpha
+				</span>
+			</button>
+			<button id="filter-button">
+				<span class="material-symbols-outlined inline-icon">
+					filter_list
+				</span>
+			</button>
+		</div>
 		@component.Container("masonry-container w-11/12 mx-auto content") {
 			@itemList(pageData.Library)
 		}

@@ -444,6 +444,25 @@ header::after {
   aspect-ratio: 1.789;
 }
 
+.masonry-item {
+  margin-bottom: 25px;
+}
+.masonry-item img {
+  aspect-ratio: 0.666;
+}
+.masonry-item h3,
+.masonry-item h4 {
+  color: var(--primary-text-color);
+}
+
+.shadow-card {
+  box-shadow: 0 0 20px;
+  color: black;
+}
+.shadow-card:hover {
+  color: var(--primary-color-dark);
+}
+
 .home-container {
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
 }
@@ -452,13 +471,6 @@ header::after {
   display: block;
   padding: 0;
   transition: height 0.3s;
-}
-.masonry-container .masonry-item {
-  margin-bottom: 25px;
-  outline: solid 1px #e5e5e5;
-}
-.masonry-container .masonry-item img {
-  aspect-ratio: 0.666;
 }
 
 @media screen and (min-width: 768px) {

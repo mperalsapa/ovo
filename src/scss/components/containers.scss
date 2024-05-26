@@ -6,20 +6,6 @@
     display: block;
     padding: 0;
     transition: height 0.3s;
-
-    .masonry-item {
-        margin-bottom: 25px;
-        //margin: 25px;
-        // margin-inline: 12.5px;
-        // margin-inline: 1%;
-        // margin-inline: 12.5px;
-        outline: solid 1px #e5e5e5;
-
-
-        img {
-            aspect-ratio: 0.666;
-        }
-    }
 }
 
 @media screen and (min-width: 768px) {

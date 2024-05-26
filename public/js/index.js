@@ -4,6 +4,7 @@ import { VideoPlayer } from "./video-player.js";
 import { SyncMenu } from "./syncMenu.js";
 import { PlayerIframe } from "./player-iframe.js";
 import { Routes } from "./routes.js";
+import { LibraryFiltering } from "./library-filtering.js";
 
 let $grid = null;
 
@@ -20,6 +21,9 @@ $(document).ready(function () {
 
     // Initialize Sync menu
     let syncplayMenu = new SyncMenu();
+
+    // Initialize library filtering
+    let libraryFiltering = new LibraryFiltering();
 
     // Add listener for "menu" button click to toggle sidebar
     $("#sidebar-menu-button").click(function () {
