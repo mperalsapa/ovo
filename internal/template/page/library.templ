@@ -28,7 +28,7 @@ templ Library(pageData LibraryPageData) {
 		Title:       pageData.Library.Name,
 		UserSession: pageData.UserSession,
 	}) {
-		@component.Container("masonry-container w-11/12 mx-auto") {
+		@component.Container("masonry-container w-11/12 mx-auto content") {
 			@itemList(pageData.Library)
 		}
 	}
