@@ -58,7 +58,7 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 						<h2 class="">{ pageData.Item.OriginalTitle }</h2>
 					}
 					<div class="flex justify-between flex-wrap gap-4">
-						<div class="flex justify-between basis-96 details">
+						<div class="flex justify-between basis-96 details flex-wrap">
 							<span class="whitespace-nowrap">
 								{ strconv.Itoa(pageData.Item.ReleaseDate.Year()) }
 								if pageData.Item.ItemType == model.ItemTypeShow {
