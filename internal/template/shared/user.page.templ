@@ -6,6 +6,7 @@ import "ovo-server/internal/session"
 type UserPageData struct {
 	Title       string
 	UserSession session.UserSession
+	Classes     string
 }
 
 templ UserPage(pageData UserPageData) {
@@ -15,7 +16,7 @@ templ UserPage(pageData UserPageData) {
 		})
 		@component.PageContainer("h-fit") {
 			@component.UserNavbar()
-			@component.Container("px-0 marginTopHeader") {
+			@component.Container("px-0 marginTopHeader " + pageData.Classes) {
 				{ children... }
 			}
 		}

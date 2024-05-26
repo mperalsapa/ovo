@@ -9,10 +9,11 @@ type VerticalCardTitleSubtitleData struct {
 	CardSubtitle string
 	ImagePath    string
 	CardPath     string
+	Classes      string
 }
 
 templ VerticalCardTitleSubtitle(componentData VerticalCardTitleSubtitleData) {
-	<a class={ "flex flex-col items-center w-48 masonry-item" } href={ templ.SafeURL(componentData.CardPath) }>
+	<a class={ "flex flex-col items-center w-48 rounded-sm overflow-hidden masonry-item", componentData.Classes } href={ templ.SafeURL(componentData.CardPath) }>
 		<img class="w-full" src={ fmt.Sprintf("https://media.themoviedb.org/t/p/w300_and_h450_bestv2%s", componentData.ImagePath) }/>
 		<h3 class="truncate w-10/12 text-center">{ componentData.CardTitle }</h3>
 		<h4 class="truncate w-10/12 text-center">{ componentData.CardSubtitle }</h4>
