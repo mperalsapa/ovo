@@ -39,6 +39,7 @@ type apiRoutes struct {
 	Libraries          string
 	SyncplayGroups     string // CRUD = POST, GET, DELETE, PUT
 	ToggleFavoriteItem string // POST
+	ToggleWatchedItem  string // POST
 }
 
 var Routes route
@@ -145,6 +146,7 @@ func Init() bool {
 	// ApiRoutes.Libraries = BuildApiRoute("/libraries")
 	ApiRoutes.SyncplayGroups = BuildApiRoute("/syncplay/groups")
 	ApiRoutes.ToggleFavoriteItem = BuildApiRoute("/toggle-favorite-item")
+	ApiRoutes.ToggleWatchedItem = BuildApiRoute("/toggle-watched-item")
 
 	SaveRoutesJSON()
 

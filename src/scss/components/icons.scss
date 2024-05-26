@@ -4,9 +4,12 @@
 
 .icon {
 
-    &-red.active {
+    &-danger.active {
         color: red;
     }
 
+    &-success.active {
+        color: green;
+    }
 
 }

@@ -74,4 +74,28 @@ $(document).ready(function () {
         })
     });
 
+    // Add listener for "watched" item
+    $(".watched-button").click((e) => {
+        // get data from button
+        let itemID = e.currentTarget.dataset.itemid;
+        console.log(itemID);
+        if (!itemID) {
+            itemID = 0;
+        }
+        fetch(Routes.ApiRoutes.ToggleWatchedItem, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "itemID": parseInt(itemID) }),
+        }).then((response) => {
+            response.json().then((data) => {
+                if (data.message == "success") {
+                    e.target.classList.toggle("active");
+                }
+            })
+        })
+    });
+
 })

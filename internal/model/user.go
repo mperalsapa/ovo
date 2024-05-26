@@ -116,3 +116,38 @@ func (u *User) ItemIsFavorite(itemID uint) bool {
 	log.Println(len(u.FavoriteItems))
 	return favoriteID != 0
 }
+
+func (u *User) ToggleWatchedItem(itemID uint) bool {
+	item, err := GetItemById(itemID)
+	if item.ID == 0 || err != nil {
+		return false
+	}
+
+	u.FetchWatchedItems()
+	for _, watchedItem := range u.WatchedItems {
+		if watchedItem.ID == item.ID {
+			db.GetDB().Model(&u).Association("WatchedItems").Delete(item)
+			u.Save()
+			return false
+		}
+	}
+
+	u.WatchedItems = append(u.WatchedItems, item)
+	u.Save()
+	return true
+}
+
+func (u *User) FetchWatchedItems() {
+	db.GetDB().Model(&u).Association("WatchedItems").Find(&u.WatchedItems)
+}
+
+func (u *User) ItemIsWatched(itemID uint) bool {
+	var watchedID uint
+	db.GetDB().Model(&u).Where("item_id = ?", itemID).Association("WatchedItems").Find(&u.WatchedItems)
+	if len(u.WatchedItems) > 0 {
+		watchedID = u.WatchedItems[0].ID
+	}
+	log.Println(watchedID)
+	log.Println(len(u.WatchedItems))
+	return watchedID != 0
+}

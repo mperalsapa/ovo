@@ -95,11 +95,13 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 									play_arrow
 								</span>
 							</button>
-							// <span class="material-symbols-outlined inline-icon">
-							// 	check
-							// </span>
+							<button class="watched-button" data-itemID={ strconv.FormatUint(uint64(pageData.Item.ID), 10) }>
+								<span class={ "material-symbols-outlined inline-icon icon-success", templ.KV("active", pageData.User.ItemIsWatched(pageData.Item.ID)) }>
+									check
+								</span>
+							</button>
 							<button class="favorite-button" data-itemID={ strconv.FormatUint(uint64(pageData.Item.ID), 10) }>
-								<span class={ "material-symbols-outlined inline-icon icon-red",templ.KV("active", pageData.User.ItemIsFavorite(pageData.Item.ID)) }>
+								<span class={ "material-symbols-outlined inline-icon icon-danger",templ.KV("active", pageData.User.ItemIsFavorite(pageData.Item.ID)) }>
 									favorite
 								</span>
 							</button>

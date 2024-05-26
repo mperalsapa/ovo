@@ -638,8 +638,11 @@ header::after {
   vertical-align: text-bottom;
 }
 
-.icon-red.active {
+.icon-danger.active {
   color: red;
+}
+.icon-success.active {
+  color: green;
 }
 
 html {

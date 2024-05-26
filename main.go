@@ -103,6 +103,7 @@ func main() {
 	api.DELETE(router.ApiRoutes.SyncplayGroups, apiController.LeaveSyncGroup)
 	api.PUT(router.ApiRoutes.SyncplayGroups, apiController.JoinSyncGroup)
 	api.POST(router.ApiRoutes.ToggleFavoriteItem, apiController.ToggleFavoriteItem)
+	api.POST(router.ApiRoutes.ToggleWatchedItem, apiController.ToggleWatchedItem)
 
 	// 			Admin routes (admin only)
 	admin := echoInstance.Group("")
