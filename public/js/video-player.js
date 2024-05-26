@@ -61,17 +61,22 @@ export class VideoPlayer {
         this.bufferCheckerInterval = setInterval(() => {
 
             let availBuffer = this.GetAvailableBuffer();
-            if (availBuffer < 1 && !this.isBuffering) {
+            console.log("Available buffer: ", availBuffer)
+            if (availBuffer < 0.5 && !this.isBuffering) {
                 this.lastBufferState = Date.now();
                 this.Buffering();
             }
 
-            if (availBuffer > 1 && this.isBuffering && Date.now() - this.lastBufferState > 1000) {
-                this.lastBufferState = Date.now();
-                this.Canplay();
+            if (this.isBuffering) {
+                if (availBuffer > 5) {
+                    this.Canplay();
+                }
+                if (availBuffer > 1 && Date.now() - this.lastBufferState > 5000) {
+                    this.Canplay();
+                }
             }
 
-        }, 100);
+        }, 250);
     }
 
     async #InitSyncplay() {
@@ -387,7 +392,6 @@ export class VideoPlayer {
     }
 
     #Play() {
-        console.log("Duration: ", this.player.duration, "Current Time: ", this.player.currentTime)
         if (this.player.currentTime === this.player.duration) {
             // This is required because some browsers (firefox) wont start from the beginning if the video is already ended
             this.RequestSeek(0);
