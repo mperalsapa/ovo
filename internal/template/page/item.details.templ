@@ -57,21 +57,21 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 					if pageData.Item.Title != pageData.Item.OriginalTitle {
 						<h2 class="">{ pageData.Item.OriginalTitle }</h2>
 					}
-					<div class="flex justify-between">
-						<div class="flex gap-6 details">
-							<span>
+					<div class="flex justify-between flex-wrap gap-4">
+						<div class="flex justify-between basis-96 details">
+							<span class="whitespace-nowrap">
 								{ strconv.Itoa(pageData.Item.ReleaseDate.Year()) }
 								if pageData.Item.ItemType == model.ItemTypeShow {
 									- { strconv.Itoa(pageData.Item.EndDate.Year()) }
 								}
 							</span>
 							if pageData.Item.Duration > 0 {
-								<span>
+								<span class="whitespace-nowrap">
 									{ pageData.Item.GetFancyDuration() }
 								</span>
 							}
 							if pageData.Item.MetaRating > 0 {
-								<div>
+								<div class="whitespace-nowrap">
 									<span>
 										{ fmt.Sprintf("%.1f", pageData.Item.MetaRating) }
 									</span>
@@ -84,7 +84,7 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 								</div>
 							}
 							if pageData.Item.Duration > 0 {
-								<span>
+								<span class="whitespace-nowrap">
 									Ends at { time.Now().Add(pageData.Item.Duration).Format("15:04") }
 								</span>
 							}
