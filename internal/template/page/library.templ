@@ -17,7 +17,7 @@ templ itemList(library model.Library) {
 		@component.VerticalCardTitleSubtitle(component.VerticalCardTitleSubtitleData{
 			CardTitle:    item.Title,
 			CardSubtitle: strconv.Itoa(item.ReleaseDate.Year()),
-			ImagePath:    item.PosterPath,
+			ImagePath:    "https://image.tmdb.org/t/p/w500" + item.PosterPath,
 			CardPath:     router.GenerateRouteWithId(router.Routes.Item, item.ID),
 		})
 	}
