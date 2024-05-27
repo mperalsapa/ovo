@@ -2,20 +2,21 @@ package page
 
 import "ovo-server/internal/template/shared"
 import "ovo-server/internal/template/component"
+import "ovo-server/internal/session"
 
 type AdminDashboardPageData struct {
-	Username string
+	UserSession session.UserSession
 }
 
 templ AdminDashboardPage(pageData AdminDashboardPageData) {
-	@shared.Page(shared.PageData{
-		Title: "Admin Dashboard",
+	@shared.AdminPage(shared.AdminPageData{
+		Title:       "Admin Dashboard",
+		UserSession: pageData.UserSession,
 	}) {
-		@component.AdminSidebar()
 		@component.Container("p-10") {
 			<div>
 				<h1>Admin Dashboard</h1>
-				<p>Welcome, { pageData.Username }!</p>
+				<p>Welcome, { pageData.UserSession.Username }!</p>
 			</div>
 		}
 	}

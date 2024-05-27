@@ -5,11 +5,13 @@ import "ovo-server/internal/template/component"
 import "ovo-server/internal/model"
 import "ovo-server/internal/router"
 import "fmt"
+import "ovo-server/internal/session"
 
 type AdminLibraryFormPageData struct {
-	Editing  bool
-	Library  model.Library
-	ErrorMsg string
+	Editing     bool
+	Library     model.Library
+	ErrorMsg    string
+	UserSession session.UserSession
 }
 
 func getTitle(editing bool) string {
@@ -20,10 +22,9 @@ func getTitle(editing bool) string {
 }
 
 templ AdminLibraryForm(pageData AdminLibraryFormPageData) {
-	@shared.Page(shared.PageData{
+	@shared.AdminPage(shared.AdminPageData{
 		Title: getTitle(pageData.Editing),
 	}) {
-		@component.AdminSidebar()
 		@component.Container("p-10") {
 			<form method="POST" class="mx-auto w-1/2 flex flex-col gap-3" action={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, pageData.Library.ID)) }>
 				<input type="hidden" value={ fmt.Sprintf("%d", pageData.Library.ID) } id="library_id" name="ID"/>

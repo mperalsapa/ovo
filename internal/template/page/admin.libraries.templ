@@ -5,17 +5,19 @@ import "ovo-server/internal/template/component"
 import "ovo-server/internal/model"
 import "ovo-server/internal/router"
 import "fmt"
+import "ovo-server/internal/session"
 
 type LibrariesPageData struct {
 	Libraries   []model.Library
 	FormContent component.AdminLibraryFormData
+	UserSession session.UserSession
 }
 
 templ LibrariesPage(pageData LibrariesPageData) {
-	@shared.Page(shared.PageData{
-		Title: "Libraries",
+	@shared.AdminPage(shared.AdminPageData{
+		Title:       "Libraries",
+		UserSession: pageData.UserSession,
 	}) {
-		@component.AdminSidebar()
 		@component.Container("p-10") {
 			<div class="flex flex-col gap-3">
 				<h1 class="text-2xl">Libraries</h1>

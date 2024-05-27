@@ -5,7 +5,8 @@ import "ovo-server/internal/model"
 import "ovo-server/internal/session"
 
 type UserSidebarData struct {
-	UserSession session.UserSession
+	UserSession    session.UserSession
+	IsAdminSection bool
 }
 
 templ libraryList() {
@@ -17,19 +18,43 @@ templ libraryList() {
 }
 
 templ UserSidebar(pageData UserSidebarData) {
-	<div class="h-screen inline min-w-72 bg-stone-800 text-white overflow-x-hidden w-72 md:sticky md:top-0 md:left-0 sidebar-container closed" id="sidebar">
+	<div class={ "h-screen inline min-w-72 bg-stone-800 text-white overflow-x-hidden w-72 md:sticky md:top-0 md:left-0 sidebar-container", templ.KV("closed", !pageData.IsAdminSection) } id="sidebar">
 		<div class="lateral-navbar">
-			<div>
-				<a href={ templ.SafeURL(router.Routes.Home) } class="button button-secondary"><span>Home</span></a>
-			</div>
-			<h2>Media</h2>
-			<hr/>
-			@libraryList()
-			if pageData.UserSession.Role > model.Visitor {
-				<h2>Admin</h2>
+			if !pageData.IsAdminSection {
+				<div>
+					<a href={ templ.SafeURL(router.Routes.Home) } class="button button-secondary"><span>Home</span></a>
+				</div>
+				<h2>Media</h2>
+				<hr/>
+				@libraryList()
+				if pageData.UserSession.Role > model.Visitor {
+					<h2>Admin</h2>
+					<hr/>
+					<div>
+						<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-secondary"><span>Dashboard</span></a>
+					</div>
+				}
+			} else {
+				<h2>Dashboard</h2>
 				<hr/>
 				<div>
-					<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-secondary"><span>Dashboard</span></a>
+					<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-secondary"><span>Home</span></a>
+				</div>
+				<h2>Media</h2>
+				<hr/>
+				<div>
+					<a href={ templ.SafeURL(router.AdminRoutes.Libraries) } class="button button-secondary"><span>Libraries</span></a>
+				</div>
+				<h2>Administration</h2>
+				<hr/>
+				<div>
+					<a href={ templ.SafeURL(router.AdminRoutes.Users) } class="button button-secondary"><span>Users</span></a>
+				</div>
+				<h2>Settings</h2>
+				<hr/>
+				<div>
+					<a href={ templ.SafeURL(router.AdminRoutes.Settings) } class="button button-secondary"><span>Server</span></a>
+					<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-secondary"><span>Network</span></a>
 				</div>
 			}
 		</div>

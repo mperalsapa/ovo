@@ -1,0 +1,29 @@
+package shared
+
+import "ovo-server/internal/template/component"
+import "ovo-server/internal/session"
+
+type AdminPageData struct {
+	Title       string
+	UserSession session.UserSession
+	Classes     string
+	HideNoise   bool
+}
+
+templ AdminPage(pageData AdminPageData) {
+	@Page(PageData{
+		Title:     pageData.Title,
+		HideNoise: pageData.HideNoise,
+	}) {
+		@component.UserSidebar(component.UserSidebarData{
+			UserSession:    pageData.UserSession,
+			IsAdminSection: true,
+		})
+		@component.PageContainer("h-fit") {
+			@component.UserNavbar()
+			@component.Container("px-0 py-10 marginTopHeader " + pageData.Classes) {
+				{ children... }
+			}
+		}
+	}
+}

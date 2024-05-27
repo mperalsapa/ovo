@@ -14,7 +14,7 @@ import (
 
 func AdminDashboard(context echo.Context) error {
 	pageData := page.AdminDashboardPageData{
-		Username: session.GetUserSession(context).Username,
+		UserSession: session.GetUserSession(context),
 	}
 	component := page.AdminDashboardPage(pageData)
 	return RenderView(context, http.StatusOK, component)
@@ -43,8 +43,9 @@ func AdminLibrary(context echo.Context) error {
 	}
 
 	pageData := page.AdminLibraryFormPageData{
-		Library: library,
-		Editing: library.ID != 0,
+		Library:     library,
+		Editing:     library.ID != 0,
+		UserSession: session.GetUserSession(context),
 	}
 
 	component := page.AdminLibraryForm(pageData)
@@ -95,9 +96,10 @@ func AdminStoreLibrary(context echo.Context) error {
 	// if there is an error, show the form again with the error message and the previous data
 	if err != nil {
 		pageData := page.AdminLibraryFormPageData{
-			Library:  storedLibrary,
-			ErrorMsg: err.Error(),
-			Editing:  storedLibrary.ID != 0,
+			Library:     storedLibrary,
+			ErrorMsg:    err.Error(),
+			Editing:     storedLibrary.ID != 0,
+			UserSession: session.GetUserSession(context),
 		}
 		component := page.AdminLibraryForm(pageData)
 		return RenderView(context, http.StatusBadRequest, component)
