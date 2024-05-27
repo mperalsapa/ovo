@@ -1,9 +1,10 @@
-// @import "../base/variables.scss";
+@use "../base/variables.scss" as vars;
+
 $scrollIndicatorHeight: 5px;
-$scrollIndicatorColor: #343434;
+$scrollIndicatorColor: vars.$backgroundColor;
 $scrollProgressHeight: 3px;
-$scrollProgressColor: #44a9cc;
-$scrollProgressGlowColor: #63b4d0;
+$scrollProgressColor: vars.$mainThemePrimaryColor;
+$scrollProgressGlowColor: adjust-color(vars.$mainThemePrimaryColor, $lightness: 10%);
 
 .scrollIndicator {
     position: absolute;
@@ -25,15 +26,6 @@ $scrollProgressGlowColor: #63b4d0;
     width: 0%;
     height: $scrollProgressHeight;
     height: 100%;
-
-    // img {
-    //     position: absolute;
-    //     left: 0;
-    //     right: 0;
-    //     top: 0;
-    //     width: 100%;
-    //     height: 100%;
-    // }
 
     &::before {
         position: absolute;
@@ -73,7 +65,7 @@ $scrollProgressGlowColor: #63b4d0;
         filter: blur(1px);
 
         animation: thumbGlow 1.5s infinite;
-        box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+        box-shadow: 0 0 5px 2px white, 0 0 10px 3px $scrollProgressColor;
         border-radius: 50%;
         background-color: white;
         width: $scrollProgressHeight;
@@ -97,15 +89,15 @@ $scrollProgressGlowColor: #63b4d0;
 
     @keyframes thumbGlow {
         0% {
-            box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+            box-shadow: 0 0 5px 2px white, 0 0 10px 3px $scrollProgressColor;
         }
 
         50% {
-            box-shadow: 0 0 7px 3px white, 0 0 11px 4px #63b4d0;
+            box-shadow: 0 0 7px 3px white, 0 0 11px 4px $scrollProgressColor;
         }
 
         100% {
-            box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+            box-shadow: 0 0 5px 2px white, 0 0 10px 3px $scrollProgressColor;
         }
     }
 }

@@ -8,7 +8,7 @@ type HorizontalCardData struct {
 }
 
 templ HorizontalCard(componentData HorizontalCardData) {
-	<a href={ templ.SafeURL(componentData.CardPath) } class={ "horizontal-card flex justify-center items-center " + componentData.Classes }>
+	<a href={ templ.SafeURL(componentData.CardPath) } class={ "horizontal-card flex justify-center items-center overflow-hidden " + componentData.Classes }>
 		<img src={ componentData.ImagePath }/>
 		<span>{ componentData.CardTitle }</span>
 	</a>

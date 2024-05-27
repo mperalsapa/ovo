@@ -3,22 +3,22 @@
 @tailwind utilities;
 :root {
   --text-color: textColor;
-  --primary-color: #44a9cc;
-  --secondary-color: #3f7587;
+  --primary-color: #f7931e;
+  --secondary-color: #dd5221;
   --background-color: #1d1d1b;
-  --warning-color: hsl(24, 100%, 62%);
+  --warning-color: hsl(54, 100%, 43%);
   --danger-color: hsl(0, 100%, 62%);
   --primary-text-color: white;
   --secondary-text-color: white;
   --warning-text-color: white;
   --danger-text-color: white;
-  --primary-color-light: #6cbbd7;
-  --secondary-color-light: #6cbbd7;
-  --warning-color-light: #ffa970;
+  --primary-color-light: #f9ab4f;
+  --secondary-color-light: #f9ab4f;
+  --warning-color-light: #ffe70f;
   --danger-color-light: #ff7070;
-  --primary-color-dark: #246d86;
-  --secondary-color-dark: #246d86;
-  --warning-color-dark: #d65600;
+  --primary-color-dark: #a95e06;
+  --secondary-color-dark: #a95e06;
+  --warning-color-dark: #756a00;
   --danger-color-dark: #d60000;
 }
 
@@ -139,6 +139,17 @@
   bottom: 0;
   background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.5) 50%);
   background-size: 100% 6px;
+}
+
+.verticalGradient {
+  position: fixed;
+  top: 72px;
+  pointer-events: none;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.78) 2%, rgba(187, 187, 187, 0) 12%, rgba(255, 255, 255, 0) 88%, rgba(0, 0, 0, 0.78) 98%);
 }
 
 .button {
@@ -443,7 +454,7 @@ select option {
   -ms-overflow-style: initial;
   scrollbar-width: thin;
   /* For Webkit-based browsers (Chrome, Safari and Opera) */
-  z-index: 1;
+  z-index: 2;
 }
 
 .sidebar-container.closed {
@@ -533,7 +544,7 @@ header::after {
 }
 .library-card span {
   position: absolute;
-  font-size: 5rem;
+  font-size: 3rem;
   font-weight: 600;
   text-transform: uppercase;
   text-shadow: 8px 8px 16px black;
@@ -611,7 +622,7 @@ header::after {
   left: 0;
   border-top: solid 1px #1e1e1e;
   border-bottom: solid 1px black;
-  background-color: #343434;
+  background-color: #1d1d1b;
   padding-top: 1px;
   padding-bottom: 1px;
   width: 100%;
@@ -621,7 +632,7 @@ header::after {
 .scrollProgress {
   position: relative;
   transition: all 300ms linear;
-  background-color: #44a9cc;
+  background-color: #f7931e;
   width: 0%;
   height: 3px;
   height: 100%;
@@ -635,7 +646,7 @@ header::after {
   filter: blur(5px);
   animation: barGlow 3s infinite;
   transition: inherit;
-  background: linear-gradient(-90deg, #63b4d0, transparent);
+  background: linear-gradient(-90deg, #f9ab4f, transparent);
   height: 5px;
   content: "";
 }
@@ -660,7 +671,7 @@ header::after {
   z-index: 1;
   filter: blur(1px);
   animation: thumbGlow 1.5s infinite;
-  box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+  box-shadow: 0 0 5px 2px white, 0 0 10px 3px #f7931e;
   border-radius: 50%;
   background-color: white;
   width: 3px;
@@ -680,13 +691,13 @@ header::after {
 }
 @keyframes thumbGlow {
   0% {
-    box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+    box-shadow: 0 0 5px 2px white, 0 0 10px 3px #f7931e;
   }
   50% {
-    box-shadow: 0 0 7px 3px white, 0 0 11px 4px #63b4d0;
+    box-shadow: 0 0 7px 3px white, 0 0 11px 4px #f7931e;
   }
   100% {
-    box-shadow: 0 0 5px 2px white, 0 0 10px 3px #63b4d0;
+    box-shadow: 0 0 5px 2px white, 0 0 10px 3px #f7931e;
   }
 }
 

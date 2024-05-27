@@ -1,3 +1,5 @@
+@use "variables.scss" as vars;
+
 .noise {
     position: fixed;
     top: -50%;
@@ -85,4 +87,15 @@
     bottom: 0;
     background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, .5) 50%);
     background-size: 100% 6px;
+}
+
+.verticalGradient {
+    position: fixed;
+    top: vars.$header-height;
+    pointer-events: none;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.78) 2%, rgba(187, 187, 187, 0) 12%, rgba(255, 255, 255, 0) 88%, rgba(0, 0, 0, 0.78) 98%);
 }
