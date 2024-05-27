@@ -26,3 +26,25 @@
     min-width: 0;
     @apply w-0;
 }
+
+.lateral-navbar {
+    @apply my-5 mx-10 flex flex-col w-52;
+
+    button {
+        display: flex;
+        align-items: center;
+
+    }
+
+    h2 {
+        @apply mb-3;
+    }
+
+    div {
+        @apply mt-3 mb-5 gap-3 flex flex-col;
+
+        button {
+            @apply w-full ps-5 gap-3;
+        }
+    }
+}

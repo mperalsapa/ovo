@@ -250,23 +250,6 @@ select option {
   border-color: var(--danger-color);
 }
 
-.lateral-navbar {
-  @apply my-5 mx-10 flex flex-col w-52;
-}
-.lateral-navbar button {
-  display: flex;
-  align-items: center;
-}
-.lateral-navbar h2 {
-  @apply mb-3;
-}
-.lateral-navbar div {
-  @apply mt-3 mb-5 gap-3 flex flex-col;
-}
-.lateral-navbar div button {
-  @apply w-full ps-5 gap-3;
-}
-
 .imago-container {
   position: relative;
   width: 82px;
@@ -460,6 +443,23 @@ select option {
 .sidebar-container.closed {
   min-width: 0;
   @apply w-0;
+}
+
+.lateral-navbar {
+  @apply my-5 mx-10 flex flex-col w-52;
+}
+.lateral-navbar button {
+  display: flex;
+  align-items: center;
+}
+.lateral-navbar h2 {
+  @apply mb-3;
+}
+.lateral-navbar div {
+  @apply mt-3 mb-5 gap-3 flex flex-col;
+}
+.lateral-navbar div button {
+  @apply w-full ps-5 gap-3;
 }
 
 .marginTopHeader {
