@@ -16,7 +16,7 @@ templ UserPage(pageData UserPageData) {
 		})
 		@component.PageContainer("h-fit") {
 			@component.UserNavbar()
-			@component.Container("px-0 marginTopHeader " + pageData.Classes) {
+			@component.Container("px-0 py-10 marginTopHeader " + pageData.Classes) {
 				{ children... }
 			}
 		}

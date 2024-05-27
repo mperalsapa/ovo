@@ -434,3 +434,10 @@ func (library *Library) GetLibraryMainItems() []Item {
 
 	return mainItems
 }
+
+func (library *Library) GetLastItems(limit int) []Item {
+	var items []Item
+	db.GetDB().Order("id desc").Limit(limit).Where("library_id = ? and item_type in ('movie', 'show')", library.ID).Find(&items)
+
+	return items
+}
