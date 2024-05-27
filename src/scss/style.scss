@@ -1,6 +1,7 @@
 @use "base/tailwind.scss";
 @use "base/variables.scss";
 @use "base/standalone.scss";
+@use "base/background-noise.scss";
 @use "components/button.scss";
 @use "components/input-fields.scss";
 @use "components/alert.scss";
@@ -45,7 +46,7 @@ html {
 }
 
 body {
-    background-color: var(--background-color);
+    // background-color: var(--background-color);
     @apply flex w-screen min-h-screen h-fit;
 }
 
