@@ -1,0 +1,15 @@
+package component
+
+type LibraryHorizontalCardData struct {
+	CardTitle string
+	ImagePath string
+	CardPath  string
+	Classes   string
+}
+
+templ LibraryHorizontalCard(componentData LibraryHorizontalCardData) {
+	<a href={ templ.SafeURL(componentData.CardPath) } class={ "horizontal-card flex justify-center items-center overflow-hidden " + componentData.Classes }>
+		<img src={ componentData.ImagePath }/>
+		<span>{ componentData.CardTitle }</span>
+	</a>
+}
