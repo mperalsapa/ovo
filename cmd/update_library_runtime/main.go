@@ -14,7 +14,7 @@ func main() {
 	database.GetDB().Find(&libraries)
 
 	for _, library := range libraries {
-		for _, item := range library.GetItems() {
+		for _, item := range library.GetItems("") {
 			// Fetch runtime from file
 			if item.ItemType == model.ItemTypeMovie || item.ItemType == model.ItemTypeShow {
 				item.UpdateItemRuntime()
