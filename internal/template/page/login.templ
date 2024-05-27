@@ -11,7 +11,9 @@ type LoginPageData struct {
 }
 
 templ LoginPage(pageData LoginPageData) {
-	@shared.Page("Login") {
+	@shared.Page(shared.PageData{
+		Title: "Login",
+	}) {
 		<form method="POST" class="min-h-full flex flex-col items-center justify-center gap-10 mx-auto">
 			@component.AnimatedImago()
 			<div class="mx-auto w-fit h-fit">

@@ -20,7 +20,9 @@ func getTitle(editing bool) string {
 }
 
 templ AdminLibraryForm(pageData AdminLibraryFormPageData) {
-	@shared.Page(getTitle(pageData.Editing)) {
+	@shared.Page(shared.PageData{
+		Title: getTitle(pageData.Editing),
+	}) {
 		@component.AdminSidebar()
 		@component.Container("p-10") {
 			<form method="POST" class="mx-auto w-1/2 flex flex-col gap-3" action={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, pageData.Library.ID)) }>

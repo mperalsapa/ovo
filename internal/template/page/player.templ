@@ -43,7 +43,10 @@ script TestScript(message string) {
 }
 
 templ Player(PageData PlayerData) {
-	@shared.Page("Player") {
+	@shared.Page(shared.PageData{
+		Title:     "Player",
+		HideNoise: true,
+	}) {
 		<div class="w-screen h-screen relative">
 			<video class="w-screen h-screen bg-black" data-enabledSyncplay={ strconv.FormatBool(PageData.UserSession.SyncPlayGroup != "") } src={ router.GenerateDownloadItemRoute(PageData.Item.ID) }></video>
 			<div class="w-full top-0 absolute px-10 pt-5 flex justify-between">

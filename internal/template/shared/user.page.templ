@@ -7,10 +7,14 @@ type UserPageData struct {
 	Title       string
 	UserSession session.UserSession
 	Classes     string
+	HideNoise   bool
 }
 
 templ UserPage(pageData UserPageData) {
-	@Page(pageData.Title) {
+	@Page(PageData{
+		Title:     pageData.Title,
+		HideNoise: pageData.HideNoise,
+	}) {
 		@component.UserSidebar(component.UserSidebarData{
 			UserSession: pageData.UserSession,
 		})

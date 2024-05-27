@@ -11,7 +11,9 @@ type RegisterPageData struct {
 }
 
 templ RegisterPage(pageData RegisterPageData) {
-	@shared.Page("Login") {
+	@shared.Page(shared.PageData{
+		Title: "Register",
+	}) {
 		<form method="POST" class="min-h-full flex flex-col items-center justify-center gap-10 mx-auto">
 			@component.AnimatedImago()
 			<div class="mx-auto w-fit h-fit">

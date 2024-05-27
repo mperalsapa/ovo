@@ -2,7 +2,12 @@ package shared
 
 import "ovo-server/internal/router"
 
-templ Page(title string) {
+type PageData struct {
+	Title     string
+	HideNoise bool
+}
+
+templ Page(pageData PageData) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -29,14 +34,16 @@ templ Page(title string) {
 			// ImagesLoaded
 			<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
 			<script type="module" src={ router.Routes.Assets + "/js/index.js" }></script>
-			<title>{ title }</title>
+			<title>{ pageData.Title }</title>
 		</head>
 		<body class="w-screen min-h-screen overflow-x-hidden">
 			{ children... }
-			<div class="backgroundGradient"></div>
-			<div class="noise"></div>
-			<div class="scanLines"></div>
-			<div class="verticalGradient"></div>
+			if (!pageData.HideNoise) {
+				<div class="backgroundGradient"></div>
+				<div class="noise"></div>
+				<div class="scanLines"></div>
+				<div class="verticalGradient"></div>
+			}
 		</body>
 	</html>
 }

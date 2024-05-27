@@ -73,11 +73,11 @@
   height: 200vh;
   pointer-events: none;
   background: transparent url("http://assets.iceable.com/img/noise-transparent.png") repeat 0 0;
-  background-repeat: repeat;
   animation: bg-animation 0.2s infinite;
+  background-repeat: repeat;
   opacity: 0.9;
   visibility: visible;
-  z-index: 10;
+  z-index: 2;
 }
 
 @keyframes bg-animation {
@@ -126,7 +126,7 @@
 }
 
 .scanLines {
-  z-index: 11;
+  z-index: 2;
   opacity: 0.13;
   /* OPACIDAD SCANLINES */
   width: 100%;
