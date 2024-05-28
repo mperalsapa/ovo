@@ -17,22 +17,21 @@ templ LibrariesPage(pageData LibrariesPageData) {
 	@shared.AdminPage(shared.AdminPageData{
 		Title:       "Libraries",
 		UserSession: pageData.UserSession,
+		Classes:     "px-10 gap-4 w-fit",
 	}) {
-		@component.Container("p-10") {
-			<div class="flex flex-col gap-3">
-				<h1 class="text-2xl">Libraries</h1>
-				<div>
-					<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, 0)) }>Add</a>
-					<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithCommand(router.AdminRoutes.Command, "ScanLibraries")) }>Scan Libraries</a>
-				</div>
-				<div class="container grid gap-3" id="libraryContainer">
-					for _, library := range pageData.Libraries {
-						<a class="border border-gray-200 my-4" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, library.ID)) } data-ID={ fmt.Sprintf("%d", library.ID) }>
-							<h2 class="text-xl p-4">{ library.Name }</h2>
-						</a>
-					}
-				</div>
-			</div>
-		}
+		<h1 class="text-2xl">Libraries</h1>
+		<div class="mb-4">
+			<a class="button button-primary" href={ templ.SafeURL(router.GenerateRouteWithCommand(router.AdminRoutes.Command, "ScanLibraries")) }>Scan Libraries</a>
+		</div>
+		<div class="flex flex-wrap justify-center gap-4">
+			for _, library := range pageData.Libraries {
+				<a class="border border-gray-200 horizontal-card" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, library.ID)) } data-ID={ fmt.Sprintf("%d", library.ID) }>
+					<h2 class="text-xl w-fit m-auto">{ library.Name }</h2>
+				</a>
+			}
+			<a class="border border-gray-200 horizontal-card" href={ templ.SafeURL(router.GenerateRouteWithId(router.AdminRoutes.Library, 0)) }>
+				<h2 class="material-symbols-outlined w-fit m-auto" style="font-size: 5rem;">add_circle</h2>
+			</a>
+		</div>
 	}
 }
