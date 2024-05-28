@@ -28,7 +28,7 @@ type Library struct {
 	Name      string   `json:"name" form:"name" gorm:"not null"`
 	ImagePath string   `json:"image_path" form:"image_path"`
 	Paths     []string `json:"paths" form:"paths[]" gorm:"serializer:json"`
-	Items     []Item   `json:"items"`
+	Items     []Item   `json:"items" gorm:"constraint:OnDelete:CASCADE"`
 }
 
 func (library *Library) Validate() error {
@@ -106,6 +106,11 @@ func DeleteLibrary(id uint) error {
 
 func (library *Library) DeleteLibrary() {
 	db.GetDB().Delete(&library)
+	for _, item := range library.GetItems("") {
+		db.GetDB().Select("Credits").Delete(&item)
+		item.Delete()
+	}
+
 }
 
 func (library *Library) Save() error {
