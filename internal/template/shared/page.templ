@@ -15,24 +15,17 @@ templ Page(pageData PageData) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="stylesheet" href={ router.Routes.Assets + "/css/style.css" }/>
 			// External Libraries - TODO: Get external libraries from CDN
-			// HTMX
-			<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
 			// SweetAlert2
 			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
-			// AJAX
+			// JQUERY
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 			// Google Icons - Material Icons (FILL, GRAD)
 			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0"/>
-			// Masonry Grid
-			// <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-			// FreeWall
-			// <script defer src={ router.Routes.Assets + "/js/freewall.js" }></script>
-			// Packery
-			// <script src="https://unpkg.com/packery@2/dist/packery.pkgd.min.js"></script>
 			// Isotope
 			<script defer src={ router.Routes.Assets + "/js/isotope.min.js" }></script>
-			// ImagesLoaded
+			// ImagesLoaded - Required for Isotope
 			<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+			// Custom JS
 			<script type="module" src={ router.Routes.Assets + "/js/index.js" }></script>
 			<title>{ pageData.Title }</title>
 		</head>
