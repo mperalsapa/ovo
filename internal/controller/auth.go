@@ -109,11 +109,15 @@ func RegisterRequest(context echo.Context) error {
 
 	user := model.NewUser(reqUser.Username, reqUser.Password)
 
-	userCount := model.UserCount()
-	if userCount == 0 {
-		user.Role = model.Admin
-		user.Enabled = true
-	}
+	// Disables new users if there are already users in the system
+	// This was added to prevent users from registering without the admin
+	// consent. Commented temporarlly to allow users to register and
+	// in a future we will implement the admin consent in admin dashboard.
+	// userCount := model.UserCount()
+	// if userCount == 0 {
+	// 	user.Role = model.Admin
+	// 	user.Enabled = true
+	// }
 
 	user.Save()
 
