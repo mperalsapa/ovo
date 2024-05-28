@@ -12,7 +12,7 @@ type UserSidebarData struct {
 templ libraryList() {
 	<div class="flex flex-wrap justify-center">
 		for _, lib := range model.GetLibraries() {
-			<a href={ templ.SafeURL(router.GenerateRouteWithId(router.Routes.Library, lib.ID)) } class="button button-primary">{ lib.Name }</a>
+			<a href={ templ.SafeURL(router.GenerateRouteWithId(router.Routes.Library, lib.ID)) } class="button button-secondary">{ lib.Name }</a>
 		}
 	</div>
 }
