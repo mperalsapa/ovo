@@ -20,9 +20,6 @@ type dbInst struct {
 
 var db dbInst = dbInst{}
 
-// var db *gorm.DB
-// var dbConfig = &gorm.Config{}
-
 func Init() {
 	db.config = &gorm.Config{}
 	var err error
@@ -49,7 +46,7 @@ func Init() {
 
 		db.connection, err = gorm.Open(mysql.Open(dsn), db.config)
 	default:
-		db.connection, err = gorm.Open(sqlite.Open("test.db"), db.config)
+		db.connection, err = gorm.Open(sqlite.Open("ovo.db"), db.config)
 	}
 
 	if err != nil {
