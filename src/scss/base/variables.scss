@@ -54,7 +54,6 @@ $darkColorPercentage: -20%;
     --secondary-color-dark: #{adjust-color($mainThemePrimaryColor, $lightness: $darkColorPercentage)};
     --warning-color-dark: #{adjust-color($mainThemeWarningColor, $lightness: $darkColorPercentage)};
     --danger-color-dark: #{adjust-color($mainThemeDangerColor, $lightness: $darkColorPercentage)};
-
 }
 
 :root body.dark {

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"log"
 	"ovo-server/internal/database"
 	"time"
 
@@ -28,4 +29,58 @@ func (person *Person) Save() error {
 	}
 
 	return nil
+}
+
+func (person *Person) GetCredits() []Credit {
+	var credits []Credit
+	transaction := database.GetDB().Preload("Person").Where("person_id = ?", person.ID).Find(&credits)
+
+	if transaction.Error != nil {
+		log.Println("Error when getting credits for person: ", person.ID, transaction.Error)
+		return nil
+	}
+
+	return credits
+}
+
+func (person *Person) LoadCredits() {
+	person.Credits = person.GetCredits()
+}
+
+func GetPersonById(id uint) (*Person, error) {
+	var person Person
+	transaction := database.GetDB().First(&person, id)
+
+	if transaction.Error != nil {
+		return nil, transaction.Error
+	}
+
+	return &person, nil
+}
+
+func (p *Person) GetCreditItems() []Item {
+	var credits []Credit
+	var items []Item
+	uniqueItems := make(map[uint]Item)
+
+	transaction := database.GetDB().Distinct("item_id").Preload("Item").Where("person_id = ?", p.ID).Find(&credits)
+
+	if transaction.Error != nil {
+		log.Println("Error when getting person with credits and items: ", p.ID, transaction.Error)
+		return nil
+	}
+
+	for _, c := range credits {
+		uniqueItems[c.ItemID] = c.Item
+	}
+
+	log.Println(len(uniqueItems))
+
+	for _, i := range uniqueItems {
+		items = append(items, i)
+	}
+
+	log.Println(len(items))
+
+	return items
 }

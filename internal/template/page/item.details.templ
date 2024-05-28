@@ -21,6 +21,7 @@ templ castList(item model.Item) {
 			CardTitle:    credit.Person.Name,
 			CardSubtitle: fmt.Sprintf("as %s", credit.Role),
 			ImagePath:    "https://image.tmdb.org/t/p/w500" + credit.Person.ProfilePath,
+			CardPath:     router.GenerateRouteWithId(router.Routes.Person, credit.Person.ID),
 		})
 	}
 }
@@ -53,9 +54,9 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 			<img class="item-image mx-auto" src={ "https://image.tmdb.org/t/p/w500" + pageData.Item.PosterPath }/>
 			<div class="flex flex-col gap-8 overflow-x-hidden w-full basis-1/2 flex-grow">
 				<div class="flex flex-col gap-2">
-					<h1 class="">{ pageData.Item.Title }</h1>
+					<h1 class="text-3xl leading-none">{ pageData.Item.Title }</h1>
 					if pageData.Item.Title != pageData.Item.OriginalTitle {
-						<h2 class="">{ pageData.Item.OriginalTitle }</h2>
+						<h2 class="text-lg leading-none">{ pageData.Item.OriginalTitle }</h2>
 					}
 					<div class="flex justify-between flex-wrap gap-x-4 gap-y-8">
 						<div class="flex details flex-wrap justify-start gap-x-4 gap-y-2">
@@ -109,7 +110,7 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 					</div>
 				</div>
 				if pageData.Item.TagLine != "" {
-					<h2>{ pageData.Item.TagLine }</h2>
+					<h2 class="text-lg leading-none">{ pageData.Item.TagLine }</h2>
 				}
 				<p>
 					{ pageData.Item.Description }

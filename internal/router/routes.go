@@ -19,6 +19,7 @@ type route struct {
 	Home         string
 	Library      string
 	Item         string
+	Person       string
 	Player       string
 	DownloadItem string
 	Websocket    string
@@ -128,6 +129,7 @@ func Init() bool {
 	Routes.Home = BuildRoute("/")
 	Routes.Library = BuildRoute("/library/:id")
 	Routes.Item = BuildRoute("/item/:id")
+	Routes.Person = BuildRoute("/person/:id")
 	Routes.Player = BuildRoute("/player")
 	Routes.DownloadItem = BuildRoute("/download")
 	Routes.Websocket = BuildRoute("/ws")

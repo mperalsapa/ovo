@@ -3,7 +3,11 @@
 }
 
 .masonry-container {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 25px;
+    justify-content: center;
+    // display: block;
     padding: 0;
     transition: height 0.3s;
 }
@@ -24,16 +28,6 @@
     margin: 2.5rem;
     margin-inline: 5rem;
     gap: 2.5rem;
-
-    h1 {
-        font-size: 1.75rem;
-        line-height: 1;
-    }
-
-    h2 {
-        font-size: 1.25rem;
-        line-height: 1;
-    }
 
     .item-image {
         aspect-ratio: 0.666;

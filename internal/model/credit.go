@@ -12,6 +12,7 @@ import (
 type Credit struct {
 	gorm.Model
 	ItemID     uint   `json:"item_id" gorm:"not null"`
+	Item       Item   `json:"item"`
 	PersonID   uint   `json:"person_id" gorm:"not null"`
 	Person     Person `json:"person"`
 	Department string `json:"department"`

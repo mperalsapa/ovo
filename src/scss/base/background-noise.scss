@@ -91,9 +91,18 @@
     background-size: 100% 6px;
 }
 
+// If body contains header, we assign the header height
+// to the top of the gradient
+body:has(header) .verticalGradient {
+    top: #{vars.$header-height}
+}
+
+body:not(:has(header)) .verticalGradient {
+    top: 0;
+}
+
 .verticalGradient {
     position: fixed;
-    top: vars.$header-height;
     pointer-events: none;
     right: 0;
     bottom: 0;

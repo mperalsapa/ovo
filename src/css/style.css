@@ -63,6 +63,16 @@
   overflow: hidden;
 }
 
+.person-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 15;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.person-description:hover {
+  -webkit-line-clamp: unset;
+}
+
 .noise {
   position: fixed;
   top: -50%;
@@ -141,9 +151,16 @@
   background-size: 100% 6px;
 }
 
+body:has(header) .verticalGradient {
+  top: 72px;
+}
+
+body:not(:has(header)) .verticalGradient {
+  top: 0;
+}
+
 .verticalGradient {
   position: fixed;
-  top: 72px;
   pointer-events: none;
   right: 0;
   bottom: 0;
@@ -467,6 +484,7 @@ select option {
 }
 
 header {
+  --headerHeight: 72px;
   display: flex;
   position: fixed;
   justify-content: space-between;
@@ -574,7 +592,10 @@ header::after {
 }
 
 .masonry-container {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 25px;
+  justify-content: center;
   padding: 0;
   transition: height 0.3s;
 }
@@ -593,14 +614,6 @@ header::after {
   margin: 2.5rem;
   margin-inline: 5rem;
   gap: 2.5rem;
-}
-.item-container h1 {
-  font-size: 1.75rem;
-  line-height: 1;
-}
-.item-container h2 {
-  font-size: 1.25rem;
-  line-height: 1;
 }
 .item-container .item-image {
   aspect-ratio: 0.666;

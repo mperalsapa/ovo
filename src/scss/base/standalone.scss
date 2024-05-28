@@ -28,3 +28,14 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+.person-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 15;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    &:hover {
+        -webkit-line-clamp: unset;
+    }
+}

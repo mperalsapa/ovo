@@ -7,8 +7,9 @@
 }
 
 header {
-    display: flex;
+    --headerHeight: #{vars.$header-height};
 
+    display: flex;
     position: fixed;
     justify-content: space-between;
     gap: vars.$header-gap;
