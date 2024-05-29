@@ -1,13 +1,17 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"log"
+	"net/http"
+	"os"
 
 	"ovo-server/internal/config"
 	"ovo-server/internal/controller"
 	apiController "ovo-server/internal/controller/api"
 	"ovo-server/internal/database"
+	"ovo-server/internal/file"
 	customMiddleware "ovo-server/internal/middleware"
 	"ovo-server/internal/model"
 	"ovo-server/internal/router"
@@ -50,6 +54,9 @@ func init() {
 	tmdb.Init()
 }
 
+//go:embed public
+var staticAssets embed.FS
+
 func main() {
 	log.Println("Starting OVO Server...")
 	echoInstance := echo.New()
@@ -59,7 +66,10 @@ func main() {
 	echoInstance.HidePort = true
 
 	// Static files route setup
-	echoInstance.Static(router.Routes.Assets, "public")
+	// echoInstance.Static(router.Routes.Assets, "public")
+	useOS := len(os.Args) > 1 && os.Args[1] == "live"
+	assetHandler := http.FileServer(file.GetFileSystem(useOS, staticAssets))
+	echoInstance.GET(router.Routes.Assets+"/*", echo.WrapHandler(http.StripPrefix(router.Routes.Assets+"/", assetHandler)))
 
 	// Middleware setup
 	// 		CORS setup
