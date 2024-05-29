@@ -1,0 +1,28 @@
+version: '3'
+services:
+  ovo:
+    image: ovo-server
+    ports:
+      - 80:8080
+    environment:
+      - OVO_DATABASE_TYPE=mysql
+      - OVO_DATABASE_HOST=mysql
+      - OVO_DATABASE_USERNAME=your_user
+      - OVO_DATABASE_PASSWORD=your_password
+      - OVO_DATABASE_NAME=your_database
+      - OVO_TMDB_API_KEY=your_api_key
+    restart: on-failure:5
+    volumes:
+      - ./testing_media_dir:/mnt/media/ovo
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_password
+      - MYSQL_DATABASE=your_database
+      - MYSQL_USER=your_user
+      - MYSQL_PASSWORD=your_password
+    volumes:
+      - ./tmp/mysql-data:/var/lib/mysql

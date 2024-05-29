@@ -1,0 +1,12 @@
+cmd
+node_modules
+testing_media_dir
+tmp
+.air.toml
+.env
+.gitignore
+package-lock.json
+package.json
+README.md
+tailwind.config.js
+*.db

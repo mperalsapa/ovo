@@ -36,23 +36,37 @@ func Init() {
 		},
 	)
 
-	switch config.Variables.DatabaseType {
-	case "mysql":
-		dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-			config.Variables.DatabaseUsername,
-			config.Variables.DatabasePassword,
-			config.Variables.DatabaseHost,
-			config.Variables.DatabaseName)
+	tries := 0
+	delay := 6
 
-		db.connection, err = gorm.Open(mysql.Open(dsn), db.config)
-	default:
-		db.connection, err = gorm.Open(sqlite.Open("ovo.db"), db.config)
-	}
+	for tries < 5 {
+		if tries > 0 {
+			log.Println("Retrying database connection in ", delay, " seconds")
+			time.Sleep(time.Duration(delay) * time.Second)
+		}
 
-	if err != nil {
-		log.Println("Failed to connect to database: ", err.Error())
-		os.Exit(1)
-		// panic("Failed to connect to database!")
+		switch config.Variables.DatabaseType {
+		case "mysql":
+			dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+				config.Variables.DatabaseUsername,
+				config.Variables.DatabasePassword,
+				config.Variables.DatabaseHost,
+				config.Variables.DatabaseName)
+
+			db.connection, err = gorm.Open(mysql.Open(dsn), db.config)
+		default:
+			db.connection, err = gorm.Open(sqlite.Open("ovo.db"), db.config)
+		}
+		if err != nil {
+			log.Println("Failed to connect to database: ", err.Error())
+			tries++
+			if tries == 5 {
+				log.Println("Failed to connect to database after 5 tries. Exiting.")
+				os.Exit(1)
+			}
+		} else {
+			break
+		}
 	}
 
 }

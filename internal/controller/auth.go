@@ -113,11 +113,13 @@ func RegisterRequest(context echo.Context) error {
 	// This was added to prevent users from registering without the admin
 	// consent. Commented temporarlly to allow users to register and
 	// in a future we will implement the admin consent in admin dashboard.
-	// userCount := model.UserCount()
-	// if userCount == 0 {
-	// 	user.Role = model.Admin
-	// 	user.Enabled = true
-	// }
+	userCount := model.UserCount()
+	if userCount == 0 {
+		user.Role = model.Admin
+		user.Enabled = true
+	} else {
+		user.Enabled = true
+	}
 
 	user.Save()
 

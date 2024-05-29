@@ -131,5 +131,5 @@ func main() {
 	// }
 
 	log.Println("Started on http://localhost:8080. Ready to serve requests.")
-	echoInstance.Start("localhost:8080")
+	echoInstance.Start(":8080")
 }
