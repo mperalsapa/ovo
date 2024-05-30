@@ -26,7 +26,7 @@ export class LibraryFiltering {
         // Get current Order from url
         let currentOrderBy = new URLSearchParams(window.location.search).get('order_by');
         if (currentOrderBy == null) {
-            currentOrderBy = "title";
+            currentOrderBy = "created_at";
         }
 
         let currentOrder = new URLSearchParams(window.location.search).get('order');
