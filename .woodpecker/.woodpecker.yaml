@@ -1,0 +1,17 @@
+steps:
+  build-and-publish:
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      platforms: linux/amd64
+      repo: git.mperals.work/mapeca/ovo
+      registry: git.mperals.work
+      tags: latest
+      username:
+        from_secret: registry_user
+      password:
+        from_secret: registry_pass
+    when:
+      - event: push
+        branch: main
+      - event: pull_request
+        branch: main
