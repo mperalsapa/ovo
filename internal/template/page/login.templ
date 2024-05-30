@@ -3,6 +3,7 @@ package page
 import (
 	"ovo-server/internal/template/shared"
 	"ovo-server/internal/template/component"
+	"ovo-server/internal/router"
 )
 
 type LoginPageData struct {
@@ -16,7 +17,7 @@ templ LoginPage(pageData LoginPageData) {
 	}) {
 		<form method="POST" class="min-h-full flex flex-col items-center justify-center gap-10 mx-auto">
 			@component.AnimatedImago()
-			<div class="mx-auto w-fit h-fit">
+			<div class="mx-auto w-fit h-fit flex flex-col items-center">
 				if (pageData.AlertMsg != "") {
 					@component.Alert(pageData.AlertMsg, "error")
 				}
@@ -31,6 +32,7 @@ templ LoginPage(pageData LoginPageData) {
 					</div>
 					<input class="button" type="submit" value="Login"/>
 				</div>
+				<a href={ templ.SafeURL(router.Routes.Register) }>Don't have an account? Register here</a>
 			</div>
 		</form>
 	}
