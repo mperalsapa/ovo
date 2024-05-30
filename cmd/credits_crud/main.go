@@ -17,7 +17,7 @@ func main() {
 	// database.GetDB().Logger.LogMode(logger.Silent)
 
 	library := model.Library{
-		Type:  "movie",
+		Type:  "Movie",
 		Name:  "Movies",
 		Paths: []string{"/movies"},
 	}

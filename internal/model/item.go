@@ -23,7 +23,7 @@ const (
 type Item struct {
 	gorm.Model
 	LibraryID        uint          `json:"library" gorm:"not null"`
-	ItemType         string        `gorm:"enum:show,season,episode,movie"`
+	ItemType         string        `gorm:"enum:Show,Season,Episode,Movie"`
 	MetaProvider     string        `json:"meta_platform"`
 	MetaID           string        `json:"meta_id"`
 	MetaRating       float32       `json:"meta_rating"`

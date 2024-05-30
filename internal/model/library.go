@@ -18,13 +18,13 @@ import (
 type LibraryType string
 
 const (
-	LibraryTypeMovie = "movie"
-	LibraryTypeShow  = "show"
+	LibraryTypeMovie = "Movie"
+	LibraryTypeShow  = "Show"
 )
 
 type Library struct {
 	gorm.Model
-	Type      string   `json:"type" form:"type" gorm:"not null; enum('movie', 'show')"`
+	Type      string   `json:"type" form:"type" gorm:"not null; enum('Movie', 'Show')"`
 	Name      string   `json:"name" form:"name" gorm:"not null"`
 	ImagePath string   `json:"image_path" form:"image_path"`
 	Paths     []string `json:"paths" form:"paths[]" gorm:"serializer:json"`
@@ -114,12 +114,21 @@ func (library *Library) DeleteLibrary() {
 }
 
 func (library *Library) Save() error {
+	items := library.Items
+	library.Items = nil
+
+	defer func() {
+		library.Items = items
+	}()
+
 	if err := library.Validate(); err != nil {
+		log.Println("Error validating library: ", err)
 		return err
 	}
 	transaction := db.GetDB().Save(&library)
 
 	if transaction.Error != nil {
+		log.Println("Error saving library: ", transaction.Error)
 		return transaction.Error
 	}
 
@@ -230,7 +239,7 @@ func (library *Library) GenerateLibraryThumbnail() {
 	}
 
 	var items []Item
-	db.GetDB().Where("library_id = ? and item_type in ('movie', 'show')", library.ID).Find(&items)
+	db.GetDB().Where("library_id = ? and item_type in ('Movie', 'Show')", library.ID).Find(&items)
 
 	for i := 0; i < min(10, len(items)); i++ {
 		imageItem := items[rand.Intn(len(items))]
@@ -453,7 +462,7 @@ func (library *Library) GetLibraryMainItems() []Item {
 
 func (library *Library) GetLastItems(limit int) []Item {
 	var items []Item
-	db.GetDB().Order("id desc").Limit(limit).Where("library_id = ? and item_type in ('movie', 'show')", library.ID).Find(&items)
+	db.GetDB().Order("id desc").Limit(limit).Where("library_id = ? and item_type in ('Movie', 'Show')", library.ID).Find(&items)
 
 	return items
 }
