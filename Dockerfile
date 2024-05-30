@@ -1,24 +1,27 @@
-############################
-# STEP 1 build executable binary
-############################
-FROM golang:alpine AS builder
-# Install git.
-# Git is required for fetching the dependencies.
-RUN apk update && apk add --no-cache git
-WORKDIR $GOPATH/src/ovo-server/
-COPY . .
-# Fetch dependencies.
-# Using go get.
-RUN go get -d -v
-# Build the binary.
-RUN go build -o /go/bin/ovo-server
-############################
-# STEP 2 build a small image
-############################
+# Fetch
+FROM golang:1.22.1-alpine AS fetch-stage
+WORKDIR /app
+COPY go.mod go.sum 
+RUN go mod download
+
+# Generate
+FROM ghcr.io/a-h/templ:latest AS generate-stage
+COPY --chown=65532:65532 . /app
+WORKDIR /app
+RUN ["templ", "generate"]
+
+# Build
+FROM golang:1.22.1-alpine AS build-stage
+COPY --from=generate-stage /app /app
+WORKDIR /app
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/app
+
 FROM alpine
 # Install FFmpeg
 RUN apk add --no-cache ffmpeg
 # Copy our static executable.
-COPY --from=builder /go/bin/ovo-server /go/bin/ovo-server
+WORKDIR /
+COPY --from=build-stage /app/app /app
+EXPOSE 8080
 # Run the binary.
-ENTRYPOINT ["/go/bin/ovo-server"]
+ENTRYPOINT ["/app"]
