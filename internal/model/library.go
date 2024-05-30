@@ -216,8 +216,24 @@ func (library *Library) ScanLibrary() error {
 
 	// Finally, we get a random item from the library to set it as the library image
 	// We do 10 tries to get a random item with an image, if we don't get one, we don't set the image
-	for i := 0; i < min(10, len(library.Items)); i++ {
-		imageItem := library.Items[rand.Intn(len(library.Items))]
+	library.GenerateLibraryThumbnail()
+
+	library.Save()
+
+	return nil
+}
+
+func (library *Library) GenerateLibraryThumbnail() {
+	library.LoadItems("")
+	if len(library.Items) == 0 {
+		return
+	}
+
+	var items []Item
+	db.GetDB().Where("library_id = ? and item_type in ('movie', 'show')", library.ID).Find(&items)
+
+	for i := 0; i < min(10, len(items)); i++ {
+		imageItem := items[rand.Intn(len(items))]
 		itemID, err := strconv.Atoi(imageItem.MetaID)
 		if err != nil {
 			continue
@@ -235,12 +251,7 @@ func (library *Library) ScanLibrary() error {
 		if library.ImagePath != "" {
 			break
 		}
-
 	}
-
-	library.Save()
-
-	return nil
 }
 
 // ItemExistsOnDisk checks if the item exists on disk
