@@ -25,6 +25,7 @@ type route struct {
 	Player          string
 	DownloadItem    string
 	Websocket       string
+	RoutesJSON      string
 }
 
 type adminRoute struct {
@@ -107,8 +108,7 @@ func GenerateDownloadItemRoute(itemID uint) string {
 	return fmt.Sprintf("%s?item=%d", Routes.DownloadItem, itemID)
 }
 
-func SaveRoutesJSON() {
-
+func GetRoutesJSON() string {
 	routesJSON, err := json.Marshal(map[string]interface{}{
 		"Routes":    Routes,
 		"ApiRoutes": ApiRoutes,
@@ -116,10 +116,21 @@ func SaveRoutesJSON() {
 
 	if err != nil {
 		log.Println("Error marshalling routes to JSON:", err)
+		return ""
+	}
+
+	return string(routesJSON)
+}
+
+func SaveRoutesJSON() {
+
+	routesJSON := GetRoutesJSON()
+
+	if routesJSON == "" {
 		return
 	}
 
-	err = os.WriteFile("public/routes.json", routesJSON, 0644)
+	err := os.WriteFile("public/routes.json", []byte(routesJSON), 0644)
 
 	if err != nil {
 		log.Println("Error saving routes to file:", err)
@@ -147,6 +158,7 @@ func Init() bool {
 	Routes.Player = BuildRoute("/player")
 	Routes.DownloadItem = BuildRoute("/download")
 	Routes.Websocket = BuildRoute("/ws")
+	Routes.RoutesJSON = BuildRoute("/assets/routes.json")
 
 	// Admin routes
 	AdminRoutes.Dashboard = BuildAdminRoute("")

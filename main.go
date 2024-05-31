@@ -85,6 +85,11 @@ func main() {
 	}))
 
 	// Route definition
+	// 		Anyone can access these routes
+	echoInstance.GET(router.Routes.RoutesJSON, func(c echo.Context) error {
+		return c.JSON(http.StatusOK, router.Routes)
+	})
+
 	// 		Unauthenticated routes (Public routes)
 	unauth := echoInstance.Group("")
 	unauth.Use(customMiddleware.IsNotAuthenticated)
