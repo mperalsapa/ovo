@@ -21,7 +21,7 @@ FROM alpine
 RUN apk add --no-cache ffmpeg
 # Copy our static executable.
 WORKDIR /
-COPY --from=build-stage /app/app /app
+COPY --from=build-stage /app /app
 EXPOSE 8080
 # Run the binary.
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["/app/app"]

@@ -115,11 +115,16 @@ func SaveRoutesJSON() {
 	})
 
 	if err != nil {
-		log.Println("Error saving routes to file:", err)
+		log.Println("Error marshalling routes to JSON:", err)
 		return
 	}
 
-	os.WriteFile("public/routes.json", routesJSON, 0644)
+	err = os.WriteFile("public/routes.json", routesJSON, 0644)
+
+	if err != nil {
+		log.Println("Error saving routes to file:", err)
+		return
+	}
 }
 
 func Init() bool {
