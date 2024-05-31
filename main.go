@@ -87,7 +87,7 @@ func main() {
 	// Route definition
 	// 		Anyone can access these routes
 	echoInstance.GET(router.Routes.RoutesJSON, func(c echo.Context) error {
-		return c.JSON(http.StatusOK, router.Routes)
+		return c.JSON(http.StatusOK, router.RoutesJSON)
 	})
 
 	// 		Unauthenticated routes (Public routes)

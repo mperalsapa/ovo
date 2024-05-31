@@ -46,9 +46,15 @@ type apiRoutes struct {
 	ToggleWatchedItem  string // POST
 }
 
+type routesJSON struct {
+	Routes    route
+	ApiRoutes apiRoutes
+}
+
 var Routes route
 var ApiRoutes apiRoutes
 var AdminRoutes adminRoute
+var RoutesJSON routesJSON
 
 // Default basepath for app is "/". This can be changed in the .env file.
 var BasePath = "/"
@@ -109,16 +115,14 @@ func GenerateDownloadItemRoute(itemID uint) string {
 }
 
 func GetRoutesJSON() string {
-	routesJSON, err := json.Marshal(map[string]interface{}{
-		"Routes":    Routes,
-		"ApiRoutes": ApiRoutes,
-	})
+	routesJSON, err := json.Marshal(RoutesJSON)
 
 	if err != nil {
 		log.Println("Error marshalling routes to JSON:", err)
 		return ""
 	}
 
+	log.Println("Routes are:", string(routesJSON))
 	return string(routesJSON)
 }
 
@@ -176,6 +180,8 @@ func Init() bool {
 	ApiRoutes.ToggleFavoriteItem = BuildApiRoute("/toggle-favorite-item")
 	ApiRoutes.ToggleWatchedItem = BuildApiRoute("/toggle-watched-item")
 
+	RoutesJSON.Routes = Routes
+	RoutesJSON.ApiRoutes = ApiRoutes
 	SaveRoutesJSON()
 
 	return true

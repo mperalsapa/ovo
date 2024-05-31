@@ -19,6 +19,10 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /app/app
 FROM alpine
 # Install FFmpeg
 RUN apk add --no-cache ffmpeg
+# Install TZone
+RUN apk add --no-cache tzdata
+# Set the timezone to Madrid
+ENV TZ=Europe/Madrid
 # Copy our static executable.
 WORKDIR /
 COPY --from=build-stage /app /app
