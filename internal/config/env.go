@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -10,6 +11,7 @@ import (
 
 type variables struct {
 	Basedir          string
+	ListeningPort    uint
 	DatabaseType     string
 	DatabaseHost     string
 	DatabaseUsername string
@@ -63,4 +65,17 @@ func Init() {
 
 	Variables.TMDBApiKey = Get("OVO_TMDB_API_KEY")
 	Variables.Basedir = strings.ToLower(GetOptional("OVO_BASEDIR"))
+	if GetOptional("OVO_LISTENING_PORT") == "" {
+		log.Println("Listening port not set. Using default port 8080.")
+		Variables.ListeningPort = 8080
+	} else {
+		port, err := strconv.Atoi(Get("OVO_LISTENING_PORT"))
+		if err != nil {
+			log.Fatal("Invalid port number. Using default port 8080.")
+			Variables.ListeningPort = 8080
+		} else {
+			Variables.ListeningPort = uint(port)
+
+		}
+	}
 }

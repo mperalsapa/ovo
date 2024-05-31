@@ -130,6 +130,6 @@ func main() {
 	// 	log.Println(route.Method, route.Path)
 	// }
 
-	log.Printf("Ready to serve requests. Started on :8080%s", router.BasePath)
-	echoInstance.Start(":8080")
+	log.Printf("Ready to serve requests. Started on :%d%s", config.Variables.ListeningPort, router.BasePath)
+	echoInstance.Start(":" + fmt.Sprint(config.Variables.ListeningPort))
 }
