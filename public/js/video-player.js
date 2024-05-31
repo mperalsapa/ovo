@@ -16,6 +16,7 @@ export class VideoPlayer {
     isBuffering = false;
     player;
     buttons;
+    bufferSpinner;
 
     constructor() {
         let player = document.getElementsByTagName('video');
@@ -50,7 +51,7 @@ export class VideoPlayer {
 
         this.#UpdateUI();
 
-        this.RequestCanPlay();
+        this.RequestPlayOnStart();
 
         // this.lastBufferingTime = Date.now();
         this.StartBufferCheckerInterval();
@@ -62,17 +63,26 @@ export class VideoPlayer {
 
             let availBuffer = this.GetAvailableBuffer();
             console.log("Available buffer: ", availBuffer)
-            if (availBuffer < 0.5 && !this.isBuffering) {
+            if (availBuffer < 0.5 &&
+                !this.isBuffering &&
+                this.player.duration - this.player.currentTime >= 0.5) {
+                console.log("Available buffer: ", availBuffer, " seconds. Remaining time: ", this.player.duration - this.player.currentTime, " seconds. Buffering...")
                 this.lastBufferState = Date.now();
                 this.Buffering();
+                this.DisplaySpinner();
+                return;
             }
 
             if (this.isBuffering) {
                 if (availBuffer > 5) {
-                    this.Canplay();
+                    this.CanPlay();
+                    this.HideSpinner();
+                    return;
                 }
                 if (availBuffer > 1 && Date.now() - this.lastBufferState > 5000) {
-                    this.Canplay();
+                    this.CanPlay();
+                    this.HideSpinner();
+                    return;
                 }
             }
 
@@ -156,10 +166,13 @@ export class VideoPlayer {
                 console.log("Other player is buffering, waiting there: ", data.StartedFrom)
                 this.player.pause();
                 this.player.currentTime = data.StartedFrom;
+                this.DisplaySpinner();
                 break;
             case "canplay":
                 console.log("Other player can play, waiting there: ", data.StartedFrom)
                 this.player.currentTime = this.GetCurrentTime(data.StartedFrom, data.StartedAt);
+                this.HideSpinner();
+                this.#Play();
                 break;
             default:
                 console.log("Event not handled: ", data.event);
@@ -174,6 +187,7 @@ export class VideoPlayer {
         let forward = document.getElementById('forward');
         let mute = document.getElementById('mute');
         let fullScreen = document.getElementById('full-screen');
+        let spinner = document.getElementById('spinner');
 
         this.buttons = {
             play: play,
@@ -183,6 +197,8 @@ export class VideoPlayer {
             fullScreen: fullScreen,
         }
 
+        this.bufferSpinner = spinner;
+        this.HideSpinner();
     }
 
     #AddListeners() {
@@ -339,14 +355,24 @@ export class VideoPlayer {
         return bufferEnd - currentTime;
     }
 
-    Canplay() {
+    CanPlay() {
         this.isBuffering = false;
-        let actualDate = new Date();
-        console.log("Can play :D " + actualDate.getHours() + ":" + actualDate.getMinutes() + ":" + actualDate.getSeconds() + "." + actualDate.getMilliseconds())
-        this.#SendWebsocketMessage({
-            event: "canplay",
-            StartedFrom: this.player.currentTime
-        })
+        if (this.syncConnection) {
+            this.#SendWebsocketMessage({
+                event: "canplay",
+                StartedFrom: this.player.currentTime
+            });
+        } else {
+            this.#Play();
+        }
+    }
+
+    DisplaySpinner() {
+        this.bufferSpinner.style.display = 'block';
+    }
+
+    HideSpinner() {
+        this.bufferSpinner.style.display = 'none';
     }
 
     // This function requires an number (startedFrom) and a Unix millisecond timestamp (startedAt)
@@ -355,7 +381,8 @@ export class VideoPlayer {
         return StartedFrom + (Date.now() - StartedAt) / 1000;
     }
 
-    RequestCanPlay() {
+    RequestPlayOnStart() {
+        this.isBuffering = false;
         if (this.syncConnection) {
             this.#SendWebsocketMessage({
                 event: "requestPlay",
@@ -366,6 +393,11 @@ export class VideoPlayer {
     }
 
     RequestPlay() {
+        if (this.player.ended) {
+            this.RequestSeek(0);
+            return;
+        }
+
         if (this.syncConnection) {
             let newAction = this.player.paused ? "play" : "pause";
             this.#SendWebsocketMessage({

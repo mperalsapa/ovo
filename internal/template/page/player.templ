@@ -48,6 +48,7 @@ templ Player(PageData PlayerData) {
 		HideNoise: true,
 	}) {
 		<div class="w-screen h-screen relative">
+			<span id="spinner" class="loader absolute top-1/2 left-1/2"></span>
 			<video class="w-screen h-screen bg-black" data-enabledSyncplay={ strconv.FormatBool(PageData.UserSession.SyncPlayGroup != "") } src={ router.GenerateDownloadItemRoute(PageData.Item.ID) }></video>
 			<div class="w-full top-0 absolute px-10 pt-5 flex justify-between">
 				<div class="flex gap-3">
