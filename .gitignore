@@ -4,7 +4,6 @@ tmp
 node_modules
 *templ.go
 *templ.txt
-public/css/*
 src/css/*
 testing_media_dir/*
 public/routes.json
