@@ -5,11 +5,16 @@ type LibraryHorizontalCardData struct {
 	ImagePath string
 	CardPath  string
 	Classes   string
+	Emptyicon string
 }
 
 templ LibraryHorizontalCard(componentData LibraryHorizontalCardData) {
 	<a href={ templ.SafeURL(componentData.CardPath) } class={ "horizontal-card flex justify-center items-center overflow-hidden " + componentData.Classes }>
-		<img src={ componentData.ImagePath }/>
+		if componentData.ImagePath != "" {
+			<img src={ "https://image.tmdb.org/t/p/w500" + componentData.ImagePath }/>
+		} else {
+			<div class="empty-image-icon flex justify-center items-center"></div>
+		}
 		<span>{ componentData.CardTitle }</span>
 	</a>
 }

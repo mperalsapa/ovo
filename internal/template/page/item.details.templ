@@ -20,8 +20,9 @@ templ castList(item model.Item) {
 		@component.VerticalCardTitleSubtitle(component.VerticalCardTitleSubtitleData{
 			CardTitle:    credit.Person.Name,
 			CardSubtitle: fmt.Sprintf("as %s", credit.Role),
-			ImagePath:    "https://image.tmdb.org/t/p/w500" + credit.Person.ProfilePath,
+			ImagePath:    credit.Person.ProfilePath,
 			CardPath:     router.GenerateRouteWithId(router.Routes.Person, credit.Person.ID),
+			Emptyicon:    "person",
 		})
 	}
 }
@@ -30,8 +31,9 @@ templ seasonList(item model.Item) {
 	for _, season := range item.GetSeasons() {
 		@component.VerticalCardTitle(component.VerticalCardTitleData{
 			CardTitle: season.Title,
-			ImagePath: "https://image.tmdb.org/t/p/w500" + season.PosterPath,
+			ImagePath: season.PosterPath,
 			CardPath:  router.GenerateRouteWithId(router.Routes.Item, season.ID),
+			Emptyicon: "tv",
 		})
 	}
 }
@@ -51,7 +53,11 @@ templ ItemDetailsPage(pageData ItemDetailsPageData) {
 		UserSession: pageData.UserSession,
 	}) {
 		<div class="flex flex-col lg:flex-row items-start gap-8 flex-wrap item-container content">
-			<img class="item-image mx-auto" src={ "https://image.tmdb.org/t/p/w500" + pageData.Item.PosterPath }/>
+			if pageData.Item.PosterPath != "" {
+				<img class="item-image mx-auto" src={ "https://image.tmdb.org/t/p/w500" + pageData.Item.PosterPath }/>
+			} else {
+				<div class="item-image mx-auto flex justify-center items-center"><span class="material-symbols-outlined">play_circle</span></div>
+			}
 			<div class="flex flex-col gap-8 overflow-x-hidden w-full basis-1/2 flex-grow">
 				<div class="flex flex-col gap-2">
 					<h1 class="text-3xl leading-none">{ pageData.Item.Title }</h1>

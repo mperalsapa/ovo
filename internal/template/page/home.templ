@@ -17,7 +17,7 @@ templ homeLibraries() {
 	for _, lib := range model.GetLibraries() {
 		@component.LibraryHorizontalCard(component.LibraryHorizontalCardData{CardTitle: lib.Name,
 			CardPath:  router.GenerateRouteWithId(router.Routes.Library, lib.ID),
-			ImagePath: "https://image.tmdb.org/t/p/w500" + lib.ImagePath,
+			ImagePath: lib.ImagePath,
 			Classes:   "library-card",
 		})
 	}
@@ -27,10 +27,11 @@ templ lastContent(lib model.Library) {
 	@component.HorizontalCarrousel() {
 		for _, item := range lib.GetLastItems(10) {
 			@component.VerticalCardTitleSubtitle(component.VerticalCardTitleSubtitleData{
-				ImagePath:    "https://image.tmdb.org/t/p/w500" + item.PosterPath,
+				ImagePath:    item.PosterPath,
 				CardPath:     router.GenerateRouteWithId(router.Routes.Item, item.ID),
 				CardTitle:    item.Title,
 				CardSubtitle: strconv.Itoa(item.ReleaseDate.Year()),
+				Emptyicon:    "tv",
 			})
 		}
 	}

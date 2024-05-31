@@ -32,6 +32,11 @@
     .item-image {
         aspect-ratio: 0.666;
         width: 350px;
+        background-color: var(--primary-color-dark);
+
+        span {
+            font-size: 5em;
+        }
     }
 
 
