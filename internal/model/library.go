@@ -460,6 +460,26 @@ func (library *Library) GetLibraryMainItems() []Item {
 	return mainItems
 }
 
+func (library *Library) GetFavoriteItems(user User) []Item {
+	var items []Item
+
+	db.GetDB().Model(&user).Association("FavoriteItems").Find(&items)
+
+	return items
+}
+
+func (library *Library) LoadFavoriteItems(user User) {
+	var items []Item
+	favItems := library.GetFavoriteItems(user)
+	for _, item := range favItems {
+		db.GetDB().First(&item, item.ID)
+		if item.ItemType == ItemTypeMovie || item.ItemType == ItemTypeShow {
+			items = append(items, item)
+		}
+	}
+	library.Items = items
+}
+
 func (library *Library) GetLastItems(limit int) []Item {
 	var items []Item
 	db.GetDB().Order("id desc").Limit(limit).Where("library_id = ? and item_type in ('Movie', 'Show')", library.ID).Find(&items)

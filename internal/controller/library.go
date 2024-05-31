@@ -48,3 +48,18 @@ func Library(context echo.Context) error {
 
 	return RenderView(context, http.StatusOK, component)
 }
+
+func FavoriteLibrary(context echo.Context) error {
+	userSession := session.GetUserSession(context)
+	user := model.GetUserByUsername(userSession.Username)
+
+	library := model.Library{}
+	library.LoadFavoriteItems(user)
+
+	component := page.Library(page.LibraryPageData{
+		Library:     library,
+		UserSession: userSession,
+	})
+
+	return RenderView(context, http.StatusOK, component)
+}

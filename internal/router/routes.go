@@ -11,19 +11,20 @@ import (
 )
 
 type route struct {
-	Assets       string
-	Api          string
-	Login        string
-	Logout       string
-	Register     string
-	Profile      string
-	Home         string
-	Library      string
-	Item         string
-	Person       string
-	Player       string
-	DownloadItem string
-	Websocket    string
+	Assets          string
+	Api             string
+	Login           string
+	Logout          string
+	Register        string
+	Profile         string
+	Home            string
+	Library         string
+	FavoriteLibrary string
+	Item            string
+	Person          string
+	Player          string
+	DownloadItem    string
+	Websocket       string
 }
 
 type adminRoute struct {
@@ -135,6 +136,7 @@ func Init() bool {
 	Routes.Profile = BuildRoute("/profile")
 	Routes.Home = BuildRoute("/")
 	Routes.Library = BuildRoute("/library/:id")
+	Routes.FavoriteLibrary = BuildRoute("/favorite-library")
 	Routes.Item = BuildRoute("/item/:id")
 	Routes.Person = BuildRoute("/person/:id")
 	Routes.Player = BuildRoute("/player")

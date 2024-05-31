@@ -100,6 +100,7 @@ func main() {
 	auth.GET(router.Routes.Logout, controller.Logout)
 	auth.GET(router.Routes.Home, controller.Home)
 	auth.GET(router.Routes.Library, controller.Library)
+	auth.GET(router.Routes.FavoriteLibrary, controller.FavoriteLibrary)
 	auth.GET(router.Routes.Item, controller.Item)
 	auth.GET(router.Routes.Person, controller.Person)
 	auth.GET(router.Routes.Player, controller.Player)
