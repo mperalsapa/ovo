@@ -14,12 +14,26 @@
     -ms-overflow-style: initial;
     // Firefox
     scrollbar-width: thin;
-
-    /* For Webkit-based browsers (Chrome, Safari and Opera) */
-    // *::-webkit-scrollbar {
-    //     display: block;
-    // }
     z-index: +2;
+
+    background: linear-gradient(90deg, #1a1a1a 0%, #333 50%, #1a1a1a 100%);
+    background-color: #333;
+
+    h2 {
+        text-transform: uppercase;
+        font-size: 1.1em;
+    }
+
+    &::after {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: -1;
+        background: repeating-linear-gradient(#0015ff00, #393939 5px);
+        width: 100%;
+        height: 100%;
+        content: "";
+    }
 }
 
 .sidebar-container.closed {

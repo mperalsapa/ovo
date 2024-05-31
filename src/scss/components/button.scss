@@ -1,14 +1,23 @@
+@use "../base/variables.scss" as vars;
+
 .button {
-    background-color: var(--secondary-color);
-    color: var(--primary-text-color);
+    background-color: var(--primary-color);
 
     min-width: 2.5rem;
-    @apply rounded p-2;
-    @apply border-2 hover:border-dashed;
-    outline-color: var(--secondary-color);
+    @apply rounded p-1 px-2;
+    @apply border-2;
+    border-color: #{adjust-color(vars.$mainThemePrimaryColor, $lightness: vars.$darkColorPercentage * 2)};
+
+    color: black;
+    text-transform: uppercase;
+    font-size: 1.1em;
+    letter-spacing: 2px;
+    -webkit-text-stroke: 0.5px;
+    -webkit-text-stroke-color: black;
 
     &:hover {
-        background-color: var(--secondary-color-light);
+        background-color: var(--primary-color-light);
+        border-color: #{adjust-color(vars.$mainThemePrimaryColor, $lightness: vars.$lightColorPercentage * 2)};
     }
 
     &-secondary {

@@ -5,7 +5,7 @@ input[type=password] {
     min-width: 300px;
     width: 100%;
     @apply rounded p-1 px-2;
-    @apply outline hover:outline-4 outline-2 outline-secondary;
+    @apply border border-secondary;
     background-color: transparent;
     color: var(--primary-text-color);
 }
@@ -14,7 +14,7 @@ select {
     min-width: 300px;
     width: 100%;
     @apply rounded p-1 px-2;
-    @apply outline hover:outline-4 outline-2 outline-secondary;
+    @apply border border-secondary;
     background-color: transparent;
     color: var(--primary-text-color);
 }

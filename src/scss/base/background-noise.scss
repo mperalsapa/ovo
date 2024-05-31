@@ -16,7 +16,7 @@
     // background: transparent url('/ovo/assets/images/vhs_noise.gif') repeat 0 0;
     // opacity: .1;
     visibility: visible;
-    z-index: +2;
+    z-index: -1;
 }
 
 @keyframes bg-animation {
@@ -76,7 +76,7 @@
 }
 
 .scanLines {
-    z-index: +2;
+    z-index: -1;
     opacity: 0.13;
     /* OPACIDAD SCANLINES */
     width: 100%;
@@ -107,6 +107,6 @@ body:not(:has(header)) .verticalGradient {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 1;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.78) 2%, rgba(187, 187, 187, 0) 12%, rgba(255, 255, 255, 0) 88%, rgba(0, 0, 0, 0.78) 98%);
+    z-index: -1;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.5) 2%, rgba(0, 0, 0, 0) 6%, rgba(0, 0, 0, 0) 94%, rgba(0, 0, 0, 0.5) 98%, rgba(0, 0, 0, 0.75) 100%);
 }

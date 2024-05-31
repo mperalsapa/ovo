@@ -12,7 +12,7 @@ type UserSidebarData struct {
 templ libraryList() {
 	<div class="flex flex-wrap justify-center">
 		for _, lib := range model.GetLibraries() {
-			<a href={ templ.SafeURL(router.GenerateRouteWithId(router.Routes.Library, lib.ID)) } class="button button-secondary">{ lib.Name }</a>
+			<a href={ templ.SafeURL(router.GenerateRouteWithId(router.Routes.Library, lib.ID)) } class="button button-primary">{ lib.Name }</a>
 		}
 	</div>
 }
@@ -22,7 +22,7 @@ templ UserSidebar(pageData UserSidebarData) {
 		<div class="lateral-navbar">
 			if !pageData.IsAdminSection {
 				<div>
-					<a href={ templ.SafeURL(router.Routes.Home) } class="button button-secondary"><span>Home</span></a>
+					<a href={ templ.SafeURL(router.Routes.Home) } class="button button-primary"><span>Home</span></a>
 				</div>
 				<h2>Media</h2>
 				<hr/>
@@ -31,30 +31,30 @@ templ UserSidebar(pageData UserSidebarData) {
 					<h2>Admin</h2>
 					<hr/>
 					<div>
-						<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-secondary"><span>Dashboard</span></a>
+						<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-primary"><span>Dashboard</span></a>
 					</div>
 				}
 			} else {
 				<h2>Dashboard</h2>
 				<hr/>
 				<div>
-					<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-secondary"><span>Home</span></a>
+					<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-primary"><span>Home</span></a>
 				</div>
 				<h2>Media</h2>
 				<hr/>
 				<div>
-					<a href={ templ.SafeURL(router.AdminRoutes.Libraries) } class="button button-secondary"><span>Libraries</span></a>
+					<a href={ templ.SafeURL(router.AdminRoutes.Libraries) } class="button button-primary"><span>Libraries</span></a>
 				</div>
 				<h2>Administration</h2>
 				<hr/>
 				<div>
-					<a href={ templ.SafeURL(router.AdminRoutes.Users) } class="button button-secondary"><span>Users</span></a>
+					<a href={ templ.SafeURL(router.AdminRoutes.Users) } class="button button-primary"><span>Users</span></a>
 				</div>
 				<h2>Settings</h2>
 				<hr/>
 				<div>
-					<a href={ templ.SafeURL(router.AdminRoutes.Settings) } class="button button-secondary"><span>Server</span></a>
-					<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-secondary"><span>Network</span></a>
+					<a href={ templ.SafeURL(router.AdminRoutes.Settings) } class="button button-primary"><span>Server</span></a>
+					<a href={ templ.SafeURL(router.AdminRoutes.Dashboard) } class="button button-primary"><span>Network</span></a>
 				</div>
 			}
 		</div>
