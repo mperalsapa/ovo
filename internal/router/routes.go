@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"ovo-server/internal/config"
 	"strings"
 )
 
@@ -47,7 +48,8 @@ var Routes route
 var ApiRoutes apiRoutes
 var AdminRoutes adminRoute
 
-var BasePath = "/ovo"
+// Default basepath for app is "/". This can be changed in the .env file.
+var BasePath = "/"
 var AdminBasePath = "/admin"
 
 // func BuildRoute(path string) (string, error) {
@@ -120,6 +122,11 @@ func SaveRoutesJSON() {
 }
 
 func Init() bool {
+
+	if config.Variables.Basedir != "" && config.Variables.Basedir != "/" {
+		BasePath = config.Variables.Basedir
+	}
+
 	Routes.Assets = BuildRoute("/assets")
 	Routes.Api = BuildRoute("/api")
 	Routes.Login = BuildRoute("/login")

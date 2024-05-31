@@ -9,6 +9,7 @@ import (
 )
 
 type variables struct {
+	Basedir          string
 	DatabaseType     string
 	DatabaseHost     string
 	DatabaseUsername string
@@ -61,4 +62,5 @@ func Init() {
 	}
 
 	Variables.TMDBApiKey = Get("OVO_TMDB_API_KEY")
+	Variables.Basedir = strings.ToLower(GetOptional("OVO_BASEDIR"))
 }
