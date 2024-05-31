@@ -11,11 +11,11 @@ import (
 
 func GetFileSystem(useOS bool, staticAssets embed.FS) http.FileSystem {
 	if useOS {
-		log.Print("using live mode")
+		log.Print("Using live filesystem mode")
 		return http.FS(os.DirFS("public"))
 	}
 
-	log.Print("using embed mode")
+	log.Print("Using embed filesystem mode")
 	fsys, err := fs.Sub(staticAssets, "public")
 	if err != nil {
 		panic(err)

@@ -130,6 +130,6 @@ func main() {
 	// 	log.Println(route.Method, route.Path)
 	// }
 
-	log.Println("Started on http://localhost:8080. Ready to serve requests.")
+	log.Printf("Ready to serve requests. Started on :8080%s", router.BasePath)
 	echoInstance.Start(":8080")
 }
