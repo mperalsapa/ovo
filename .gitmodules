@@ -1,0 +1,3 @@
+[submodule "ovo-web"]
+	path = ovo-web
+	url = https://github.com/mperalsapa/ovo-web
