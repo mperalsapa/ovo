@@ -39,6 +39,23 @@ By default, a `.env` file is required. When that `.env` file is not present, the
 
 Lastly, the default database is SQLite. If you plan to use another database supported by GORM (MySQL, PosgreSQL, etc...), you need to specify the connection parameters in the `.env` file or as environment variables.
 
+## TODO
+Explain frontend submodule
+```bash
+git clone <URL_REPOSITORIO_BACKEND>
+cd go-backend
+git submodule init
+git submodule update
+```
+And frontend build
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+
+
 # Deployment
 ## Binary
 An way of running the server, could be using the binary file. This eliminates docker from the equation, but requires to have FFmpeg in system's path.

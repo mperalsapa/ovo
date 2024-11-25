@@ -51,10 +51,22 @@ type routesJSON struct {
 	ApiRoutes apiRoutes
 }
 
+// New Route struct. Scope of this routes is to provide acces to a frontend only JS based app.
+// This routes will only return JSON data.
+type newRoute struct {
+	CheckAuth        string
+	Login            string
+	Register         string
+	Logout           string
+	Libraries        string
+	LastLibraryItems string
+}
+
 var Routes route
 var ApiRoutes apiRoutes
 var AdminRoutes adminRoute
 var RoutesJSON routesJSON
+var NewRoute newRoute
 
 // Default basepath for app is "/". This can be changed in the .env file.
 var BasePath = "/"
@@ -183,6 +195,13 @@ func Init() bool {
 	RoutesJSON.Routes = Routes
 	RoutesJSON.ApiRoutes = ApiRoutes
 	SaveRoutesJSON()
+
+	// newRoutes definition
+	NewRoute.CheckAuth = BuildApiRoute("/v1/checkAuth")
+	NewRoute.Login = BuildApiRoute("/v1/login")
+	NewRoute.Register = BuildApiRoute("/v1/register")
+	NewRoute.Logout = BuildApiRoute("/v1/logout")
+	NewRoute.Libraries = BuildApiRoute("/v1/libraries")
 
 	return true
 }
