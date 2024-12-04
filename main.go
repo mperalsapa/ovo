@@ -85,6 +85,7 @@ func main() {
 	echoInstance.GET("/api/v1/checkAuth", apiController.CheckAuth)
 	echoInstance.POST(router.NewRoute.Login, apiController.Login)
 	echoInstance.POST(router.NewRoute.Register, apiController.Register)
+	echoInstance.POST(router.NewRoute.Logout, apiController.Logout)
 	// Set Bundle MiddleWare
 	// echoInstance.Use(middleware.Logger())
 	// echoInstance.Use(middleware.Gzip())

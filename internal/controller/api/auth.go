@@ -117,3 +117,11 @@ func Register(context echo.Context) error {
 	// return context.Redirect(http.StatusFound, router.Routes.Login)
 	return context.JSON(http.StatusOK, &ApiResponse{Data: "true"})
 }
+
+func Logout(context echo.Context) error {
+	session := session.GetUserSession(context)
+	session.Authenticated = false
+	session.SaveUserSession(context)
+	log.Println("User logged out: " + session.Username)
+	return context.JSON(http.StatusOK, &ApiResponse{Data: "true"})
+}
